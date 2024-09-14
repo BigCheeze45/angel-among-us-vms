@@ -5,7 +5,7 @@ DJANGO_CONTAINER := vms-django-1
 
 # Build the Docker image
 build:
-	docker build --no-cache -t $(DOCKER_IMAGE_NAME) .
+	docker build -t $(DOCKER_IMAGE_NAME) .
 
 # Bring up the Docker Compose stack
 up:
@@ -23,6 +23,10 @@ reset:
 migrate:
 	docker exec $(DJANGO_CONTAINER) python manage.py makemigrations app
 	docker exec $(DJANGO_CONTAINER) python manage.py migrate
+
+# setup a local dev env - OS independent
+local:
+	pip install --user --requirement requirements.txt
 
 # Initialize: print welcome message, build image, and bring up the stack
 .PHONY: init

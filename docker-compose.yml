@@ -2,8 +2,8 @@ volumes:
   # use named volume to persist data, in this case the database
   pgdata:
 
-    # share senstive info without exposing them via environment variables
 secrets:
+  # share senstive info without exposing them via environment variables
   secret_key:
     environment: SECRET_KEY
   postgres_user:
@@ -25,6 +25,7 @@ services:
       - POSTGRES_DB_FILE=/run/secrets/postgres_db
       - POSTGRES_USER_FILE=/run/secrets/postgres_user
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_passwd
+      - TZ=${GLOBAL_TIMEZONE:-America/New_York}
     secrets:
       - postgres_db
       - postgres_user
@@ -32,7 +33,9 @@ services:
   django:
     working_dir: /app
     volumes:
-      - .:/app
+      # The defaults value . is added so that the docker-compose.yaml file can
+      # work when running docker-outside-of-docker in devcontainer
+      - ${LOCAL_WORKSPACE_FOLDER:-.}:/app
     image: aau-vms
     secrets:
       - secret_key
@@ -40,7 +43,7 @@ services:
       - postgres_user
       - postgres_passwd
     environment:
-      - TZ=${GLOBAL_TIMEZONE:-America/New_York}}
+      - TZ=${GLOBAL_TIMEZONE:-America/New_York}
     ports:
       - ${DJANGO_PORT:-80}:8000
-    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+    entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
