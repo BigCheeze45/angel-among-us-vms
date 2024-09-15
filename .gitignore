@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,windows,macos,linux,django,node,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,windows,macos,linux,django,node,react
 
+### ignore folder - helpful for files you don't want to delete or add to ignore file###
+IGNORE/
+
 ### Django ###
 *.log
 *.pot
