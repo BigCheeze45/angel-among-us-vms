@@ -4,6 +4,8 @@
 ### ignore folder - helpful for files you don't want to delete or add to ignore file###
 IGNORE/
 
+database-client-config.json
+
 ### Django ###
 *.log
 *.pot

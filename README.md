@@ -60,6 +60,9 @@ While dev containers are supported by a number of [different tools and services]
    1. Open VS Code Command Palette
    2. Type in `Dev Containers` and select **"Reopen in Container"**
 
+See [below for information](#accessing-container-applications-and-services) on
+accessing other containers from _within_ your dev container.
+
 ### Local
 
 To develop locally, you'll need to install Python & add it to your system PATH.
@@ -101,9 +104,22 @@ Assuming Docker is running:
 If there are no issues, this will build and pull all the necessary images. Once
 it is complete, check Docker Desktop. All services under `vms` should be green (running).
 
-In your browser visit [http://localhost/app](http://localhost/app) and ta-da!
+In your browser visit [http://localhost](http://localhost) and ta-da!
 
 Happy coding!!
+
+## Accessing container applications and services
+
+Unless otherwise noted, most application/services/tools running in containers
+are accessible on their default ports on localhost _outside_ of the container.
+For example, `localhost:5432` connects you to the database container
+_if it is running_.
+
+If/when you need to access the host machine from _within_ a container
+(say a [devcontainer](#dev-container)) use `host.docker.internal` as the
+hostname. This is a [special DNS Docker provides](
+   https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)
+for containers to access services running on the host machine.
 
 # Makefile
 
@@ -125,7 +141,7 @@ Assuming you have make installed, you can run any of the targets listed below.
 |   build    |                                    Build application docker image                                    |
 |     up     |                    Bring up the application docker compose stack (start the app)                     |
 |    down    |                    Bring down the application docker compose stop (stop the app)                     |
-|   reset    |           Stop the app and remove volumes. Effectively start from scratch on the next `up`           |
+|   clean    |           Stop the app and remove volumes. Effectively start from scratch on the next `up`           |
 |  migrate   |                  Synchronize change made to models with the schema in the database                   |
 |   local    |                                     Install project requirements                                     |
 

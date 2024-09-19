@@ -16,13 +16,23 @@ down:
 	$(DOCKER_COMPOSE) down
 
 # Reset: bring down the stack, remove volumes and orphaned containers
-reset:
+clean:
 	$(DOCKER_COMPOSE) down --volumes --remove-orphans
 
-# Migrate: Synchronize change made to models with the schema in the database
+# Migrate: The migrate command looks at the INSTALLED_APPS setting
+# and creates any necessary database tables according to the database
+# settings in vms/settings.py
 migrate:
-	docker exec $(DJANGO_CONTAINER) python manage.py makemigrations app
-	docker exec $(DJANGO_CONTAINER) python manage.py migrate
+	docker exec -t $(DJANGO_CONTAINER) python manage.py migrate
+
+# By running makemigrations, you’re telling Django that you’ve made some changes
+# to your models (in this case, you’ve made new ones) and that you’d like
+# the changes to be stored as a migration.
+migrations:
+	docker exec -t $(DJANGO_CONTAINER) python manage.py makemigrations app
+
+super:
+	docker exec -ti $(DJANGO_CONTAINER) python manage.py createsuperuser
 
 # setup a local dev env - OS independent
 local:

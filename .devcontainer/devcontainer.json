@@ -20,12 +20,7 @@
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-		"ghcr.io/devcontainers-community/npm-features/prettier:1": {
-			// plugins should be separated by space, not commas
-			"plugins": "prettier-plugin-sh prettier-plugin-sql prettier-plugin-jinja-template"
-		},
-		"ghcr.io/gvatsal60/dev-container-features/pre-commit:1": {}
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
 	},
 	// Configure tool-specific properties.
 	"customizations": {
@@ -37,7 +32,9 @@
 				"ms-python.black-formatter",
 				"ms-azuretools.vscode-docker",
 				"bysabi.prettier-vscode-standard",
-				"streetsidesoftware.code-spell-checker"
+				"streetsidesoftware.code-spell-checker",
+				"ms-vscode-remote.remote-containers",
+				"cweijan.vscode-postgresql-client2"
 			],
 			"settings": {
 				"editor.formatOnSave": true,
@@ -65,7 +62,9 @@
 				},
 				"[dockerfile]": {
 					"editor.defaultFormatter": "ms-azuretools.vscode-docker"
-				}
+				},
+				"database-client.queryWithSchema": true,
+				"database-client.defaultSelectLimit": 1000
 			}
 		}
 	},
