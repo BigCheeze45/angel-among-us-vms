@@ -159,3 +159,12 @@ TODO
 # Troubleshooting
 
 Common gotchas and resolution
+
+## ModuleNotFoundError
+
+When using the [dev container](#dev-container) you may get this error,
+even after running `pip install`. This is because the container builds
+and installs packages as `root` but runs as `vscode` user (at time of writing).
+
+To fix this: add the package to [the requirements file](./requirements.txt)
+then rebuild the container.

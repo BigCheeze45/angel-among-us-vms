@@ -44,6 +44,7 @@ services:
       - postgres_passwd
     environment:
       - TZ=${GLOBAL_TIMEZONE:-America/New_York}
+      - DEBUG=${DEBUG:-False}
     ports:
       - ${DJANGO_PORT:-80}:8000
     entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
