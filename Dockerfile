@@ -13,7 +13,7 @@ RUN rm /tmp/requirements.txt
 
 # Build frontend image
 # https://www.docker.com/blog/how-to-setup-your-local-node-js-development-environment-using-docker/
-FROM node AS frontend
+FROM node:20 AS frontend
 
 WORKDIR /app
 COPY react-admin/package*.json .

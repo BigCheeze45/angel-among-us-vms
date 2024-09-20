@@ -18,6 +18,7 @@ services:
   # See https://hub.docker.com/_/postgres
   database:
     image: postgres
+    container_name: database
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -38,6 +39,7 @@ services:
       # work when running docker-outside-of-docker in devcontainer
       - ${LOCAL_WORKSPACE_FOLDER:-.}:/app
     image: aau-vms-backend
+    container_name: django
     secrets:
       - secret_key
       - postgres_db
@@ -52,6 +54,7 @@ services:
     entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
   react-admin:
     image: aau-vms-frontend
+    container_name: react
     environment:
       # this url is a placeholder and should be changed once backend API is setup
       - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-https://jsonplaceholder.typicode.com}

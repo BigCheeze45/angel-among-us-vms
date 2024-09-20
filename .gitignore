@@ -5,6 +5,7 @@
 IGNORE/
 
 database-client-config.json
+*.pdk
 
 ### Django ###
 *.log
