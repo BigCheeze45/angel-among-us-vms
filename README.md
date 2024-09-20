@@ -1,8 +1,12 @@
 # Angel Among Us Volunteer Management System
 
+Volunteer management system using a Django REST backend (via [Django REST framework
+](https://www.django-rest-framework.org))
+with React a (via [React-Admin](https://marmelab.com/react-admin/)) frontend.
+
 # Getting Started
 
-**Instructions and setup below are for development and should not be used if deploying
+**Instructions and setup below are for development and should not be used when deploying
 to production. See the [deployment instructions](#deployment) below for that**.
 
 ## Perquisites
@@ -33,10 +37,10 @@ environment variables that are accessible from any process.
 1. In the project folder make a copy of `example.env` and name it `.env` (note the dot in the file name)
 2. Edit `.env` by filling in the required settings
 
-From here, you have a couple of options of development environment:
+<!-- From here, you have a couple of options of development environment: -->
 
-- [Dev container](#dev-container) - simple & easy
-- [Local](#local) - your milage may vary
+<!-- - [Dev container](#dev-container) - simple & easy -->
+<!-- - [Local](#local) - your milage may vary -->
 
 ### Dev Container
 
@@ -63,7 +67,7 @@ While dev containers are supported by a number of [different tools and services]
 See [below for information](#accessing-container-applications-and-services) on
 accessing other containers from _within_ your dev container.
 
-### Local
+<!-- ### Local
 
 To develop locally, you'll need to install Python & add it to your system PATH.
 
@@ -99,7 +103,7 @@ Assuming Docker is running:
 
    ```shell
    docker compose up -d
-   ```
+   ``` -->
 
 If there are no issues, this will build and pull all the necessary images. Once
 it is complete, check Docker Desktop. All services under `vms` should be green (running).
@@ -142,7 +146,7 @@ Assuming you have make installed, you can run any of the targets listed below.
 |     up     |                    Bring up the application docker compose stack (start the app)                     |
 |    down    |                    Bring down the application docker compose stop (stop the app)                     |
 |   clean    |           Stop the app and remove volumes. Effectively start from scratch on the next `up`           |
-|  migrate   |                  Synchronize change made to models with the schema in the database                   |
+|  makemigrations   |                  Synchronize change made to models with the schema in the database            |
 |   local    |                                     Install project requirements                                     |
 
 _Generated using [Markdown Tables Generator](https://www.tablesgenerator.com/markdown_tables#)_
