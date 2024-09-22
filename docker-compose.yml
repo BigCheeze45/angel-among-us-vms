@@ -2,6 +2,7 @@ volumes:
   # use named volume to persist data, in this case the database
   pgdata:
 
+
 secrets:
   # share senstive info without exposing them via environment variables
   secret_key:
@@ -17,6 +18,7 @@ services:
   # See https://hub.docker.com/_/postgres
   database:
     image: postgres
+    container_name: database
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -36,7 +38,8 @@ services:
       # The defaults value . is added so that the docker-compose.yaml file can
       # work when running docker-outside-of-docker in devcontainer
       - ${LOCAL_WORKSPACE_FOLDER:-.}:/app
-    image: aau-vms
+    image: aau-vms-backend
+    container_name: django
     secrets:
       - secret_key
       - postgres_db
@@ -44,6 +47,19 @@ services:
       - postgres_passwd
     environment:
       - TZ=${GLOBAL_TIMEZONE:-America/New_York}
+      # SECURITY WARNING: don't run with debug turned on in production!
+      - DEBUG=${DEBUG:-True}
     ports:
-      - ${DJANGO_PORT:-80}:8000
+      - ${DJANGO_PORT:-8000}:8000
     entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+  react-admin:
+    image: aau-vms-frontend
+    container_name: react
+    environment:
+      # this url is a placeholder and should be changed once backend API is setup
+      - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-https://jsonplaceholder.typicode.com}
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/.env:/app/.env
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/react-admin:/app
+    ports:
+      - ${VITE_PORT:-80}:5173

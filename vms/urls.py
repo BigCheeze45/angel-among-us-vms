@@ -14,10 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("app/", include("app.urls")),
+    path("", include("app.urls")),
     path("admin/", admin.site.urls),
 ]
+
+if settings.DEBUG:
+    # expose browseable API if in dev/debug mode
+    # or any other URLs that should be accessible only during dev
+    urlpatterns.append(
+        path("api-auth/", include("rest_framework.urls")),
+    )

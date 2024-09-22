@@ -1,5 +1,25 @@
-# Ignore everything by default
-*
+# Ignore node modules
+**/node_modules
 
-# Except
-!requirements.txt
+# Git
+.git
+.gitignore
+
+# dev container
+.devcontainer
+
+# Python/Django
+__pycache__/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Misc. & OS files
+.DS_*
+IGNORE
