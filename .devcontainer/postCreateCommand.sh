@@ -12,7 +12,7 @@ if [ ! -f "$INITIALIZATION_FILE" ]; then
     make init
 
     # install pre-commit hooks
-    pre-commit install
+    # pre-commit install
 
     # setup node modules
     cd react-admin && npm install && cd ..
