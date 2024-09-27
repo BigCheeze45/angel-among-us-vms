@@ -139,16 +139,18 @@ where `target` is any target specified in the makefile.
 
 Assuming you have make installed, you can run any of the targets listed below.
 
-|   **Target**   |                                            **Description**                                           |
-|:--------------:|:----------------------------------------------------------------------------------------------------:|
-|      init      | Spin up the development environment. This is the default target if one is not provided (e.g. `make`) |
-|      build     |                                    Build application docker images                                   |
-|       up       |                     Bring up the application docker compose stack (start the app)                    |
-|      down      |                     Bring down the application docker compose stop (stop the app)                    |
-|      login     |        Log into the specified container e.g. `make -e login container=<container name \| ID>`        |
-|      clean     |           Stop the app and remove volumes. Effectively start from scratch on the next `up`           |
-| makemigrations |                creates new migration files based on the changes detected in the models               |
-|     migrate    |                   Synchronize change made to models with the schema in the database                  |
+|   **Target**   |                                              **Description**                                              |
+|:--------------:|:---------------------------------------------------------------------------------------------------------:|
+|      init      |    Spin up the development environment. This is the default target if one is not provided (e.g. `make`)   |
+|      build     |                                      Build application docker images                                      |
+|       up       |                       Bring up the application docker compose stack (start the app)                       |
+|      down      |                       Bring down the application docker compose stop (stop the app)                       |
+|      login     |                      Log into the specified container e.g. `make -e login container=`                     |
+|      clean     |              Stop the app and remove volumes. Effectively start from scratch on the next `up`             |
+|     cleandb    | Stop the db container & remove its volumes. Effectively start the database from scratch on the next  `up` |
+| makemigrations |                  creates new migration files based on the changes detected in the models                  |
+|     migrate    |                     Synchronize change made to models with the schema in the database                     |
+|   djangotest   |                                         Run all backend unit tests                                        |
 
 _Generated using [Markdown Tables Generator](https://www.tablesgenerator.com/markdown_tables#)_
 
