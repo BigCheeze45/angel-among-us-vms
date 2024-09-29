@@ -51,8 +51,7 @@
 					"analysis.inlayHints.callArgumentNames": "partial",
 					"editor.defaultFormatter": "ms-python.black-formatter",
 					"editor.codeActionsOnSave": {
-						"source.organizeImports": "always",
-						"source.unusedImports": "always"
+						"source.organizeImports": "always"
 					}
 				},
 				"[shellscript]": {
@@ -70,9 +69,9 @@
 		}
 	},
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "chmod +x ./.devcontainer/postCreateCommand.sh && ./.devcontainer/postCreateCommand.sh"
+	"postCreateCommand": "chmod +x ./.devcontainer/postCreateCommand.sh && ./.devcontainer/postCreateCommand.sh",
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }

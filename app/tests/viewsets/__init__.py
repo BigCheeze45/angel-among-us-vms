@@ -1,0 +1,1 @@
+from .SkillCategoryViewSetsTest import SkillCategoryViewSetsTest
