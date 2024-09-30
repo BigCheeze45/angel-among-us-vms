@@ -1,18 +1,14 @@
 from django.db import models
-from django.utils import timezone
-from app.models import Volunteer
-
-
-class Volunteer(models.Model):
-    name = models.CharField(max_length=100)
+from django.contrib.auth.models import User
 
 
 class VolunteerMilestone(models.Model):
     volunteer = models.ForeignKey(
-        Volunteer, on_delete=models.CASCADE, related_name="milestones"
+        User, on_delete=models.CASCADE, related_name="milestones"
     )
+    milestone_date = models.DateField(null=False)
     years_of_service = models.IntegerField(default=0)
-    milestone_date = models.DateField(default=timezone.now)
+    award_description = models.TextField(null=True, blank=True)
     award_title = models.CharField(max_length=100, null=True, blank=True)
     award_description = models.TextField(null=True, blank=True)
     achievement_level = models.CharField(
