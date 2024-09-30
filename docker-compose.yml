@@ -57,7 +57,6 @@ services:
     image: aau-vms-frontend
     container_name: react
     environment:
-      # this url is a placeholder and should be changed once backend API is setup
       - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-http://localhost:${DJANGO_PORT:-8000}}
     volumes:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/.env:/app/.env

@@ -9,7 +9,9 @@ class VolunteerSkill(models.Model):
     Association table linking Volunteers and the skills they have.
     """
 
-    volunteer = models.ForeignKey(User, db_column="volunteer_id", on_delete=models.CASCADE)
+    volunteer = models.ForeignKey(
+        User, db_column="volunteer_id", on_delete=models.CASCADE, related_name="skills"
+    )
     category = models.ForeignKey(
         SkillCategory,
         db_column="category_id",
