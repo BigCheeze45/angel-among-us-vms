@@ -6,7 +6,7 @@ class TeamCategory(models.Model):
     Overarching category to group teams by
     """
 
-    name = models.CharField(null=False, max_length=200, unique=True)
+    name = models.CharField(null=False, max_length=100, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     last_modified_at = models.DateTimeField(null=True, auto_now=True)
 
