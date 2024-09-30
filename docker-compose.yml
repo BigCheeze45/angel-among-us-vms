@@ -49,15 +49,16 @@ services:
       - TZ=${GLOBAL_TIMEZONE:-America/New_York}
       # SECURITY WARNING: don't run with debug turned on in production!
       - DEBUG=${DEBUG:-True}
+      - DJANGO_LOG_LEVEL=${DJANGO_LOG_LEVEL:-INFO}
     ports:
       - ${DJANGO_PORT:-8000}:8000
-    entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
   react-admin:
     image: aau-vms-frontend
     container_name: react
     environment:
       # this url is a placeholder and should be changed once backend API is setup
-      - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-https://jsonplaceholder.typicode.com}
+      - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-http://localhost:${DJANGO_PORT:-8000}}
     volumes:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/.env:/app/.env
       - ${LOCAL_WORKSPACE_FOLDER:-.}/react-admin:/app

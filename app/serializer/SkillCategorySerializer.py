@@ -7,5 +7,5 @@ class SkillCategorySerializer(serializers.ModelSerializer):
         model = SkillCategory
         fields = ["id", "category", "description"]
 
-    def is_valid(self, *, raise_Exception=True):
-        return super().is_valid(raise_exception=raise_Exception)
+    def is_valid(self, *, raise_exception=True):
+        return super().is_valid(raise_exception=raise_exception)

@@ -40,8 +40,8 @@
 			"settings": {
 				"editor.formatOnSave": true,
 				"debugpy.showPythonInlineValues": true,
-				"editor.formatOnSaveMode": "modificationsIfAvailable",
-				"editor.defaultFormatter": "bysabi.prettier-vscode-standard",
+				"editor.formatOnSaveMode": "file",
+				// "editor.defaultFormatter": "bysabi.prettier-vscode-standard",
 				"[jsonc]": {
 					"editor.defaultFormatter": "vscode.json-language-features"
 				},

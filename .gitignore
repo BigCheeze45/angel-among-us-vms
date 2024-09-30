@@ -3,6 +3,7 @@
 
 ### ignore folder - helpful for files you don't want to delete or add to ignore file###
 IGNORE/
+react-admin/.vite/deps_temp_*/
 
 database-client-config.json
 *.pdk
@@ -200,7 +201,6 @@ cython_debug/
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*

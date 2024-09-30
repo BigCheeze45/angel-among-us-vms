@@ -27,6 +27,14 @@ clean:
 	rm -f .devcontainer/.pdk
 	rm -fr react-admin/node_modules
 
+# Destroy and rebuild the database
+cleandb:
+	$(DOCKER_COMPOSE) down database --volumes
+	$(DOCKER_COMPOSE) up database -d
+	$(MAKE) makemigrations
+	$(MAKE) migrate
+	$(MAKE) super
+
 # Login into the specified container
 login:
 	docker exec -ti $(container) /bin/bash
@@ -43,13 +51,17 @@ makemigrations:
 super:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py createsuperuser
 
+# Run backend (django) tests
+djangotest:
+	docker exec -t $(DJANGO_CONTAINER) python manage.py test --noinput --failfast app/tests
+
 # Initialize: print welcome message, build image, and bring up the stack
 .PHONY: init
 init:
 	@echo "Setting up VMS Developemnt environment"
 	$(MAKE) build
 	$(MAKE) up
-	# Hack until dependencies & health checks can be added
+	# FIXME - Hack until dependencies & health checks can be added
 	sleep 15
 	$(MAKE) migrate
 	$(MAKE) super

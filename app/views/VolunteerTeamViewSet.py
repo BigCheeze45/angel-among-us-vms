@@ -4,16 +4,16 @@ from rest_framework import viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from app.models.VolunteerSkill import VolunteerSkill
-from app.serializer.VolunteerSkillSerializer import VolunteerSkillSerializer
+from app.models.VolunteerTeam import VolunteerTeam
+from app.serializer.VolunteerTeamSerializer import VolunteerTeamSerializer
 
 
-class VolunteerSkillViewSet(viewsets.ModelViewSet):
-    serializer_class = VolunteerSkillSerializer
+class VolunteerTeamViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = VolunteerTeamSerializer
 
     def get_queryset(self):
         volunteer_id = self.kwargs.get("pk")
-        return VolunteerSkill.objects.filter(volunteer=volunteer_id)
+        return VolunteerTeam.objects.filter(volunteer=volunteer_id)
 
     def retrieve(self, request: Request, pk=None, *args, **kwargs):
         team = get_object_or_404(self.get_queryset(), pk=pk)
