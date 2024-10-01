@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 from common.utils import read_docker_secrets_file
@@ -45,8 +46,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 25,
 }
 
-# Application definition
+# django-phonenumber-field
+# ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
+PHONENUMBER_DEFAULT_REGION = 'US'
 
+# Application definition
 INSTALLED_APPS = [
     "app.apps.AppConfig",
     "django.contrib.admin",
@@ -57,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_filters",
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
