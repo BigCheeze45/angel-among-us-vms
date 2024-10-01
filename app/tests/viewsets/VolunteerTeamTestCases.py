@@ -1,10 +1,10 @@
 from django.urls import reverse
-from django.contrib.auth.models import User
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from app.models.Team import Team
+from app.models.Volunteer import Volunteer
 from app.models.TeamCategory import TeamCategory
 from app.models.VolunteerTeam import VolunteerTeam
 
@@ -20,7 +20,9 @@ class VolunteerTeamTestCases(APITestCase):
         # Using User for now until Volunteer model is complete
         self.category = TeamCategory.objects.create(name="Administration")
 
-        self.user = User.objects.create(username="username")
+        self.user = Volunteer.objects.create(
+            first_name="John", last_name="Doe", cell_phone="999-999-999"
+        )
 
         self.team = Team.objects.create(
             name="Team Name",

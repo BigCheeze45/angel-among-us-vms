@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 from app.models.Team import Team
+from app.models.Volunteer import Volunteer
 
 
 class VolunteerTeam(models.Model):
@@ -21,8 +21,7 @@ class VolunteerTeam(models.Model):
         on_delete=models.CASCADE,
     )
     volunteer = models.ForeignKey(
-        # TODO - change to volunteer
-        User,
+        Volunteer,
         editable=False,
         db_column="volunteer_id",
         # when a Volunteer is deleted, also delete their team membership
@@ -35,4 +34,4 @@ class VolunteerTeam(models.Model):
 
     def __str__(self) -> str:
         # cheap hack for admin view
-        return f"{self.volunteer.username} => {self.team.name}"
+        return f"{self.volunteer.full_name} => {self.team.name}"

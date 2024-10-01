@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
 
+from app.models.Volunteer import Volunteer
 from app.models.SkillCategory import SkillCategory
 
 
@@ -10,7 +10,7 @@ class VolunteerSkill(models.Model):
     """
 
     volunteer = models.ForeignKey(
-        User, db_column="volunteer_id", on_delete=models.CASCADE, related_name="skills"
+        Volunteer, db_column="volunteer_id", on_delete=models.CASCADE, related_name="skills"
     )
     category = models.ForeignKey(
         SkillCategory,

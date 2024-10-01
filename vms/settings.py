@@ -48,6 +48,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
 }
 
+# django-phonenumber-field
+# ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
+PHONENUMBER_DEFAULT_REGION = 'US'
+
 # django-cor-headers
 # https://github.com/adamchainz/django-cors-headers
 if DEBUG:
@@ -66,6 +70,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "phonenumber_field",
     "django.contrib.contenttypes",
 ]
 

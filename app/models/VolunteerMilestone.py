@@ -1,10 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+from app.models.Volunteer import Volunteer
 
 
 class VolunteerMilestone(models.Model):
     volunteer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="milestones"
+        Volunteer, on_delete=models.CASCADE, related_name="milestones"
     )
     milestone_date = models.DateField(null=False)
     years_of_service = models.IntegerField(default=0)

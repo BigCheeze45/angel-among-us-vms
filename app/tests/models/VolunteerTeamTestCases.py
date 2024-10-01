@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.utils.timezone import localtime
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from app.models.Team import Team
+from app.models.Volunteer import Volunteer
 from app.models.TeamCategory import TeamCategory
 from app.models.VolunteerTeam import VolunteerTeam
 
@@ -19,8 +19,8 @@ class VolunteerTeamTestCases(TestCase):
         # Using User for now until Volunteer model is complete
         self.category = TeamCategory.objects.create(name="Administration")
 
-        self.user = User.objects.create(
-            username="username", is_superuser=True, is_staff=True, is_active=True
+        self.volunteer = Volunteer.objects.create(
+            first_name="John", last_name="Doe", cell_phone="999-999-999"
         )
 
         self.team = Team.objects.create(
@@ -32,7 +32,7 @@ class VolunteerTeamTestCases(TestCase):
 
         # VolunteerTeam
         self.test_instance = VolunteerTeam.objects.create(
-            team=self.team, volunteer=self.user
+            team=self.team, volunteer=self.volunteer
         )
 
     def test_model_creation(self):
@@ -41,10 +41,10 @@ class VolunteerTeamTestCases(TestCase):
 
         # test the user (volunteer) & team are correct
         self.assertEqual(instance.team.name, "Team Name")
-        self.assertEqual(instance.volunteer.username, "username")
+        self.assertEqual(instance.volunteer.full_name, "John Doe")
 
     def test_model_str(self):
-        self.assertEqual(str(self.test_instance), "username => Team Name")
+        self.assertEqual(str(self.test_instance), "John Doe => Team Name")
 
     def test_model_update_end_date(self):
         # user = User.objects.create(username="NewVolunteer")

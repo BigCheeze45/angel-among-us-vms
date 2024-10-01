@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
 
+from app.models.Volunteer import Volunteer
 
 class VolunteerActivity(models.Model):
     volunteer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="activities"
+        Volunteer, on_delete=models.CASCADE, related_name="activities"
     )
     end_date = models.DateField(null=True)
     activity_name = models.CharField(max_length=200)
