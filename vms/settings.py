@@ -29,7 +29,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 # If you set DEBUG to False, you also need to properly set the ALLOWED_HOSTS setting.
 # https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-ALLOWED_HOSTS
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "django"]
 
 # Frameworks
 # django-rest-framework
@@ -38,33 +38,44 @@ ALLOWED_HOSTS = []
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
-    ],
+    "DEFAULT_PERMISSION_CLASSES": [],
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+    # ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
 }
 
 # django-phonenumber-field
 # ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
 PHONENUMBER_DEFAULT_REGION = 'US'
 
+# django-cor-headers
+# https://github.com/adamchainz/django-cors-headers
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [*ALLOWED_HOSTS, "http://localhost", "http://localhost:8000"]
+
 # Application definition
 INSTALLED_APPS = [
     "app.apps.AppConfig",
-    "django.contrib.admin",
+    "corsheaders",
+    "rest_framework",
+    "django_filters",
     "django.contrib.auth",
-    "django.contrib.contenttypes",
+    "django.contrib.admin",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "django_filters",
     "phonenumber_field",
+    "django.contrib.contenttypes",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -134,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.getenv("TZ", "UTC")
 
 USE_I18N = True
 
