@@ -1,6 +1,7 @@
 from rest_framework import viewsets
-from app.models.VolunteerMilestone import VolunteerMilestone
+
 from app.serializer import VolunteerMilestoneSerializer
+from app.models.VolunteerMilestone import VolunteerMilestone
 
 
 class VolunteerMilestoneViewSet(viewsets.ModelViewSet):

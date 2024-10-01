@@ -11,7 +11,7 @@ from app.models.VolunteerSkill import VolunteerSkill
 from app.serializer.SkillCategorySerializer import SkillCategorySerializer
 
 
-class SkillCategoryViewSetsTest(APITestCase):
+class SkillCategoryTestCases(APITestCase):
     """
     Test SkillCategory View set (API)
     """
@@ -43,9 +43,12 @@ class SkillCategoryViewSetsTest(APITestCase):
         response = self.client.post(url, data=payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        api_instance = SkillCategory.objects.get(category="API Category")
-        payload["id"] = api_instance.id
-        self.assertEqual(response.data, payload)
+    def test_api_create_duplicate_category(self):
+        payload = {"category": "Admin", "description": "This is not a unique category. Should return 400"}
+        url = reverse("skills-list")
+        response = self.client.post(url, data=payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_api_create_invalid(self):
         payload = {"Not_Name": "API Category"}

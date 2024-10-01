@@ -4,9 +4,9 @@ from rest_framework import routers
 from app.views.UserViewSet import UserViewSet
 from app.views.TeamViewSet import TeamViewSet
 from app.views.VolunteerViewSet import VolunteerViewSet
-from app.views.SkillCategoryView import SkillCategoryViewSet
 from app.views.TeamCategoryViewSet import TeamCategoryViewSet
 from app.views.VolunteerSkillView import VolunteerSkillViewSet
+from app.views.SkillCategoryViewSet import SkillCategoryViewSet
 from app.views.VolunteerTeamViewSet import VolunteerTeamViewSet
 from app.views.VolunteerActivityViewSet import VolunteerActivityViewSet
 from app.views.VolunteerMilestoneViewSet import VolunteerMilestoneViewSet

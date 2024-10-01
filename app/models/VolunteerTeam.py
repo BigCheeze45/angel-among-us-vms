@@ -15,7 +15,7 @@ class VolunteerTeam(models.Model):
 
     team = models.ForeignKey(
         Team,
-        editable=False,
+        # editable=False,
         db_column="team_id",
         # when a team is deleted, also delete all its members
         on_delete=models.CASCADE,

@@ -31,7 +31,7 @@ const UserList = () => (
   <List>
     <Datagrid bulkActionButtons={<PostBulkActionButtons />}>
       {/* <TextField source="id" /> */}
-      <UrlField source="url" />
+      {/* <UrlField source="url" /> */}
       <TextField source="username" />
       <EmailField source="email" />
       <BooleanField source="is_staff" />
@@ -45,7 +45,7 @@ export const App = () => (
     dataProvider={drfProvider}
   >
     <Resource
-      name="users"
+      name="volunteers"
       list={UserList}
       show={ShowGuesser}
       edit={EditGuesser}
