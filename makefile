@@ -33,7 +33,7 @@ cleandb:
 	$(DOCKER_COMPOSE) up database -d
 	$(MAKE) makemigrations
 	$(MAKE) migrate
-	$(MAKE) super
+	$(MAKE) loaddata
 
 # Login into the specified container
 login:
@@ -42,6 +42,14 @@ login:
 # Synchronize change made to models with the schema in the database
 migrate:
 	docker exec -t $(DJANGO_CONTAINER) python manage.py migrate
+
+# Dump DB to json file
+dumpdata:
+	docker exec -t $(DJANGO_CONTAINER) python manage.py dumpdata --output app/fixtures/dumpdata.json
+
+# Load sample fixtures
+loaddata:
+	docker exec -t $(DJANGO_CONTAINER) python manage.py loaddata app/fixtures/dumpdata.json
 
 # This command creates new migration files based on the changes detected in the models.
 makemigrations:
@@ -64,5 +72,5 @@ init:
 	# FIXME - Hack until dependencies & health checks can be added
 	sleep 15
 	$(MAKE) migrate
-	$(MAKE) super
+	$(MAKE) loaddata
 	@echo "Happy coding!"

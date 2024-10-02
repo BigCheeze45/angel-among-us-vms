@@ -1,4 +1,6 @@
 from .Team import Team
+from .County import County
+from .Address import Address
 from .Volunteer import Volunteer
 from .TeamCategory import TeamCategory
 from .VolunteerTeam import VolunteerTeam
