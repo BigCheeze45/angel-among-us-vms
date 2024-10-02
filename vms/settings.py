@@ -43,14 +43,15 @@ REST_FRAMEWORK = {
     #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
     # ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
     "PAGE_SIZE": 25,
     "DEFAULT_AUTHENTICATION_CLASSES": [],
 }
 
 # django-phonenumber-field
 # ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
-PHONENUMBER_DEFAULT_REGION = 'US'
+PHONENUMBER_DEFAULT_REGION = "US"
 
 # django-cor-headers
 # https://github.com/adamchainz/django-cors-headers
