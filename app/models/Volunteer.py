@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from phonenumber_field.modelfields import PhoneNumberField
 
+from app.models.Address import Address
 class Volunteer(models.Model):
     """
     A Volunteer
@@ -22,10 +23,8 @@ class Volunteer(models.Model):
     cell_phone = PhoneNumberField(max_length=15)
     home_phone = PhoneNumberField(null=True, blank=True, max_length=15)
     work_phone = PhoneNumberField(null=True, blank=True, max_length=15)
-
     date_of_birth = models.DateField(blank=True, null=True)
-    # TODO - add when address model is implemented
-    # address = models.ForeignKey(Address, db_column="address_id", on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, null=True, db_column="address_id", on_delete=models.CASCADE)
     ishelters_category_type = models.CharField(null=True)
     ishelters_access_flag = models.BooleanField(null=True)
     ishelters_id = models.IntegerField(null=True, unique=True, editable=False)

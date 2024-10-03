@@ -1,6 +1,6 @@
 from django.test import TestCase
 from app.models.SkillCategory import SkillCategory
-from django.db.utils import DataError
+from django.db.utils import DataError, IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -21,6 +21,13 @@ class SkillCategoryTestCases(TestCase):
         # Test names are the same
         self.assertEqual(instance.category, "web design")
         self.assertEqual(instance.description, "book")
+
+    def test_model_unique_category(self):
+        """Skill category should be unique (i.e. no duplicate categories)"""
+        with self.assertRaises(IntegrityError):
+            SkillCategory.objects.create(
+                category="web design", description="This is not a unique category"
+            )
 
     def test_model_update_description(self):
         self.test_instance.description = "cat"

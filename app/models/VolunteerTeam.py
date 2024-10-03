@@ -15,7 +15,7 @@ class VolunteerTeam(models.Model):
 
     team = models.ForeignKey(
         Team,
-        editable=False,
+        # editable=False,
         db_column="team_id",
         # when a team is deleted, also delete all its members
         on_delete=models.CASCADE,
@@ -33,5 +33,4 @@ class VolunteerTeam(models.Model):
     created_at = models.DateTimeField(null=False, auto_now_add=True)
 
     def __str__(self) -> str:
-        # cheap hack for admin view
-        return f"{self.volunteer.full_name} => {self.team.name}"
+        return self.team.name

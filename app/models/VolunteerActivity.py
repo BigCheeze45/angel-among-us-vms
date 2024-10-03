@@ -21,4 +21,4 @@ class VolunteerActivity(models.Model):
     )
 
     def __str__(self):
-        return f"{self.activity_name} by {self.volunteer.name}"
+        return f"{self.activity_name} by {self.volunteer.first_name}"

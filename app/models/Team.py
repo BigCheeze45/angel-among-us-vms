@@ -9,7 +9,7 @@ class Team(models.Model):
     """
 
     name = models.CharField(max_length=200, unique=True, null=False)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     email = models.EmailField(null=False, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     category = models.ForeignKey(

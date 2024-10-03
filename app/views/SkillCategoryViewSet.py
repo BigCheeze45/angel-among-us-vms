@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import APIException, ErrorDetail
 
+from common.constants import ERROR_DETAIL_CODES
 from app.models.SkillCategory import SkillCategory
 from app.serializer.SkillCategorySerializer import SkillCategorySerializer
 
@@ -26,7 +27,7 @@ class SkillCategoryViewSet(ModelViewSet):
         except ProtectedError:
             detail = ErrorDetail(
                 f"Cannot delete this category because it is still in use",
-                code="PROTECTED",
+                code=ERROR_DETAIL_CODES.get("ProtectedError"),
             )
             exception = APIException(detail=detail)
             return Response(
