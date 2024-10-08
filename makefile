@@ -31,6 +31,7 @@ clean:
 cleandb:
 	$(DOCKER_COMPOSE) down database --volumes
 	$(DOCKER_COMPOSE) up database -d
+	sleep 15
 	$(MAKE) makemigrations
 	$(MAKE) migrate
 	$(MAKE) loaddata
