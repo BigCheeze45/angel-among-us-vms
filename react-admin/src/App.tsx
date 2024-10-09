@@ -19,6 +19,9 @@ import {
 import { Fragment } from "react"
 import { Layout } from "./Layout"
 import dataProvider from "./dataProvider"
+import { VolunteersCreate }  from "./components/VolunteersCreate.tsx" //This is added from Teodora.
+import React from 'react'
+import CustomExportButton from "./components/CustomExportButton"
 
 const drfProvider = dataProvider()
 
@@ -30,8 +33,9 @@ const PostBulkActionButtons = () => (
   </Fragment>
 )
 
-const VolunteerList = () => (
-  <List>
+const VolunteerList: React.FC = (props) => (
+  <List {...props} actions={<CustomExportButton/>}> {/* Custom Export Button */}
+  
     <Datagrid bulkActionButtons={<PostBulkActionButtons />}>
       {/* <TextField source="id" /> */}
       {/* <TextField source="first_name" /> */}
@@ -89,6 +93,7 @@ export const App = () => (
       list={VolunteerList}
       show={ShowGuesser}
       edit={EditGuesser}
+      create={VolunteersCreate} //This is added from Teodora.
     />
     <Resource
       name="teams"
