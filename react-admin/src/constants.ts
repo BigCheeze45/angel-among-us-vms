@@ -1,0 +1,4 @@
+export const ENDPOINTS = {
+    VOLUNTEERS: 'volunteers',
+    VOLUNTEER_ACTIVITIES: "VOLUNTEER_ACTIVITIES"
+}
