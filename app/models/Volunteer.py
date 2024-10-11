@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from app.models.Address import Address
-
 
 class Volunteer(models.Model):
     """
@@ -26,9 +24,15 @@ class Volunteer(models.Model):
     home_phone = PhoneNumberField(null=True, blank=True, max_length=15)
     work_phone = PhoneNumberField(null=True, blank=True, max_length=15)
     date_of_birth = models.DateField(blank=True, null=True)
-    address = models.ForeignKey(
-        Address, null=True, db_column="address_id", on_delete=models.CASCADE
-    )
+
+    # A volunteer's address
+    address_line_1 = models.CharField(max_length=100, null=False)
+    address_line_2 = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=False)
+    county = models.CharField(max_length=100, null=False)
+    state = models.CharField(max_length=100, null=False)
+    zipcode = models.CharField(max_length=10, null=False)
+
     ishelters_category_type = models.CharField(null=True)
     ishelters_access_flag = models.BooleanField(null=True)
     ishelters_id = models.IntegerField(null=True, unique=True, editable=False)
@@ -40,7 +44,7 @@ class Volunteer(models.Model):
 
     def save(self, *args, **kwargs) -> None:
         if not self.full_name:
-            # Full is not set so default to concatting individual names
+            # Full is not set so default to concatenating individual names
             if self.middle_name:
                 self.full_name = f"{self.first_name.strip()} {self.middle_name.strip()} {self.last_name.strip()}"
             else:

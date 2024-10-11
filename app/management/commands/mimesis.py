@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.db import transaction
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -8,8 +9,6 @@ from mimesis import Field, Locale
 from mimesis.random import Random
 
 from app.models.Team import Team
-from app.models.County import County
-from app.models.Address import Address
 from app.models.Volunteer import Volunteer
 from app.models.TeamCategory import TeamCategory
 from app.models.SkillCategory import SkillCategory
@@ -19,6 +18,169 @@ from app.models.VolunteerActivity import VolunteerActivity
 from app.models.VolunteerMilestone import VolunteerMilestone
 
 
+GA_COUNTIES = [
+    "Appling",
+    "Atkinson",
+    "Bacon",
+    "Baker",
+    "Baldwin",
+    "Banks",
+    "Barrow",
+    "Bartow",
+    "Ben Hill",
+    "Berrien",
+    "Bibb",
+    "Bleckley",
+    "Brantley",
+    "Brooks",
+    "Bryan",
+    "Bulloch",
+    "Burke",
+    "Butts",
+    "Calhoun",
+    "Camden",
+    "Candler",
+    "Carroll",
+    "Catoosa",
+    "Charlton",
+    "Chatham",
+    "Chattahoochee",
+    "Chattooga",
+    "Cherokee",
+    "Clarke",
+    "Clay",
+    "Clayton",
+    "Clinch",
+    "Cobb",
+    "Coffee",
+    "Colquitt",
+    "Columbia",
+    "Cook",
+    "Coweta",
+    "Crawford",
+    "Crisp",
+    "Dade",
+    "Dawson",
+    "Decatur",
+    "DeKalb",
+    "Dodge",
+    "Dooly",
+    "Dougherty",
+    "Douglas",
+    "Early",
+    "Echols",
+    "Effingham",
+    "Elbert",
+    "Emanuel",
+    "Evans",
+    "Fannin",
+    "Fayette",
+    "Floyd",
+    "Forsyth",
+    "Franklin",
+    "Fulton",
+    "Gilmer",
+    "Glascock",
+    "Glynn",
+    "Gordon",
+    "Grady",
+    "Greene",
+    "Gwinnett",
+    "Habersham",
+    "Hall",
+    "Hancock",
+    "Haralson",
+    "Harris",
+    "Hart",
+    "Heard",
+    "Henry",
+    "Houston",
+    "Irwin",
+    "Jackson",
+    "Jasper",
+    "Jeff",
+    "Jefferson",
+    "Jenkins",
+    "Johnson",
+    "Jones",
+    "Lamar",
+    "Lanier",
+    "Laurens",
+    "Lee",
+    "Liberty",
+    "Lincoln",
+    "Long",
+    "Lowndes",
+    "Lumpkin",
+    "Macon",
+    "Madison",
+    "Marion",
+    "McDuffie",
+    "McIntosh",
+    "Meriwether",
+    "Miller",
+    "Mitchell",
+    "Monroe",
+    "Montgomery",
+    "Morgan",
+    "Murray",
+    "Muscogee",
+    "Newton",
+    "Oconee",
+    "Oglethorpe",
+    "Paulding",
+    "Peach",
+    "Pickens",
+    "Pierce",
+    "Pike",
+    "Polk",
+    "Pulaski",
+    "Putnam",
+    "Quitman",
+    "Rabun",
+    "Randolph",
+    "Richmond",
+    "Rockdale",
+    "Schley",
+    "Screven",
+    "Seminole",
+    "Spalding",
+    "Stephens",
+    "Stewart",
+    "Sumter",
+    "Talbot",
+    "Taliaferro",
+    "Tattnall",
+    "Taylor",
+    "Telfair",
+    "Terrell",
+    "Thomas",
+    "Tift",
+    "Toombs",
+    "Towns",
+    "Treutlen",
+    "Troup",
+    "Turner",
+    "Twiggs",
+    "Union",
+    "Upson",
+    "Walker",
+    "Walton",
+    "Ware",
+    "Warren",
+    "Washington",
+    "Wayne",
+    "Webster",
+    "Wheeler",
+    "White",
+    "Whitfield",
+    "Wilcox",
+    "Wilkes",
+    "Wilkinson",
+    "Worth",
+]
+
+
 class Command(BaseCommand):
     help = "Load fake data"
     field = Field(Locale.EN)
@@ -26,41 +188,39 @@ class Command(BaseCommand):
     user = None
 
     def handle(self, *args: Any, **options: Any) -> str | None:
-        if not User.objects.filter(username="mimesis"):
-            self.user = User.objects.create(username="mimesis")
+        if not User.objects.filter(username="srogers"):
+            self.user = User.objects.create(
+                username="srogers", first_name="Steve", last_name="Rogers"
+            )
         else:
-            self.user = User.objects.get(username="mimesis")
-
-        print("Loading Counties")
-        # self.load_counties()
-        print(f"Loaded {County.objects.count()} counties")
+            self.user = User.objects.get(username="srogers")
 
         print("Loading skill categories")
-        # self.load_skill_categories()
+        self.load_skill_categories()
         print(f"Loaded {SkillCategory.objects.count()} skill categories")
 
         print("Loading Teams")
-        # self.load_teams()
+        self.load_teams()
         print(f"Loaded {Team.objects.count()} teams")
 
         print("Loading Volunteers")
-        # self.load_volunteers()
+        self.load_volunteers()
         print(f"Loaded {Volunteer.objects.count()} Volunteers")
 
         print("Loading Users")
-        # self.load_users()
+        self.load_users()
         print(f"Loaded {User.objects.count()} users")
 
         print("Assigning volunteers to teams")
-        # self.assign_volunteer_to_teams()
+        self.assign_volunteer_to_teams()
         print(f"Assigned {VolunteerTeam.objects.count()} Volunteers")
 
         print("Assigning milestones to volunteers")
-        # self.assign_volunteer_milestones()
+        self.assign_volunteer_milestones()
         print(f"Assigned {VolunteerMilestone.objects.count()} milestones")
 
         print("Assigning activities to volunteers")
-        # self.assign_volunteer_activities()
+        self.assign_volunteer_activities()
         print(f"Assigned {VolunteerActivity.objects.count()} activities")
 
         print("Assigning skills to volunteers")
@@ -93,7 +253,7 @@ class Command(BaseCommand):
                 )
 
     def assign_volunteer_activities(self, activities_per_volunteer: int = 3):
-        county = self.mimesis_random.choice(County.objects.all())
+        county = self.mimesis_random.choice(GA_COUNTIES)
         for v in Volunteer.objects.all():
             for _ in range(activities_per_volunteer):
                 VolunteerActivity.objects.create(
@@ -109,7 +269,7 @@ class Command(BaseCommand):
                         end=2022,
                     ),
                     hours_spent=self.field("numeric.decimal_number", start=10.0),
-                    location=county.name,
+                    location=county,
                     description=self.field("text.sentence"),
                     status=self.mimesis_random.choice(["ongoing", "completed"]),
                 )
@@ -171,7 +331,8 @@ class Command(BaseCommand):
 
     def load_volunteers(self, num_volunteers: int = 100):
         for _ in range(num_volunteers):
-            county = self.mimesis_random.choice(County.objects.all())
+            county = self.mimesis_random.choice(GA_COUNTIES)
+            state = self.mimesis_random.choice(["Georgia", "GA"])
             # rand_bool = self.mimesis_random.choice([True, False])
             rand_bool = self.field("development.boolean")
 
@@ -179,18 +340,16 @@ class Command(BaseCommand):
                 address_line_2 = (
                     f"Apt. 0{self.field('numeric.integer_number', start=10, end=100)}"
                 )
+                has_maddie_certifications = True
+                maddie_certifications_received_date = self.field(
+                    "datetime.date", start=2013
+                )
             else:
                 address_line_2 = None
-            try:
-                address = Address.objects.create(
-                    address_line_1=f"{self.field('address.street_number', maximum=1700)} {self.field('address.street_name')}",
-                    address_line_2=address_line_2,
-                    county=county,
-                    city=self.field("address.city"),
-                    state=self.field("address.state", abbr=True),
-                    zipcode=self.field("address.zip_code"),
-                )
+                has_maddie_certifications = False
+                maddie_certifications_received_date = None
 
+            try:
                 Volunteer.objects.create(
                     first_name=self.field("person.first_name"),
                     middle_name=self.field("person.last_name") if rand_bool else None,
@@ -199,11 +358,6 @@ class Command(BaseCommand):
                         self.field("person.first_name") if rand_bool else None
                     ),
                     email=self.field("person.email", unique=True),
-                    date_joined=self.field(
-                        "datetime.datetime",
-                        start=2016,
-                        end=2024,
-                    ),
                     active_status_change_date=self.field(
                         "datetime.date", start=2016, end=2024
                     ),
@@ -211,194 +365,41 @@ class Command(BaseCommand):
                     active=self.field("development.boolean"),
                     cell_phone=self.field("person.phone_number"),
                     date_of_birth=self.field("person.birthdate"),
-                    address=address,
-                    maddie_certifications_received_date=self.field(
-                        "datetime.date", start=2013
-                    ),
+                    has_maddie_certifications=has_maddie_certifications,
+                    maddie_certifications_received_date=maddie_certifications_received_date,
                     ishelters_access_flag=self.field("development.boolean"),
-                    ishelters_category_type=self.field("text.color"),
+                    ishelters_category_type=self.mimesis_random.choice(
+                        [
+                            "AAU Officer",
+                            "AAU Volunteer",
+                            "AAU Team Lead",
+                            "AAU Board Member",
+                            "AAU Staff Member",
+                        ]
+                    ),
                     ishelters_created_dt=self.field(
                         "datetime.datetime",
                         start=2018,
                         end=2023,
                     ),
+                    address_line_1=f"{self.field('address.street_number', maximum=1700)} {self.field('address.street_name')}",
+                    address_line_2=address_line_2,
+                    county=county,
+                    city=self.field("address.city"),
+                    state=state,
+                    zipcode=self.field("address.zip_code"),
                 )
             except IntegrityError:
                 continue
 
-    def load_counties(self):
-        ga_counties = [
-            "Appling",
-            "Atkinson",
-            "Bacon",
-            "Baker",
-            "Baldwin",
-            "Banks",
-            "Barrow",
-            "Bartow",
-            "Ben Hill",
-            "Berrien",
-            "Bibb",
-            "Bleckley",
-            "Brantley",
-            "Brooks",
-            "Bryan",
-            "Bulloch",
-            "Burke",
-            "Butts",
-            "Calhoun",
-            "Camden",
-            "Candler",
-            "Carroll",
-            "Catoosa",
-            "Charlton",
-            "Chatham",
-            "Chattahoochee",
-            "Chattooga",
-            "Cherokee",
-            "Clarke",
-            "Clay",
-            "Clayton",
-            "Clinch",
-            "Cobb",
-            "Coffee",
-            "Colquitt",
-            "Columbia",
-            "Cook",
-            "Coweta",
-            "Crawford",
-            "Crisp",
-            "Dade",
-            "Dawson",
-            "Decatur",
-            "DeKalb",
-            "Dodge",
-            "Dooly",
-            "Dougherty",
-            "Douglas",
-            "Early",
-            "Echols",
-            "Effingham",
-            "Elbert",
-            "Emanuel",
-            "Evans",
-            "Fannin",
-            "Fayette",
-            "Floyd",
-            "Forsyth",
-            "Franklin",
-            "Fulton",
-            "Gilmer",
-            "Glascock",
-            "Glynn",
-            "Gordon",
-            "Grady",
-            "Greene",
-            "Gwinnett",
-            "Habersham",
-            "Hall",
-            "Hancock",
-            "Haralson",
-            "Harris",
-            "Hart",
-            "Heard",
-            "Henry",
-            "Houston",
-            "Irwin",
-            "Jackson",
-            "Jasper",
-            "Jeff",
-            "Jefferson",
-            "Jenkins",
-            "Johnson",
-            "Jones",
-            "Lamar",
-            "Lanier",
-            "Laurens",
-            "Lee",
-            "Liberty",
-            "Lincoln",
-            "Long",
-            "Lowndes",
-            "Lumpkin",
-            "Macon",
-            "Madison",
-            "Marion",
-            "McDuffie",
-            "McIntosh",
-            "Meriwether",
-            "Miller",
-            "Mitchell",
-            "Monroe",
-            "Montgomery",
-            "Morgan",
-            "Murray",
-            "Muscogee",
-            "Newton",
-            "Oconee",
-            "Oglethorpe",
-            "Paulding",
-            "Peach",
-            "Pickens",
-            "Pierce",
-            "Pike",
-            "Polk",
-            "Pulaski",
-            "Putnam",
-            "Quitman",
-            "Rabun",
-            "Randolph",
-            "Richmond",
-            "Rockdale",
-            "Schley",
-            "Screven",
-            "Seminole",
-            "Spalding",
-            "Stephens",
-            "Stewart",
-            "Sumter",
-            "Talbot",
-            "Taliaferro",
-            "Tattnall",
-            "Taylor",
-            "Telfair",
-            "Terrell",
-            "Thomas",
-            "Tift",
-            "Toombs",
-            "Towns",
-            "Treutlen",
-            "Troup",
-            "Turner",
-            "Twiggs",
-            "Union",
-            "Upson",
-            "Walker",
-            "Walton",
-            "Ware",
-            "Warren",
-            "Washington",
-            "Wayne",
-            "Webster",
-            "Wheeler",
-            "White",
-            "Whitfield",
-            "Wilcox",
-            "Wilkes",
-            "Wilkinson",
-            "Worth",
-        ]
-
-        for county in ga_counties:
-            try:
-
-                County.objects.create(
-                    name=county,
-                    ishelters_id=self.field("numeric.integer_number", start=800),
+        volunteers = Volunteer.objects.select_for_update().all()
+        with transaction.atomic():
+            for volunteer in volunteers:
+                volunteer.date_joined = self.field(
+                    "datetime.datetime",
+                    start=2018,
+                    end=2024,
                 )
-
-            except IntegrityError:
-                pass
 
     def load_teams(self):
         team_categories = {

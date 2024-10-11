@@ -3,8 +3,6 @@ from django.contrib import admin
 
 from app.models import (
     Team,
-    County,
-    Address,
     Volunteer,
     TeamCategory,
     SkillCategory,
@@ -16,8 +14,6 @@ from app.models import (
 
 # make models available in django admin
 admin.site.register(Team)
-admin.site.register(County)
-admin.site.register(Address)
 admin.site.register(Volunteer)
 admin.site.register(TeamCategory)
 admin.site.register(SkillCategory)

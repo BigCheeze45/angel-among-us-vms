@@ -11,7 +11,7 @@ class Address(models.Model):
     address_line_1 = models.CharField(max_length=100, null=False)
     address_line_2 = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=False)
-    county = models.ForeignKey(County, null=True, blank=True, on_delete=models.SET_NULL)
+    county = models.CharField(max_length=100, null=False)
     state = models.CharField(max_length=100, null=False)
     zipcode = models.CharField(max_length=10, null=False)
 
