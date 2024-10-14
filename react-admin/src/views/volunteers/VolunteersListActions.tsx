@@ -1,12 +1,9 @@
-import {
-    TopToolbar,
-    ExportButton,
-    SelectColumnsButton,
-} from "react-admin"
+import {TopToolbar, ExportButton, FilterButton, SelectColumnsButton} from "react-admin"
 
 export const VolunteersListActions = () => (
-    <TopToolbar>
-        <SelectColumnsButton />
-        <ExportButton />
-    </TopToolbar>
+  <TopToolbar>
+    <FilterButton />
+    <ExportButton label="export csv" />
+    <SelectColumnsButton />
+  </TopToolbar>
 )

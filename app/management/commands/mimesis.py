@@ -502,14 +502,19 @@ class Command(BaseCommand):
         }
 
         for category_name, teams in team_categories.items():
-            category = TeamCategory.objects.create(name=category_name)
-            for team in teams:
-                if "email" not in team:
-                    email = "".join("_" if not c.isalpha() else c for c in team["name"])
-                    email = f"{email}@aau.org".lower()
-                    team["email"] = email
+            try:
+                category = TeamCategory.objects.create(name=category_name)
+                for team in teams:
+                    if "email" not in team:
+                        email = "".join(
+                            "_" if not c.isalpha() else c for c in team["name"]
+                        )
+                        email = f"{email}@aau.org".lower()
+                        team["email"] = email
 
-                Team.objects.create(**team, category=category)
+                    Team.objects.create(**team, category=category)
+            except IntegrityError:
+                pass
 
     @classmethod
     def get_volunteer_distributions(cls, num_teams, num_volunteers):

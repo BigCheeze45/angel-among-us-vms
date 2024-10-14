@@ -1,17 +1,13 @@
-import {
-  Admin,
-  Resource,
-  EditGuesser,
-  ShowGuesser,
-  ListGuesser,
-} from "react-admin"
-import { Layout } from "./Layout"
-import { Route } from 'react-router-dom'
+import {Admin, Resource} from "react-admin"
+import {Layout} from "./Layout"
 import dataProvider from "./dataProvider"
-import { UserList } from "./views/users/UserList"
-import { VolunteerShow } from "./views/volunteers/VolunteerShow"
-import { VolunteersList } from "./views/volunteers/VolunteersList"
-
+import {TeamShow} from "./views/teams/TeamShow"
+import {UserShow} from "./views/users/UserShow"
+import {UsersList} from "./views/users/UserList"
+import {UserEdit} from "./views/users/UserEdit"
+import {TeamList} from "./views/teams/TeamsList"
+import {VolunteerShow} from "./views/volunteers/VolunteerShow"
+import {VolunteersList} from "./views/volunteers/VolunteersList"
 
 const drfProvider = dataProvider()
 
@@ -24,23 +20,24 @@ export const App = () => (
       name="volunteers"
       show={VolunteerShow}
       list={VolunteersList}
-      recordRepresentation={(record) => `${record.full_name}`}
-    // edit={EditGuesser}
+      hasEdit={false}
+      hasCreate={false}
+      recordRepresentation={record => `${record.full_name}`}
     />
-    {/* Route to volunteers/<ID>/milestones */}
-    {/* <Route path=":id/activities/" element={<ListGuesser />} /> */}
-    {/* </Resource> */}
     <Resource
       name="teams"
-      list={ListGuesser}
-      show={ShowGuesser}
-      edit={EditGuesser}
+      list={TeamList}
+      show={TeamShow}
+      hasEdit={false}
+      hasCreate={false}
     />
     <Resource
       name="users"
-      list={UserList}
-      show={ShowGuesser}
-      edit={EditGuesser}
+      show={UserShow}
+      list={UsersList}
+      edit={UserEdit}
+      // display user full name when presenting a record (e.g. show view)
+      recordRepresentation={record => `${record.first_name} ${record.last_name}`}
     />
   </Admin>
 )

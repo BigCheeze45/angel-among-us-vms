@@ -23,9 +23,9 @@ import {ENDPOINTS} from "../../constants"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
 
-export const VolunteerMilestonesList = () => {
+export const VolunteerSkillsList = () => {
   const record = useRecordContext()
-  const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/milestones`
+  const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/skills`
   const {data, isPending} = useGetList(
     resource,
     // { ids: [`${record.id}/activities`] }
@@ -36,26 +36,13 @@ export const VolunteerMilestonesList = () => {
     <ListContextProvider value={listContext}>
       <CreateButton
         resource={resource}
-        label="Add new milestone"
+        label="Add new skill"
       />
       <Datagrid>
         {/* <TextField source="id" /> */}
-        <TextField
-          source="award_title"
-          label="Milestone"
-        />
-        <TextField
-          source="achievement_level"
-          label="Level"
-        />
-        <TextField
-          source="award_description"
-          label="Description"
-        />
-        <DateField
-          source="milestone_date"
-          label="Achieved on"
-        />
+        <TextField source="description" />
+        <NumberField source="proficiency_level" />
+        <NumberField source="years_of_experience" />
       </Datagrid>
       <ActivitiesPagination />
     </ListContextProvider>
