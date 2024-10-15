@@ -60,6 +60,10 @@ makemigrations:
 mimesis:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py mimesis
 
+# Synchronize VMS with iShelters
+sync:
+	docker exec -ti $(DJANGO_CONTAINER) python manage.py sync
+
 # Create a new Django admin super user
 super:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py createsuperuser
