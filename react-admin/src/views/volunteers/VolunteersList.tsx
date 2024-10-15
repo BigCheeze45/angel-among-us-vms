@@ -7,11 +7,16 @@ import {
   ReferenceInput,
   AutocompleteInput,
   DatagridConfigurable,
+  BulkExportButton,
+  TopToolbar,
+  ExportButton,
+  FilterButton,
+  SelectColumnsButton,
 } from "react-admin"
+import {Fragment} from "react"
 import {GA_COUNTIES} from "../../constants"
-import {VolunteersListActions} from "./VolunteersListActions"
 import {VolunteerFilterSidebar} from "./VolunteersFilterSidebar"
-import {VolunteerBulkActionButtons} from "./VolunteerBulkActionButtons"
+import ExportExcelButton from "../../components/ExportExcelButton"
 
 const volunteerFilters = [
   <ReferenceInput
@@ -28,6 +33,22 @@ const volunteerFilters = [
   />,
   // <DateInput key="date_joined_filter" source="date_joined" />,
 ]
+
+const VolunteersListActions = () => (
+  <TopToolbar>
+    <FilterButton />
+    <ExportButton label="export csv" />
+    <ExportExcelButton />
+    <SelectColumnsButton />
+  </TopToolbar>
+)
+
+const VolunteerBulkActionButtons = () => (
+  <Fragment>
+    <BulkExportButton label="export csv" />
+    <ExportExcelButton />
+  </Fragment>
+)
 
 export const VolunteersList = () => (
   <List

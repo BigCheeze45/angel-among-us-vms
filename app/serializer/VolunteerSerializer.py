@@ -2,6 +2,10 @@ from rest_framework import serializers
 
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
+from app.models.VolunteerSkill import VolunteerSkill
+from app.models.VolunteerActivity import VolunteerActivity
+from app.serializer.VolunteerSkillSerializer import VolunteerSkillSerializer
+from app.serializer.VolunteerActivitySerializer import VolunteerActivitySerializer
 
 
 class TeamWithStartDateSerializer(serializers.Serializer):
@@ -13,6 +17,8 @@ class TeamWithStartDateSerializer(serializers.Serializer):
 
 class VolunteerSerializer(serializers.ModelSerializer):
     teams = serializers.SerializerMethodField()
+    skills = serializers.SerializerMethodField()
+    activities = serializers.SerializerMethodField()
 
     class Meta:
         model = Volunteer
@@ -21,6 +27,18 @@ class VolunteerSerializer(serializers.ModelSerializer):
             "ishelters_created_dt",
             "application_received_date",
         ]
+
+    def get_skills(self, obj):
+        volunteer_skills = VolunteerSkill.objects.filter(volunteer=obj).select_related(
+            "volunteer"
+        )
+        return VolunteerSkillSerializer(volunteer_skills, many=True).data
+
+    def get_activities(self, obj):
+        volunteer_activities = VolunteerActivity.objects.filter(
+            volunteer=obj
+        ).select_related("volunteer")
+        return VolunteerActivitySerializer(volunteer_activities, many=True).data
 
     def get_teams(self, obj):
         volunteer_teams = VolunteerTeam.objects.filter(volunteer=obj).select_related(

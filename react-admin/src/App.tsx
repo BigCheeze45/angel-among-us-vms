@@ -35,11 +35,11 @@ export const App = () => (
     <Resource
       name="users"
       show={UserShow}
-      list={UsersList}
       edit={UserEdit}
-      create={UserCreate} 
+      create={UserCreate}
+      list={UsersList}
       // display user full name when presenting a record (e.g. show view)
       recordRepresentation={record => `${record.first_name} ${record.last_name}`}
     />
   </Admin>
-);
+)

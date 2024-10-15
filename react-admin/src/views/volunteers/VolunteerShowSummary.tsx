@@ -3,16 +3,11 @@ import {BooleanField, DateField, EmailField, ReferenceField, Show, SimpleShowLay
 export const VolunteerShowSummary = () => (
   <Show title={false}>
     <SimpleShowLayout>
-      <TextField
-        source="id"
-        label="ID"
-        aria-readonly={true}
-      />
       <TextField source="first_name" />
       <TextField source="middle_name" />
       <TextField source="last_name" />
-      <TextField source="preferred_name" />
       <TextField source="full_name" />
+      <TextField source="preferred_name" />
       <EmailField source="email" />
       <DateField source="date_joined" />
       <DateField source="active_status_change_date" />
@@ -24,18 +19,15 @@ export const VolunteerShowSummary = () => (
       <DateField source="date_of_birth" />
       <TextField source="ishelters_category_type" />
       <BooleanField source="ishelters_access_flag" />
-      <ReferenceField
-        source="ishelters_id"
-        reference="ishelters"
-      />
       <DateField source="maddie_certifications_received_date" />
       <BooleanField source="has_maddie_certifications" />
       <ReferenceField
         source="created_by"
         reference="users"
-        label="Created by"
+        label="Added by"
       >
-        <TextField source="first_name" /> <TextField source="last_name" />
+        <TextField source="first_name" />
+        <TextField source="last_name" />
       </ReferenceField>
     </SimpleShowLayout>
   </Show>

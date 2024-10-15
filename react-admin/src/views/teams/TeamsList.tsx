@@ -34,6 +34,7 @@ const TeamsListActions = () => (
 const TeamsBulkActionButtons = () => (
   <Fragment>
     <BulkExportButton label="export csv" />
+    <ExportExcelButton />
   </Fragment>
 )
 

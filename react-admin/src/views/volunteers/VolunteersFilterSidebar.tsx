@@ -4,9 +4,10 @@ import CategoryIcon from "@mui/icons-material/LocalOffer"
 import BookmarkIcon from "@mui/icons-material/BookmarkBorder"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import CardMembershipIcon from "@mui/icons-material/CardMembership"
+
 export const VolunteerFilterSidebar = () => {
-  // -1 display on the left rather than on the right of the list
   return (
+    // -1 display on the left rather than on the right of the list
     <Card sx={{order: -1, mr: 2, mt: 6, mb: 7, width: 200}}>
       <CardContent>
         <SavedQueriesList icon={<BookmarkIcon />} />
