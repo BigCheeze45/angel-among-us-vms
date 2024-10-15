@@ -1,9 +1,11 @@
-import {TopToolbar, ExportButton, FilterButton, SelectColumnsButton} from "react-admin"
+import { TopToolbar, ExportButton, SelectColumnsButton } from 'react-admin';
+import ExportExcelButton from "../../components/ExportExcelButton";
+
 
 export const VolunteersListActions = () => (
-  <TopToolbar>
-    <FilterButton />
-    <ExportButton label="export csv" />
-    <SelectColumnsButton />
-  </TopToolbar>
-)
+    <TopToolbar>
+        <ExportButton />
+        <ExportExcelButton />
+        <SelectColumnsButton />
+    </TopToolbar>
+);

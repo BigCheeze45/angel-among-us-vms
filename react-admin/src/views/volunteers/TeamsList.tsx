@@ -1,43 +1,52 @@
 import {
-  useList,
-  Datagrid,
-  RaRecord,
-  DateField,
-  TextField,
-  Pagination,
-  ShowButton,
-  useRecordContext,
-  ListContextProvider,
-} from "react-admin"
-import {ENDPOINTS} from "../../constants"
-import {ListActionToolbar} from "../../ListActionToolbar"
+    useList,
+    Datagrid,
+    TextField,
+    useGetList,
+    Pagination,
+    CreateButton,
+    useRecordContext,
+    ListContextProvider,
+    List,
+} from "react-admin";
+import { ENDPOINTS } from "../../constants";
 
-const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
-const EmptyTeams = (record: RaRecord) => <div>{`${record.full_name}`} is not on any team</div>
+import { TeamsListActions } from "./TeamsListActions";
+
+const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />;
 
 export const VolunteerTeamsList = () => {
-  const record = useRecordContext()
-  const data = record?.teams
-  const listContext = useList({data})
+    const record = useRecordContext();
+    const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/teams`;  
 
-  return (
-    <ListContextProvider value={listContext}>
-      <Datagrid
-        rowClick={false}
-        empty={<EmptyTeams />}
-        bulkActionButtons={false}
-      >
-        <TextField source="name" />
-        <DateField source="start_date" />
-        <DateField source="end_date" />
-        <ListActionToolbar>
-          <ShowButton
-            label="view team"
-            resource={`${ENDPOINTS.TEAMS}`}
-          />
-        </ListActionToolbar>
-      </Datagrid>
-      <ActivitiesPagination />
-    </ListContextProvider>
-  )
-}
+    
+    const { data, isPending } = useGetList(
+        resource,
+        { pagination: { page: 1, perPage: 10 } }  
+    );
+
+    
+    const listContext = useList({ data, isPending });
+
+    return (
+        <ListContextProvider value={listContext}>
+            {/* Button to create a new team */}
+            <CreateButton resource={resource} label="Add another team" />
+
+            {/* Displaying the teams in a data grid */}
+            <Datagrid>
+                <TextField source="team_name" label="Team Name" />
+            </Datagrid>
+            <ActivitiesPagination />
+        </ListContextProvider>
+    );
+};
+
+
+export const TeamsList = () => (
+    <List actions={<TeamsListActions />}>
+        <Datagrid>
+            <TextField source="team_name" label="Team Name" />
+        </Datagrid>
+    </List>
+);

@@ -1,5 +1,5 @@
 import {Show, TabbedShowLayout, TextField} from "react-admin"
-import {VolunteerTeamsList} from "./TeamsList"
+// import {VolunteerTeamsList} from "./TeamsList"
 import {VolunteerSkillsList} from "./SkillsList"
 import {VolunteerMilestonesList} from "./MilestonesList"
 import {VolunteerShowSummary} from "./VolunteerShowSummary"
@@ -14,9 +14,9 @@ export const VolunteerShow = () => (
       <TabbedShowLayout.Tab label="activities">
         <VolunteerActivitiesList />
       </TabbedShowLayout.Tab>
-      <TabbedShowLayout.Tab label="teams">
+      {/* <TabbedShowLayout.Tab label="teams">
         <VolunteerTeamsList />
-      </TabbedShowLayout.Tab>
+      </TabbedShowLayout.Tab> */}
       <TabbedShowLayout.Tab label="milestones">
         <VolunteerMilestonesList />
       </TabbedShowLayout.Tab>

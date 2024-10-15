@@ -1,11 +1,12 @@
-import {Admin, Resource} from "react-admin"
 import {Layout} from "./Layout"
 import dataProvider from "./dataProvider"
+import {Admin, Resource} from "react-admin"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
+import {UserCreate} from "./views/users/UserCreate"
 import {VolunteerShow} from "./views/volunteers/VolunteerShow"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 
@@ -36,8 +37,9 @@ export const App = () => (
       show={UserShow}
       list={UsersList}
       edit={UserEdit}
+      create={UserCreate} 
       // display user full name when presenting a record (e.g. show view)
       recordRepresentation={record => `${record.first_name} ${record.last_name}`}
     />
   </Admin>
-)
+);

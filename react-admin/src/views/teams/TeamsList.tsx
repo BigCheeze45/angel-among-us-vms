@@ -11,6 +11,7 @@ import {
   DatagridConfigurable,
 } from "react-admin"
 import {Fragment} from "react"
+import ExportExcelButton from "../../components/ExportExcelButton"
 
 const teamFilters = [
   <FilterLiveSearch
@@ -26,6 +27,7 @@ const TeamsListActions = () => (
   <TopToolbar>
     <FilterButton />
     <ExportButton label="export csv" />
+    <ExportExcelButton />
     <SelectColumnsButton />
   </TopToolbar>
 )
