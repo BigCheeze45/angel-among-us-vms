@@ -13,7 +13,6 @@ class VolunteerMilestoneSerializer(serializers.ModelSerializer):
             "award_title",
             "award_description",
             "achievement_level",
-            "is_active",
         ]
 
         def is_valid(self, *, raise_Exception=True):

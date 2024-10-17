@@ -31,6 +31,7 @@ clean:
 cleandb:
 	$(DOCKER_COMPOSE) down database --volumes
 	$(DOCKER_COMPOSE) up database -d
+	sleep 10
 	$(MAKE) makemigrations
 	$(MAKE) migrate
 	$(MAKE) loaddata
@@ -53,7 +54,11 @@ loaddata:
 
 # This command creates new migration files based on the changes detected in the models.
 makemigrations:
-	docker exec -t $(DJANGO_CONTAINER) python manage.py makemigrations app
+	docker exec -ti $(DJANGO_CONTAINER) python manage.py makemigrations app
+
+# Run the mimesis command to load randomly generated data
+mimesis:
+	docker exec -ti $(DJANGO_CONTAINER) python manage.py mimesis
 
 # Create a new Django admin super user
 super:

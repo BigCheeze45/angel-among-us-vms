@@ -2,7 +2,7 @@
 
 Volunteer management system using a Django REST backend (via [Django REST framework
 ](https://www.django-rest-framework.org))
-with React a (via [React-Admin](https://marmelab.com/react-admin/)) frontend.
+with a React (via [React-Admin](https://marmelab.com/react-admin/)) frontend.
 
 # Getting Started
 
@@ -145,7 +145,7 @@ Assuming you have make installed, you can run any of the targets listed below.
 |      build     |                                      Build application docker images                                      |
 |       up       |                       Bring up the application docker compose stack (start the app)                       |
 |      down      |                       Bring down the application docker compose stop (stop the app)                       |
-|      login     |                      Log into the specified container e.g. `make -e login container=`                     |
+|      login     |                      Log into the specified container e.g. `make -e login container=djagno`               |
 |      clean     |              Stop the app and remove volumes. Effectively start from scratch on the next `up`             |
 |     cleandb    | Stop the db container & remove its volumes. Effectively start the database from scratch on the next  `up` |
 | makemigrations |                  creates new migration files based on the changes detected in the models                  |
