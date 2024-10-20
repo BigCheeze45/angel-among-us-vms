@@ -1,6 +1,7 @@
 import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
+import {authProvider} from "./authProvider"
 import {Admin, Resource} from "react-admin"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
@@ -14,9 +15,13 @@ import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
 export const App = () => {
   const drfProvider = dataProvider()
-  const { authProvider, gsiParams } = useGoogleAuthProvider({
+  
+  // configure Sign-in with Google
+  const { gsiParams } = useGoogleAuthProvider({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-  });
+  })
+  // an extended googleAuthProvider that handles login callback
+  const drfAuthProvider = authProvider(gsiParams)
 
   return (
     <GoogleAuthContextProvider value={gsiParams}>
@@ -26,7 +31,7 @@ export const App = () => {
         layout={Layout}
         loginPage={LoginPage}
         dataProvider={drfProvider}
-        authProvider={authProvider}
+        authProvider={drfAuthProvider}
       >
         <Resource
           name="volunteers"

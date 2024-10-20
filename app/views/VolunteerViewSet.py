@@ -1,6 +1,8 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
-from app.models.Team import Team
+from knox.auth import TokenAuthentication
+
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.VolunteerSerializer import VolunteerSerializer
@@ -8,6 +10,9 @@ from app.serializer.VolunteerSerializer import VolunteerSerializer
 
 class VolunteerViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    
     filterset_fields = [
         "active",
         "ishelters_access_flag",

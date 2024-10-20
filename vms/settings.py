@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from common.utils import read_docker_secrets_file
 
@@ -46,9 +47,18 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
     ],
-    "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
     "PAGE_SIZE": 25,
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
+    "DEFAULT_AUTHENTICATION_CLASSES": ["knox.auth.TokenAuthentication"],
+}
+
+# Django-Rest-Knox
+KNOX_TOKEN_MODEL = "knox.AuthToken"
+REST_KNOX = {
+    "AUTO_REFRESH": True,
+    "TOKEN_MODEL": "knox.AuthToken",
+    "TOKEN_TTL": timedelta(minutes=15),
+    "USER_SERIALIZER": "knox.serializers.UserSerializer",
 }
 
 # django-phonenumber-field
@@ -67,6 +77,7 @@ INSTALLED_APPS = [
     "app.apps.AppConfig",
     "corsheaders",
     "rest_framework",
+    "knox",
     "django_filters",
     "django.contrib.auth",
     "django.contrib.admin",

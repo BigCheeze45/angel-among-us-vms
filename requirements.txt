@@ -5,6 +5,7 @@ Django==5.1.1
 django-cors-headers==4.4.0
 django-filter==24.3
 django-phonenumber-field==8.0.0
+django-rest-knox==5.0.2
 djangorestframework==3.15.2
 drf-nested-routers==0.94.1
 filelock==3.16.1
