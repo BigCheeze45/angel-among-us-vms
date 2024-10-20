@@ -221,10 +221,10 @@ export default (apiUrl: string = import.meta.env.VITE_JSON_SERVER_URL): DataProv
   >(resource: string, params: CreateParams): Promise<CreateResult<ResultRecordType>> {
     const url = generateUrl(apiUrl, resource)
     const {json} = await fetchJson(url, {
-      body: JSON.stringify(params),
+      body: JSON.stringify(params.data),
       method: HTTPMethod.POST,
     })
-    return {data: json.results}
+    return {data: json}
   },
   delete: async function <RecordType extends RaRecord = any>(
     resource: string,

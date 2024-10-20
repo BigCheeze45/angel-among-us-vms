@@ -1,107 +1,58 @@
-import {
-  Admin,
-  Resource,
-  EditGuesser,
-  BulkDeleteButton,
-  BulkExportButton,
-  BulkUpdateButton,
-  ShowGuesser,
-  ListGuesser,
-  List,
-  TextField,
-  EmailField,
-  BooleanField,
-  DateField,
-  NumberField,
-  ReferenceField,
-  Datagrid,
-} from "react-admin"
-import { Fragment } from "react"
-import { Layout } from "./Layout"
+import {Layout} from "./Layout"
+import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
+import {Admin, Resource} from "react-admin"
+import {TeamShow} from "./views/teams/TeamShow"
+import {UserShow} from "./views/users/UserShow"
+import {UsersList} from "./views/users/UserList"
+import {UserEdit} from "./views/users/UserEdit"
+import {TeamList} from "./views/teams/TeamsList"
+import {UserCreate} from "./views/users/UserCreate"
+import {VolunteerShow} from "./views/volunteers/VolunteerShow"
+import {VolunteersList} from "./views/volunteers/VolunteersList"
+import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
-const drfProvider = dataProvider()
+export const App = () => {
+  const drfProvider = dataProvider()
+  const { authProvider, gsiParams } = useGoogleAuthProvider({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  });
 
-const PostBulkActionButtons = () => (
-  <Fragment>
-    <BulkExportButton />
-    <BulkUpdateButton data={{ active: false }} />
-    <BulkDeleteButton />
-  </Fragment>
-)
-
-const VolunteerList = () => (
-  <List>
-    <Datagrid bulkActionButtons={<PostBulkActionButtons />}>
-      {/* <TextField source="id" /> */}
-      {/* <TextField source="first_name" /> */}
-      {/* <TextField source="middle_name" /> */}
-      {/* <TextField source="last_name" /> */}
-      <TextField source="full_name" label="Name" />
-      {/* <TextField source="preferred_name" /> */}
-      <EmailField source="email" />
-      <DateField source="date_joined" />
-      <DateField source="active_status_change_date" />
-      {/* <DateField source="created_at" /> */}
-      <BooleanField source="active" />
-      <TextField source="cell_phone" />
-      {/* <TextField source="home_phone" /> */}
-      {/* <TextField source="work_phone" /> */}
-      <DateField source="date_of_birth" />
-      <TextField source="ishelters_category_type" />
-      <BooleanField source="ishelters_access_flag" />
-      {/* <ReferenceField source="ishelters_id" reference="ishelters" /> */}
-      <DateField source="maddie_certifications_received_date" />
-      {/* <NumberField source="created_by" /> */}
-      {/* <NumberField source="address" /> */}
-    </Datagrid>
-  </List>
-)
-
-const UserList = () => (
-  <List>
-    <Datagrid>
-      {/* <TextField source="id" /> */}
-      {/* <DateField source="password" /> */}
-      <TextField source="first_name" />
-      <TextField source="last_name" />
-      <TextField source="username" />
-      <EmailField source="email" />
-      <BooleanField source="is_superuser" />
-      <BooleanField source="is_staff" />
-      <BooleanField source="is_active" />
-      <TextField source="last_login" />
-      <DateField source="date_joined" />
-      {/* <TextField source="groups" /> */}
-      {/* <TextField source="user_permissions" /> */}
-    </Datagrid>
-  </List>
-)
-
-export const App = () => (
-  <Admin
-    layout={Layout}
-    dataProvider={drfProvider}
-  >
-    <Resource
-      name="volunteers"
-      // list={ListGuesser}
-      list={VolunteerList}
-      show={ShowGuesser}
-      edit={EditGuesser}
-    />
-    <Resource
-      name="teams"
-      list={ListGuesser}
-      show={ShowGuesser}
-      edit={EditGuesser}
-    />
-    <Resource
-      name="users"
-      list={UserList}
-      show={ShowGuesser}
-      edit={EditGuesser}
-    />
-    {/* <Resource name="team/category" /> */}
-  </Admin>
-)
+  return (
+    <GoogleAuthContextProvider value={gsiParams}>
+      <Admin
+        // https://marmelab.com/react-admin/Admin.html#requireauth
+        requireAuth
+        layout={Layout}
+        loginPage={LoginPage}
+        dataProvider={drfProvider}
+        authProvider={authProvider}
+      >
+        <Resource
+          name="volunteers"
+          show={VolunteerShow}
+          list={VolunteersList}
+          hasEdit={false}
+          hasCreate={false}
+          recordRepresentation={record => `${record.full_name}`}
+        />
+        <Resource
+          name="teams"
+          list={TeamList}
+          show={TeamShow}
+          hasEdit={false}
+          hasCreate={false}
+        />
+        <Resource
+          name="users"
+          show={UserShow}
+          edit={UserEdit}
+          list={UsersList}
+          create={UserCreate}
+          // display user full name when presenting a record (e.g. show view)
+          recordRepresentation={record => `${record.first_name} ${record.last_name}`}
+        />
+      </Admin>
+    </GoogleAuthContextProvider>
+  )
+}
