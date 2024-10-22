@@ -9,7 +9,7 @@ import {
   DatagridConfigurable,
   BulkExportButton,
   TopToolbar,
-  ExportButton,
+  // ExportButton,
   FilterButton,
   SelectColumnsButton,
 } from "react-admin"
@@ -17,6 +17,7 @@ import {Fragment} from "react"
 import {GA_COUNTIES} from "../../constants"
 import {VolunteerFilterSidebar} from "./VolunteersFilterSidebar"
 import ExportExcelButton from "../../components/ExportExcelButton"
+import { ExportButton } from "../../components/ExportButton"
 
 const volunteerFilters = [
   <ReferenceInput
@@ -37,8 +38,9 @@ const volunteerFilters = [
 const VolunteersListActions = () => (
   <TopToolbar>
     <FilterButton />
-    <ExportButton label="export csv" />
-    <ExportExcelButton />
+    <ExportButton label="export csv" meta={{format: "csv"}} />
+    <ExportButton label="export excel" meta={{format: "excel"}}/>
+    {/* <ExportExcelButton /> */}
     <SelectColumnsButton />
   </TopToolbar>
 )
@@ -46,7 +48,8 @@ const VolunteersListActions = () => (
 const VolunteerBulkActionButtons = () => (
   <Fragment>
     <BulkExportButton label="export csv" />
-    <ExportExcelButton />
+    <BulkExportButton label="export excel" />
+    {/* <ExportExcelButton /> */}
   </Fragment>
 )
 
