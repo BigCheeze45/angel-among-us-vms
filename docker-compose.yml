@@ -73,4 +73,4 @@ services:
       MYSQL_DATABASE: aau_ishelters
       MYSQL_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - 3306:3306
+      - ${MYSQL_PORT:-3306}:3306

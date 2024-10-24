@@ -18,8 +18,8 @@ nodeenv==1.9.1
 phonenumberslite==8.13.46
 platformdirs==4.3.6
 pre-commit==3.8.0
-psycopg==3.2.1
-psycopg-binary==3.2.1
+psycopg
+psycopg-binary
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 PyYAML==6.0.2
