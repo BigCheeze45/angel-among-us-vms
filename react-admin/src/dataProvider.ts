@@ -237,7 +237,6 @@ export default (apiUrl: string = API_BASE_URL): DataProvider => ({
     }
     const export_url = `${resource}/${ENDPOINTS.EXPORT}`
     const url = generateUrl(apiUrl, export_url, query)
-    console.log(params)
 
     const response = await fetch(url, {
       method: HttpMethod.POST,
