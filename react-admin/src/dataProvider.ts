@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   RaRecord,
+  HttpError,
   Identifier,
   fetchUtils,
   SortPayload,
@@ -29,18 +30,7 @@ import {
 } from "react-admin"
 
 import {stringify} from "query-string"
-
-enum HTTPMethod {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  DELETE = "DELETE",
-  PATCH = "PATCH",
-  HEAD = "HEAD",
-  OPTIONS = "OPTIONS",
-  TRACE = "TRACE",
-  CONNECT = "CONNECT",
-}
+import {ENDPOINTS, HttpMethod, API_BASE_URL} from "./constants"
 
 export const getPaginationQuery = (pagination: PaginationPayload) => {
   return {
@@ -104,7 +94,7 @@ async function fetchOne<RecordType extends RaRecord = any>(
   params: GetOneParams<RecordType>,
 ): Promise<GetOneResult<RecordType>> {
   const url = generateUrl(apiUrl, `${resource}/${params.id}`)
-  const {json} = await fetchJson(url, {method: HTTPMethod.GET})
+  const {json} = await fetchJson(url, {method: HttpMethod.GET})
   return {data: json}
 }
 
@@ -123,7 +113,7 @@ async function updateOne<RecordType extends RaRecord = any>(
   const url = generateUrl(apiUrl, `${resource}/${params.id}`)
   const {json} = await fetchJson(url, {
     body: JSON.stringify(params.data),
-    method: HTTPMethod.PATCH,
+    method: HttpMethod.PATCH,
   })
   return {data: json}
 }
@@ -141,7 +131,7 @@ async function deleteOne<RecordType extends RaRecord = any>(
   params: DeleteParams<RecordType>,
 ): Promise<DeleteResult<RecordType>> {
   const url = generateUrl(apiUrl, `${resource}/${params.id}`)
-  const {json} = await fetchJson(url, {method: HTTPMethod.DELETE})
+  const {json} = await fetchJson(url, {method: HttpMethod.DELETE})
   return {data: json}
 }
 
@@ -153,21 +143,20 @@ async function deleteOne<RecordType extends RaRecord = any>(
  *
  * https://marmelab.com/react-admin/DataProviders.html
  */
-export default (apiUrl: string = import.meta.env.VITE_JSON_SERVER_URL): DataProvider => ({
+export default (apiUrl: string = API_BASE_URL): DataProvider => ({
   getList: async function <RecordType extends RaRecord = any>(
     resource: string,
     params: GetListParams & QueryFunctionContext,
   ): Promise<GetListResult<RecordType>> {
-    // console.log(params)
     const query = {
       ...getFilterQuery(params.filter),
       ...getPaginationQuery(params.pagination),
       ...getOrderingQuery(params.sort),
     }
-    // console.log("QUERY", query)
+
     const url = generateUrl(apiUrl, resource, query)
-    const {json} = await fetchJson(url, {method: HTTPMethod.GET})
-    // TODO: include pagination info
+    const {json} = await fetchJson(url, {method: HttpMethod.GET})
+
     return {data: json.results, total: json.count}
   },
   getOne: async function <RecordType extends RaRecord = any>(
@@ -196,7 +185,7 @@ export default (apiUrl: string = import.meta.env.VITE_JSON_SERVER_URL): DataProv
       [params.target]: params.id,
     }
     const url = generateUrl(apiUrl, resource, query)
-    const {json} = await fetchJson(url, {method: HTTPMethod.GET})
+    const {json} = await fetchJson(url, {method: HttpMethod.GET})
     // TODO: include pagination info
     return {data: json.results, total: json.count}
   },
@@ -222,7 +211,7 @@ export default (apiUrl: string = import.meta.env.VITE_JSON_SERVER_URL): DataProv
     const url = generateUrl(apiUrl, resource)
     const {json} = await fetchJson(url, {
       body: JSON.stringify(params.data),
-      method: HTTPMethod.POST,
+      method: HttpMethod.POST,
     })
     return {data: json}
   },
@@ -240,5 +229,27 @@ export default (apiUrl: string = import.meta.env.VITE_JSON_SERVER_URL): DataProv
     const results = await Promise.all(manyPromises)
     const data = results.map(json => json)
     return {data}
+  },
+  export: async function (resource: string, params: GetListParams & GetManyParams & QueryFunctionContext) {
+    const query = {
+      ...getFilterQuery(params.filter),
+      ...getOrderingQuery(params.sort),
+    }
+    const export_url = `${resource}/${ENDPOINTS.EXPORT}`
+    const url = generateUrl(apiUrl, export_url, query)
+    console.log(params)
+
+    const response = await fetch(url, {
+      method: HttpMethod.POST,
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({format: params.meta?.format, ids: params?.ids}),
+    })
+
+    if (response.status < 200 || response.status >= 300) {
+      const json = await response.json()
+      throw new HttpError((json && json.detail) || response.statusText, response.status, json)
+    }
+
+    return await response.blob()
   },
 })

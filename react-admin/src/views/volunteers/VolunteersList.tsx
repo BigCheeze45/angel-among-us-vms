@@ -1,30 +1,28 @@
 import {
   List,
   DateField,
+  TopToolbar,
   TextField,
   EmailField,
+  FilterButton,
   BooleanField,
   ReferenceInput,
   AutocompleteInput,
-  DatagridConfigurable,
-  BulkExportButton,
-  TopToolbar,
-  // ExportButton,
-  FilterButton,
   SelectColumnsButton,
+  DatagridConfigurable,
 } from "react-admin"
 import {Fragment} from "react"
 import {GA_COUNTIES} from "../../constants"
+import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {VolunteerFilterSidebar} from "./VolunteersFilterSidebar"
-import ExportExcelButton from "../../components/ExportExcelButton"
-import { ExportButton } from "../../components/ExportButton"
+import {ExportExcelButton} from "../../components/ExportExcelButton"
 
 const volunteerFilters = [
   <ReferenceInput
     key="team_filter"
     source="team_id"
     reference="teams"
-    perPage={150}
+    perPage={25}
     sort={{field: "name", order: "ASC"}}
   />,
   <AutocompleteInput
@@ -38,18 +36,16 @@ const volunteerFilters = [
 const VolunteersListActions = () => (
   <TopToolbar>
     <FilterButton />
-    <ExportButton label="export csv" meta={{format: "csv"}} />
-    <ExportButton label="export excel" meta={{format: "excel"}}/>
-    {/* <ExportExcelButton /> */}
+    <ExportCSVButton />
+    <ExportExcelButton />
     <SelectColumnsButton />
   </TopToolbar>
 )
 
 const VolunteerBulkActionButtons = () => (
   <Fragment>
-    <BulkExportButton label="export csv" />
-    <BulkExportButton label="export excel" />
-    {/* <ExportExcelButton /> */}
+    <ExportCSVButton />
+    <ExportExcelButton />
   </Fragment>
 )
 
@@ -83,7 +79,6 @@ export const VolunteersList = () => (
       {/* <TextField source="work_phone" /> */}
       {/* <ReferenceField source="ishelters_id" reference="ishelters" /> */}
       {/* <NumberField source="created_by" /> */}
-      {/* <NumberField source="address" /> */}
     </DatagridConfigurable>
   </List>
 )
