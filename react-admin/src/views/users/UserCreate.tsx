@@ -1,38 +1,71 @@
-import {Create, SimpleForm, TextInput, BooleanInput, PasswordInput} from "react-admin"
+import { useState } from 'react';
+import { Create, SimpleForm, SelectInput, TextInput } from "react-admin";
+import { Checkbox, FormControlLabel } from '@mui/material';
 
-export const UserCreate = () => (
-  <Create>
-    <SimpleForm>
-      <TextInput
-        source="first_name"
-        label="First Name"
-      />
-      <TextInput
-        source="last_name"
-        label="Last Name"
-      />
-      <TextInput
-        source="username"
-        label="Username"
-      />
-      <TextInput
-        source="email"
-        label="Email"
-      />
-      <PasswordInput source="password" />
-      <BooleanInput
-        source="is_superuser"
-        label="Superuser"
-      />
-      <BooleanInput
-        source="is_staff"
-        label="Staff"
-      />
-      <BooleanInput
-        source="is_active"
-        label="Active"
-      />
-      {/* <DateInput source="date_joined" label="Date Joined" /> */}
-    </SimpleForm>
-  </Create>
-)
+export const UserCreate = () => {
+  
+  const [isStaff, setIsStaff] = useState<boolean>(false);
+  const [isActive, setIsActive] = useState<boolean>(false);
+
+  
+  const handleIsStaffChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsStaff(event.target.checked);
+  };
+
+  const handleIsActiveChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsActive(event.target.checked);
+  };
+
+  return (
+    <Create>
+      <SimpleForm>
+        <TextInput
+          source="first_name"
+          label="First Name"
+          required={true}
+        />
+        <TextInput
+          source="last_name"
+          label="Last Name"
+          required={true}
+        />
+        <TextInput
+          source="email"
+          label="Email"
+          required={true}
+        />
+        <SelectInput
+          source="role"
+          label="Role"
+          required={true}
+          choices={[
+            { id: 'administrator', name: 'Administrator' },
+            { id: 'viewer', name: 'Viewer' },
+            { id: 'editor', name: 'Editor' },
+          ]}
+        />
+      
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isStaff}
+              onChange={handleIsStaffChange}
+            />
+          }
+          label="Staff"
+        />
+        
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isActive}
+              onChange={handleIsActiveChange}
+            />
+          }
+          label="Active"
+        />
+      </SimpleForm>
+    </Create>
+  );
+};
+

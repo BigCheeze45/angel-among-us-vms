@@ -64,7 +64,7 @@ export const VolunteerActivitiesList = () => {
         onClick={handleOpen}
         style={{marginBottom: "1rem"}}
       >
-        Add new skill/interest
+        Add new Activity
       </Button>
       <Datagrid
         rowClick={false}
