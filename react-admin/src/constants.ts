@@ -6,6 +6,8 @@ export const ENDPOINTS = {
   VOLUNTEER_ACTIVITIES: "VOLUNTEER_ACTIVITIES",
 }
 
+export const API_BASE_URL=import.meta.env.VITE_JSON_SERVER_URL
+
 interface County {
   id: string
   name: string

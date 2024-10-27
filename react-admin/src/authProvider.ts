@@ -1,30 +1,17 @@
-import jwt_decode from 'jwt-decode'
-import { AuthProvider } from 'react-admin'
-import { TokenStore, UserPayload, localStorageTokenStore, googleAuthProvider, CredentialResponse, IdConfiguration } from 'ra-auth-google'
+import jwt_decode from 'jwt-decode';
+import { AuthProvider } from 'react-admin';
+import { TokenStore, UserPayload, localStorageTokenStore, googleAuthProvider, IdConfiguration } from 'ra-auth-google';
+import { API_BASE_URL } from './constants';
 
 /**
  * Returns an extended googleAuthProvider that can be used with react-admin.
- * 
- * Based on ra-auth-google:
- * https://marmelab.com/react-admin/AuthProviderList.html
- *
- * @param gsiParams **Required** - Parameters for the Google Identity Services library. See the [documentation](https://developers.google.com/identity/gsi/web/reference/js-reference?hl=en#IdConfiguration) for the full list of supported parameters.
- * @param tokenStore *Optional* - The token store to use to store the token. Defaults to `localStorageTokenStore`.
- *
- * @example
- * ```ts
- * const authProvider = googleAuthProvider({
- *   gsiParams: {
- *     client_id: "my-application-client-id.apps.googleusercontent.com",
- *     ux_mode: "popup",
- *   },
- *   tokenStore: myTokenStore,
- * });
- * ```
+ * @param gsiParams **Required** - Parameters for the Google Identity Services library.
+ * @param tokenStore *Optional* - The token store to use to store the token. Defaults to localStorageTokenStore.
  */
+
 export const authProvider = ({
     gsiParams,
-    tokenStore = localStorageTokenStore
+    tokenStore = localStorageTokenStore,
 }: {
     gsiParams: Omit<IdConfiguration, 'callback'>;
     tokenStore?: TokenStore;
@@ -35,53 +22,94 @@ export const authProvider = ({
         ...baseAuthProvider,
 
         async login(params) {
-            // wait for Google login to finish
-            await baseAuthProvider.login(params)
-            // user successfully signed in with Google
-            
-            // const googleToken = tokenStore?.getToken()
-            // const user: UserPayload = jwt_decode(googleToken)
-
-            // TODO: call backend to generate an API token
-            // React-admin expects this async method to return if the login
-            // data is correct, OR throw an error if it’s not.
-            // https://marmelab.com/react-admin/AuthProviderWriting.html
-            throw new Error('Failed to handle login.')
-        },
-        async logout(params) {
-            // wait for Google logout to finish
-            await baseAuthProvider.logout(params)
-            // Google logout successfully
-
-            // TODO: 1: call backend to destroy token
-            //       2: clean up client side
-        },
         
-        async checkAuth(params) {
-            const result = await baseAuthProvider.checkAuth(params)
-            // Add any additional checks/logic here if needed
-            return result
+            await baseAuthProvider.login(params);
+
+            const googleToken = tokenStore?.getToken();
+            // if (!googleToken) {
+            //     throw new Error('Failed to get Google token.');
+            // }
+
+            const user: UserPayload = jwt_decode(googleToken);
+            const authString = `${user.email}:${''}`
+            const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa(authString)
+                },
+                //body: JSON.stringify({ username: user.email, password:'' }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Backend authentication failed.');
+            }
+
+            const data = await response.json();
+            const apiToken = data.token;
+            localStorage.setItem('apiToken', apiToken);
+
+            // //return Promise.resolve();
         },
 
-        async checkError(error) {
-            const result = await baseAuthProvider.checkAuth(error);
-            // Add any additional checks/logic here if needed
-            return result
+        async logout(params) {
+    
+            await baseAuthProvider.logout(params);
+
+            try {
+                const apiToken = localStorage.getItem('apiToken');
+            await fetch(`${API_BASE_URL}/api/auth/logout/`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Token ${apiToken}`,
+                },
+            });
+
+            localStorage.removeItem('apiToken');
+                
+            } catch (error) {
+                console.log(error)
+            }
+            
         },
 
-        async getPermissions(params) {
-            // TODO: retrieve user permissions that were provided
-            //       and saved upon logging in
-            // https://marmelab.com/react-admin/Permissions.html#permissions
-            return []
-        },
-        // Override getIdentity to fetch more user details if needed
-        // async getIdentity(params) {
-        //     const baseIdentity = await baseAuthProvider.getIdentity(params)
-        //     // Example: Fetch additional user details from your API
-        //     // const additionalDetails = await fetchAdditionalUserDetails(baseIdentity.id);
-        //     // return { ...baseIdentity, ...additionalDetails };
-        //     return baseIdentity
+        // async checkAuth(params) {
+        //     const apiToken = localStorage.getItem('apiToken');
+        //     if (!apiToken) {
+        //         throw new Error('No API token found.');
+        //     }
+
+        //     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/validate-token/`, {
+        //         method: 'POST',
+        //         headers: {
+        //             Authorization: `Bearer ${apiToken}`,
+        //         },
+        //     });
+
+        //     if (!response.ok) {
+        //         throw new Error('Invalid API token.');
+        //     }
+
+        //     return Promise.resolve();
+        // },
+
+        // async checkError(error) {
+        //     const status = error.status;
+        //     if (status === 401 || status === 403) {
+        //         localStorage.removeItem('apiToken');
+        //         return Promise.reject();
+        //     }
+        //     return Promise.resolve();
+        // },
+
+        // async getPermissions(params) {
+        
+        //     const apiToken = localStorage.getItem('apiToken');
+        //     if (!apiToken) {
+        //         throw new Error ('No API token found');
+        //     }
+        //     const decodedToken = jwt_decode(apiToken);
+        //     return Promise.resolve(decodedToken.permissions || []);
         // },
     };
-}
+};
