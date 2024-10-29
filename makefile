@@ -34,7 +34,6 @@ cleandb:
 	sleep 10
 	$(MAKE) makemigrations
 	$(MAKE) migrate
-	$(MAKE) loaddata
 
 # Login into the specified container
 login:

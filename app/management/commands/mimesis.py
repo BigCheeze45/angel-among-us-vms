@@ -10,8 +10,6 @@ from mimesis.random import Random
 
 from app.models.Team import Team
 from app.models.Volunteer import Volunteer
-from app.models.TeamCategory import TeamCategory
-from app.models.SkillCategory import SkillCategory
 from app.models.VolunteerTeam import VolunteerTeam
 from app.models.VolunteerSkill import VolunteerSkill
 from app.models.VolunteerActivity import VolunteerActivity
@@ -195,10 +193,6 @@ class Command(BaseCommand):
         else:
             self.user = User.objects.get(username="srogers")
 
-        print("Loading skill categories")
-        self.load_skill_categories()
-        print(f"Loaded {SkillCategory.objects.count()} skill categories")
-
         print("Loading Teams")
         self.load_teams()
         print(f"Loaded {Team.objects.count()} teams")
@@ -227,23 +221,11 @@ class Command(BaseCommand):
         self.assign_volunteer_skills()
         print(f"Assigned {VolunteerSkill.objects.count()} skills to volunteers")
 
-    def load_skill_categories(self):
-        for _ in range(10):
-            try:
-                SkillCategory.objects.create(
-                    category=self.field("text.color"),
-                    description=self.field("text.sentence"),
-                )
-            except IntegrityError:
-                continue
-
     def assign_volunteer_skills(self, activities_per_volunteer: int = 3):
         for v in Volunteer.objects.all():
             for _ in range(activities_per_volunteer):
-                category = self.mimesis_random.choice(SkillCategory.objects.all())
                 VolunteerSkill.objects.create(
                     volunteer=v,
-                    category=category,
                     proficiency_level=self.field(
                         "numeric.integer_number", start=1, end=10
                     ),
@@ -502,14 +484,13 @@ class Command(BaseCommand):
         }
 
         for category_name, teams in team_categories.items():
-            category = TeamCategory.objects.create(name=category_name)
             for team in teams:
                 if "email" not in team:
                     email = "".join("_" if not c.isalpha() else c for c in team["name"])
                     email = f"{email}@aau.org".lower()
                     team["email"] = email
 
-                Team.objects.create(**team, category=category)
+                Team.objects.create(**team)
 
     @classmethod
     def get_volunteer_distributions(cls, num_teams, num_volunteers):

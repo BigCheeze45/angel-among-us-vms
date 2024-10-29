@@ -1,0 +1,52 @@
+{
+    /*
+        Connection information for the source (i.e. iShelters) database.
+        This is passed directly to the mysql connector and all options
+        listed at the link below are supported:
+        https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
+    */
+    "source_database": {
+        "username": null,
+        "password": null,
+        "database": null,
+        /*
+            Test container for convenience. Should NOT be used in prod.
+            Note that you will get "Unknown MySQL server host" when
+            connection times out or host is unreachable.
+        */
+        "host": null
+        // Default to Django time zone if not provided
+        // "time_zone": "America/New_York"
+    },
+    /*
+        Email configuration setting. Will default to Django settings
+        if not provided
+        https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-EMAIL_HOST
+    */
+    // "email": {},
+    /*
+        Individuals to be notified when the ETL encounters a
+        catastrophic error & cannot continue. Ideally, this person
+        might be able to intercede & have it run to completion.
+    */
+    "alert_recipients": [],
+    /*
+        Individuals to be notified when the ETL is complete.
+        They will receive a report of changes
+    */
+    "report_recipients": [],
+    /*
+        When importing volunteers, only import
+        individuals marked as active (i.e. 
+        ishelters.staff.current = 1)
+    */
+    "active_volunteers_only": false,
+    /*
+        The VMS tracks team assignment with a start and end date.
+        When a team assignment is deleted from iShelters, end date
+        is updated to show a volunteer is no longer on that team.
+        Set this to true to delete team assignments when they're deleted
+        in iShelters
+    */
+    "team_assignment_match_source": false
+}

@@ -1,7 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Volunteer(models.Model):
@@ -12,35 +9,31 @@ class Volunteer(models.Model):
     first_name = models.CharField(max_length=50, null=False)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=False)
-    preferred_name = models.CharField(max_length=50, null=True, blank=True)
+    preferred_name = models.CharField(max_length=100, null=True, blank=True)
     full_name = models.CharField(max_length=155, blank=True)  # First + Middle + Last
     email = models.EmailField(unique=True, null=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(null=True, blank=True)
     active_status_change_date = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     active = models.BooleanField(default=True)
-    cell_phone = PhoneNumberField(max_length=15)
-    home_phone = PhoneNumberField(null=True, blank=True, max_length=15)
-    work_phone = PhoneNumberField(null=True, blank=True, max_length=15)
+    cell_phone = models.CharField(max_length=128)
+    home_phone = models.CharField(null=True, blank=True, max_length=128)
+    work_phone = models.CharField(null=True, blank=True, max_length=128)
     date_of_birth = models.DateField(blank=True, null=True)
+
+    job_title = models.CharField(null=True, default="AAU Volunteer")
+    ishelters_id = models.IntegerField(unique=True, editable=False)
+    maddie_certifications_received_date = models.DateField(null=True, blank=True)
+    has_maddie_certifications = models.BooleanField(default=False)
+    ishelters_created_dt = models.DateTimeField(null=True, editable=False)
+    application_received_date = models.DateTimeField(auto_now=True)
 
     # A volunteer's address
     address_line_1 = models.CharField(max_length=100, null=False)
     address_line_2 = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=False)
-    county = models.CharField(max_length=100, null=False)
+    county = models.CharField(max_length=100, null=True)
     state = models.CharField(max_length=100, null=False)
     zipcode = models.CharField(max_length=10, null=False)
-
-    ishelters_category_type = models.CharField(null=True)
-    ishelters_access_flag = models.BooleanField(null=True)
-    ishelters_id = models.IntegerField(null=True, unique=True, editable=False)
-    maddie_certifications_received_date = models.DateField(null=True, blank=True)
-    has_maddie_certifications = models.BooleanField(default=False)
-    ishelters_created_dt = models.DateTimeField(null=True, editable=False)
-    application_received_date = models.DateField(null=True, editable=False)
-    # ishelters_created_by_id = models.ForeignKey(null=True, editable=False, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs) -> None:
         if not self.full_name:
