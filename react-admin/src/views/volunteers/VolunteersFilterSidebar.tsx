@@ -42,41 +42,28 @@ export const VolunteerFilterSidebar = () => {
           />
         </FilterList>
         <FilterList
-          label="iShelters Access"
-          icon={<CategoryIcon />}
-        >
-          <FilterListItem
-            label="Yes"
-            value={{ishelters_access_flag: true}}
-          />
-          <FilterListItem
-            label="No"
-            value={{ishelters_access_flag: false}}
-          />
-        </FilterList>
-        <FilterList
-          label="iShelters category"
+          label="Primary job"
           icon={<CategoryIcon />}
         >
           <FilterListItem
             label="Volunteer"
-            value={{ishelters_category_type: "AAU Volunteer"}}
+            value={{job_title: "AAU Volunteer"}}
           />
           <FilterListItem
             label="Team Lead"
-            value={{ishelters_category_type: "AAU Team Lead"}}
+            value={{job_title: "AAU Team Lead"}}
           />
           <FilterListItem
             label="Staff"
-            value={{ishelters_category_type: "AAU Staff Member"}}
+            value={{job_title: "AAU Staff Member"}}
           />
           <FilterListItem
             label="Officer"
-            value={{ishelters_category_type: "AAU Officer"}}
+            value={{job_title: "AAU Officer"}}
           />
           <FilterListItem
             label="Board Member"
-            value={{ishelters_category_type: "AAU Board Member"}}
+            value={{job_title: "AAU Board Member"}}
           />
         </FilterList>
       </CardContent>

@@ -1,10 +1,7 @@
 from rest_framework import viewsets
 
 from app.models.Team import Team
-from app.models.Volunteer import Volunteer
-from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.TeamSerializer import TeamSerializer
-from app.serializer.VolunteerSerializer import VolunteerSerializer
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -12,6 +9,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     search_fields = [
         "name",
         "email",
+        "ishelters_id",
         "description",
     ]
 

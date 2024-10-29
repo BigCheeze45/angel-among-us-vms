@@ -9,6 +9,7 @@ class VolunteerViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerSerializer
     filterset_fields = [
         "active",
+        "job_title",
         "has_maddie_certifications",
         "maddie_certifications_received_date",
     ]
