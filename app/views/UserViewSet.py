@@ -8,6 +8,17 @@ from app.serializer.UserSerializer import UserSerializer
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
+    filterset_fields = [
+        "is_staff",
+        "is_active",
+        "is_superuser",
+    ]
+    search_fields = [
+        "email",
+        "username",
+        "last_name",
+        "first_name",
+    ]
 
     def get_queryset(self):
         ordering = self.request.query_params.get(

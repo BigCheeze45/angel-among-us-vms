@@ -1,10 +1,10 @@
 {
-    "short_name": "react-admin",
+    "short_name": "Volunteer Management",
     "name": "{{name}}",
     "icons": [
         {
-            "src": "favicon.ico",
-            "sizes": "64x64 32x32 24x24 16x16",
+            "src": "favicon.png",
+            "sizes": "53x56",
             "type": "image/x-icon"
         }
     ],

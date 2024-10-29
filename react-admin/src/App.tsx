@@ -1,46 +1,58 @@
-import {
-  Admin,
-  Resource,
-  EditGuesser,
-  ShowGuesser,
-  ListGuesser,
-} from "react-admin"
-import { Layout } from "./Layout"
-import { Route } from 'react-router-dom'
+import {Layout} from "./Layout"
+import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
-import { UserList } from "./views/users/UserList"
-import { VolunteerShow } from "./views/volunteers/VolunteerShow"
-import { VolunteersList } from "./views/volunteers/VolunteersList"
+import {Admin, Resource} from "react-admin"
+import {TeamShow} from "./views/teams/TeamShow"
+import {UserShow} from "./views/users/UserShow"
+import {UsersList} from "./views/users/UserList"
+import {UserEdit} from "./views/users/UserEdit"
+import {TeamList} from "./views/teams/TeamsList"
+import {UserCreate} from "./views/users/UserCreate"
+import {VolunteerShow} from "./views/volunteers/VolunteerShow"
+import {VolunteersList} from "./views/volunteers/VolunteersList"
+import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
+export const App = () => {
+  const drfProvider = dataProvider()
+  const { authProvider, gsiParams } = useGoogleAuthProvider({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  });
 
-const drfProvider = dataProvider()
-
-export const App = () => (
-  <Admin
-    layout={Layout}
-    dataProvider={drfProvider}
-  >
-    <Resource
-      name="volunteers"
-      show={VolunteerShow}
-      list={VolunteersList}
-      recordRepresentation={(record) => `${record.full_name}`}
-    // edit={EditGuesser}
-    />
-    {/* Route to volunteers/<ID>/milestones */}
-    {/* <Route path=":id/activities/" element={<ListGuesser />} /> */}
-    {/* </Resource> */}
-    <Resource
-      name="teams"
-      list={ListGuesser}
-      show={ShowGuesser}
-      edit={EditGuesser}
-    />
-    <Resource
-      name="users"
-      list={UserList}
-      show={ShowGuesser}
-      edit={EditGuesser}
-    />
-  </Admin>
-)
+  return (
+    <GoogleAuthContextProvider value={gsiParams}>
+      <Admin
+        // https://marmelab.com/react-admin/Admin.html#requireauth
+        requireAuth
+        layout={Layout}
+        loginPage={LoginPage}
+        dataProvider={drfProvider}
+        authProvider={authProvider}
+      >
+        <Resource
+          name="volunteers"
+          show={VolunteerShow}
+          list={VolunteersList}
+          hasEdit={false}
+          hasCreate={false}
+          recordRepresentation={record => `${record.full_name}`}
+        />
+        <Resource
+          name="teams"
+          list={TeamList}
+          show={TeamShow}
+          hasEdit={false}
+          hasCreate={false}
+        />
+        <Resource
+          name="users"
+          show={UserShow}
+          edit={UserEdit}
+          list={UsersList}
+          create={UserCreate}
+          // display user full name when presenting a record (e.g. show view)
+          recordRepresentation={record => `${record.first_name} ${record.last_name}`}
+        />
+      </Admin>
+    </GoogleAuthContextProvider>
+  )
+}

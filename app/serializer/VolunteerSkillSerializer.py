@@ -7,12 +7,10 @@ class VolunteerSkillSerializer(serializers.ModelSerializer):
         model = VolunteerSkill
         fields = [
             "id",
+            "skill",
             "volunteer",
-            "category",
-            "proficiency_level",
-            "years_of_experience",
-            "description",
+            # "description",
         ]
 
-    def is_valid(self, *, raise_Exception=True):
-        return super().is_valid(raise_exception=raise_Exception)
+    def is_valid(self, *, raise_exception=True):
+        return super().is_valid(raise_exception=raise_exception)
