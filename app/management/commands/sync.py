@@ -370,7 +370,8 @@ class Command(BaseCommand):
                     IFNULL(CONCAT(middleName, ' '), ''),
                     lastName
                 ) AS full_name,
-                nickName AS preferred_name,
+                -- look at additionalNames if nickname is null
+                IFNULL(nickName, additionalNames) AS preferred_name,
                 jt.title AS job_title,
                 birthDate AS date_of_birth,
                 s.dateJoined AS date_joined,
@@ -459,7 +460,7 @@ class Command(BaseCommand):
                     # fmt: on
 
                     if row != volunteer_dict:
-                        self.stdout.write(self.style.NOTICE("Change found in detected"))
+                        self.stdout.write(self.style.NOTICE("Change detected"))
                         # self.stdout.write(f"iShelters Row: {row}")
                         # self.stdout.write(f"VMS Row: {volunteer_dict}")
 
@@ -531,7 +532,7 @@ class Command(BaseCommand):
             return success
 
         try:
-            mysql_connector.connect(**connection_info)
+            cnx = mysql_connector.connect(**connection_info)
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Successfully connected to {connection_info['host']} using provided credentials"
@@ -542,6 +543,8 @@ class Command(BaseCommand):
             self.stderr.write(e.msg)
         except Exception as e:
             self.stderr.write(f"Unexpected error:{e}\n")
+        finally:
+            cnx.close()
 
         return success
 

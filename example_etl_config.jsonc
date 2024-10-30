@@ -9,11 +9,6 @@
         "username": null,
         "password": null,
         "database": null,
-        /*
-            Test container for convenience. Should NOT be used in prod.
-            Note that you will get "Unknown MySQL server host" when
-            connection times out or host is unreachable.
-        */
         "host": null
         // Default to Django time zone if not provided
         // "time_zone": "America/New_York"
