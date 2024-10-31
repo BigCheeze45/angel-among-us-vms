@@ -10,7 +10,7 @@ import {
   ListContextProvider,
 } from "react-admin"
 import {ENDPOINTS} from "../../constants"
-import {ListActionToolbar} from "../../ListActionToolbar"
+import {ListActionToolbar} from "../../components/ListActionToolbar"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
 const EmptyTeams = (record: RaRecord) => <div>{`${record.full_name}`} is not on any team</div>

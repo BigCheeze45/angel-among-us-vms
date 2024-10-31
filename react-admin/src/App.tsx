@@ -3,24 +3,24 @@ import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
 import {authProvider} from "./authProvider"
 import {Admin, Resource} from "react-admin"
+import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
-import {UserCreate} from "./views/users/UserCreate"
 import {VolunteerShow} from "./views/volunteers/VolunteerShow"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
 export const App = () => {
-  const drfProvider = dataProvider()
   
   // configure Sign-in with Google
   const { gsiParams } = useGoogleAuthProvider({
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    client_id: GOOGLE_CLIENT_ID,
   })
   // an extended googleAuthProvider that handles login callback
+  const drfDataProvider = dataProvider()
   const drfAuthProvider = authProvider(gsiParams)
 
   return (
@@ -30,7 +30,7 @@ export const App = () => {
         requireAuth
         layout={Layout}
         loginPage={LoginPage}
-        dataProvider={drfProvider}
+        dataProvider={drfDataProvider}
         authProvider={drfAuthProvider}
       >
         <Resource
@@ -53,7 +53,12 @@ export const App = () => {
           show={UserShow}
           edit={UserEdit}
           list={UsersList}
-          create={UserCreate}
+          /*
+            There is a Create view however it's a dialog that's only available
+            from UsersList. Setting this to false so RA doesn't doesn't
+            do anything unexpected (e.g. trying to navigate to it)
+          */
+          hasCreate={false}
           // display user full name when presenting a record (e.g. show view)
           recordRepresentation={record => `${record.first_name} ${record.last_name}`}
         />
