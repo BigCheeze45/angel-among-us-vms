@@ -1,9 +1,25 @@
+export const API_BASE_URL = import.meta.env.VITE_JSON_SERVER_URL
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+
 export const ENDPOINTS = {
   TEAMS: "teams",
   USERS: "users",
+  EXPORT: "export",
   VOLUNTEERS: "volunteers",
   SKILLS_CATEGORIES: "skills-categories",
   VOLUNTEER_ACTIVITIES: "VOLUNTEER_ACTIVITIES",
+}
+
+export const enum HttpMethod {
+  GET = "GET",
+  PUT = "PUT",
+  POST = "POST",
+  HEAD = "HEAD",
+  PATCH = "PATCH",
+  TRACE = "TRACE",
+  DELETE = "DELETE",
+  OPTIONS = "OPTIONS",
+  CONNECT = "CONNECT",
 }
 
 interface County {

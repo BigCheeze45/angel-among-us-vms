@@ -15,16 +15,14 @@ import {
   SaveButton,
   SelectInput,
   useRedirect,
-  ExportButton,
+  CreateButton,
   BooleanField,
   FilterButton,
-  CreateButton,
   WrapperField,
   FilterListItem,
   BulkUpdateButton,
   SavedQueriesList,
   FilterLiveSearch,
-  BulkExportButton,
   AutocompleteInput,
   CheckboxGroupInput,
   SelectColumnsButton,
@@ -32,10 +30,11 @@ import {
 } from "react-admin"
 import {Fragment, useState} from "react"
 import {ENDPOINTS} from "../../constants"
-import {ListActionToolbar} from "../../ListActionToolbar"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
+import {ExportCSVButton} from "../../components/ExportCSVButton"
+import {ListActionToolbar} from "../../components/ListActionToolbar"
 import CardMembershipIcon from "@mui/icons-material/CardMembership"
-import ExportExcelButton from "../../components/ExportExcelButton"
+import {ExportExcelButton} from "../../components/ExportExcelButton"
 import {Card, CardContent, Dialog, DialogTitle, DialogContent} from "@mui/material"
 
 const UserListActions = ({onCreateClick}) => (
@@ -47,7 +46,7 @@ const UserListActions = ({onCreateClick}) => (
         onCreateClick()
       }}
     />
-    <ExportButton label="Export CSV" />
+    <ExportCSVButton />
     <ExportExcelButton />
     <SelectColumnsButton />
   </TopToolbar>
@@ -59,7 +58,7 @@ const UsersBulkActionButtons = () => (
       label="Disable"
       data={{is_active: false}}
     />
-    <BulkExportButton label="Export CSV" />
+    <ExportCSVButton />
     <ExportExcelButton />
   </Fragment>
 )

@@ -1,28 +1,9 @@
-import {Button} from "@mui/material"
-import {useListContext} from "react-admin"
-import DownloadIcon from "@mui/icons-material/GetApp"
-import {exportToExcel} from "../components/exportToExcel"
+import {ExportButton} from "./ExportButton"
 
-const ExportExcelButton: React.FC = () => {
-  const {data} = useListContext()
-
-  const handleExcelExport = () => {
-    if (data && data.length > 0) {
-      exportToExcel(data, "volunteers_export.xlsx")
-    }
-  }
-
-  {
-    /* Custom Excel export button */
-  }
-  return (
-    <Button
-      onClick={handleExcelExport}
-      startIcon={<DownloadIcon />}
-    >
-      Export Excel
-    </Button>
-  )
-}
-
-export default ExportExcelButton
+export const ExportExcelButton = (meta, {...rest}) => (
+  <ExportButton
+    label="export excel"
+    meta={{format: "excel", ...meta}}
+    {...rest}
+  />
+)
