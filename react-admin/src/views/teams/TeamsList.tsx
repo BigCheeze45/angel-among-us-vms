@@ -3,15 +3,14 @@ import {
   TextField,
   TopToolbar,
   EmailField,
-  ExportButton,
   FilterButton,
   FilterLiveSearch,
-  BulkExportButton,
   SelectColumnsButton,
   DatagridConfigurable,
 } from "react-admin"
 import {Fragment} from "react"
-import ExportExcelButton from "../../components/ExportExcelButton"
+import {ExportCSVButton} from "../../components/ExportCSVButton"
+import {ExportExcelButton} from "../../components/ExportExcelButton"
 
 const teamFilters = [
   <FilterLiveSearch
@@ -26,14 +25,14 @@ const teamFilters = [
 const TeamsListActions = () => (
   <TopToolbar>
     <FilterButton />
-    <ExportButton label="export csv" />
+    <ExportCSVButton />
     <ExportExcelButton />
     <SelectColumnsButton />
   </TopToolbar>
 )
 const TeamsBulkActionButtons = () => (
   <Fragment>
-    <BulkExportButton label="export csv" />
+    <ExportCSVButton />
     <ExportExcelButton />
   </Fragment>
 )

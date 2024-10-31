@@ -7,7 +7,6 @@ import {
   EditButton,
   EmailField,
   CreateButton,
-  ExportButton,
   BooleanField,
   FilterButton,
   WrapperField,
@@ -15,7 +14,6 @@ import {
   BulkUpdateButton,
   SavedQueriesList,
   FilterLiveSearch,
-  BulkExportButton,
   AutocompleteInput,
   SelectColumnsButton,
   DatagridConfigurable,
@@ -23,15 +21,16 @@ import {
 import {Fragment} from "react"
 import {Card, CardContent} from "@mui/material"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
-import {ListActionToolbar} from "../../ListActionToolbar"
+import {ExportCSVButton} from "../../components/ExportCSVButton"
 import CardMembershipIcon from "@mui/icons-material/CardMembership"
-import ExportExcelButton from "../../components/ExportExcelButton"
+import {ListActionToolbar} from "../../components/ListActionToolbar"
+import {ExportExcelButton} from "../../components/ExportExcelButton"
 
 const UserListActions = () => (
   <TopToolbar>
     <FilterButton />
     <CreateButton />
-    <ExportButton label="export csv" />
+    <ExportCSVButton />
     <ExportExcelButton />
     <SelectColumnsButton />
   </TopToolbar>
@@ -43,7 +42,7 @@ const UsersBulkActionButtons = () => (
       label="disable"
       data={{is_active: false}}
     />
-    <BulkExportButton label="export csv" />
+    <ExportCSVButton />
     <ExportExcelButton />
   </Fragment>
 )

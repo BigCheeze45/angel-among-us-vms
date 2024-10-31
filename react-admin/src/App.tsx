@@ -2,6 +2,7 @@ import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
 import {Admin, Resource} from "react-admin"
+import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
@@ -14,9 +15,9 @@ import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
 export const App = () => {
   const drfProvider = dataProvider()
-  const { authProvider, gsiParams } = useGoogleAuthProvider({
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-  });
+  const {authProvider, gsiParams} = useGoogleAuthProvider({
+    client_id: GOOGLE_CLIENT_ID,
+  })
 
   return (
     <GoogleAuthContextProvider value={gsiParams}>
