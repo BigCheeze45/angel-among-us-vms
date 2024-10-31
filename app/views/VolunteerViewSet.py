@@ -1,6 +1,5 @@
 from rest_framework import viewsets
 
-from app.models.Team import Team
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.VolunteerSerializer import VolunteerSerializer

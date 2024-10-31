@@ -1,8 +1,14 @@
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User, Group
+from django.db.utils import Error as DjangoDBError
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from app.serializer.UserSerializer import UserSerializer
+from rest_framework.exceptions import APIException
+
+from common.exceptions import ConflictError
+from common.utils import django_db_error_parser
+from app.serializer.UserSerializer import UserSerializer, UserCreateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -10,7 +16,6 @@ class UserViewSet(viewsets.ModelViewSet):
     filterset_fields = [
         "is_staff",
         "is_active",
-        "is_superuser",
     ]
     search_fields = [
         "email",
@@ -20,29 +25,44 @@ class UserViewSet(viewsets.ModelViewSet):
     ]
 
     def create(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        first_name = request.data.get("first_name")
-        last_name = request.data.get("last_name")
-
-        if not email:
-            raise ValidationError({"email": "This field is required."})
-
-        user = User(
-            username=email,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            is_superuser=False,
-        )
+        user_create_serializer = UserCreateSerializer(data=request.data)
+        # validate the incoming data & abort if it's not valid
+        user_create_serializer.is_valid()
 
         try:
-            user.save()
-            user.set_unusable_password()
-            serializer = self.get_serializer(user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            validated_data = user_create_serializer.data
+            # TODO
+            # check if this role (group) exists
+            # group = get_object_or_404(Group, name__iexact=validated_data["role"])
+            # del validated_data["role"]
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            user = User.objects.create(
+                is_superuser=False,
+                **validated_data,
+                username=user_create_serializer["email"],
+            )
+            user.set_unusable_password()
+            user.save()
+
+            # TODO
+            # assign role to user
+            # group.user_set.add(user)
+
+            # return everything
+            serializer = self.serializer_class(user)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        except DjangoDBError as e:
+            parsed_e = django_db_error_parser(e)
+            if (
+                parsed_e
+                and "duplicate key value violates unique constraint" in parsed_e.slug
+            ):
+                raise ConflictError(
+                    detail=f"User with {'email' if parsed_e.field == 'username' else parsed_e.field} already exist"
+                )
+
+            # return a general API error
+            raise APIException()
 
     def get_queryset(self):
         ordering = self.request.query_params.get("ordering", "id")

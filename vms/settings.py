@@ -50,6 +50,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 25,
     "DEFAULT_AUTHENTICATION_CLASSES": [],
 }
+# Do not enable JSON responses for 400 & 500 unhandled exceptions
+# during dev
+if not DEBUG:
+    handler500 = "rest_framework.exceptions.server_error"
+    handler400 = "rest_framework.exceptions.bad_request"
 
 # django-phonenumber-field
 # ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
