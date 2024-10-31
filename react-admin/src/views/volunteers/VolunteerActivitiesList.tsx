@@ -37,14 +37,13 @@ export const VolunteerActivitiesList = () => {
   const handleClose = () => setOpen(false)
 
   const handleCreate = async value => {
-    console.log(value)
     const payload = {
       volunteer: value.id,
       location: value.location,
       start_date: value.start_date,
       activity_name: value.activity_name,
     }
-    console.log(payload)
+
     const resource = `${ENDPOINTS.VOLUNTEERS}/${value.id}/activities`
     try {
       await create(resource, {data: payload})
@@ -64,7 +63,7 @@ export const VolunteerActivitiesList = () => {
         onClick={handleOpen}
         style={{marginBottom: "1rem"}}
       >
-        Add new skill/interest
+        Add new Activity
       </Button>
       <Datagrid
         rowClick={false}

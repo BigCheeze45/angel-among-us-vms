@@ -8,7 +8,6 @@ import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
-import {UserCreate} from "./views/users/UserCreate"
 import {VolunteerShow} from "./views/volunteers/VolunteerShow"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
@@ -49,7 +48,12 @@ export const App = () => {
           show={UserShow}
           edit={UserEdit}
           list={UsersList}
-          create={UserCreate}
+          /*
+            There is a Create view however it's a dialog that's only available
+            from UsersList. Setting this to false so RA doesn't doesn't
+            do anything unexpected (e.g. trying to navigate to it)
+          */
+          hasCreate={false}
           // display user full name when presenting a record (e.g. show view)
           recordRepresentation={record => `${record.first_name} ${record.last_name}`}
         />
