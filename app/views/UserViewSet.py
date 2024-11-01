@@ -9,7 +9,7 @@ from django.db.utils import Error as DjangoDBError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException, ValidationError
+from rest_framework.exceptions import APIException, ValidationError, PermissionDenied
 
 import pandas as pd
 
@@ -32,6 +32,57 @@ class UserViewSet(viewsets.ModelViewSet):
     ]
     export_fields = ["first_name", "last_name", "email"]
 
+    def destroy(self, request, *args, **kwargs):
+        # TODO
+        return super().destroy(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        # TODO - check if user has permissions
+        return super().update(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        # Returns True if the user has the specified permission, where perm is in the format "<app label>.<permission codename>".
+        if not request.user.has_perm("auth.add_user"):
+            raise PermissionDenied()
+
+        user_create_serializer = UserCreateSerializer(data=request.data)
+        # validate the incoming data & abort if it's not valid
+        user_create_serializer.is_valid()
+
+        try:
+            validated_data = user_create_serializer.data
+
+            # check if this role (group) exists
+            group = get_object_or_404(Group, name__iexact=validated_data["role"])
+            del validated_data["role"]
+
+            user = User.objects.create(
+                is_superuser=False,
+                **validated_data,
+                username=user_create_serializer["email"],
+            )
+            user.set_unusable_password()
+            user.save()
+
+            # assign role to user
+            group.user_set.add(user)
+
+            # return everything
+            serializer = self.serializer_class(user)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        except DjangoDBError as e:
+            parsed_e = django_db_error_parser(e)
+            if (
+                parsed_e
+                and "duplicate key value violates unique constraint" in parsed_e.slug
+            ):
+                raise ConflictError(
+                    detail=f"User with {'email' if parsed_e.field == 'username' else parsed_e.field} already exist"
+                )
+
+            # return a general API error
+            raise APIException()
+
     @action(detail=False, methods=[HTTPMethod.POST, HTTPMethod.GET])
     def export(self, request):
         export_format = request.data.get("format")
@@ -51,46 +102,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return self._create_return_excel(queryset)
 
         return self._create_return_csv(queryset)
-
-    def create(self, request, *args, **kwargs):
-        user_create_serializer = UserCreateSerializer(data=request.data)
-        # validate the incoming data & abort if it's not valid
-        user_create_serializer.is_valid()
-
-        try:
-            validated_data = user_create_serializer.data
-            # TODO
-            # check if this role (group) exists
-            # group = get_object_or_404(Group, name__iexact=validated_data["role"])
-            # del validated_data["role"]
-
-            user = User.objects.create(
-                is_superuser=False,
-                **validated_data,
-                username=user_create_serializer["email"],
-            )
-            user.set_unusable_password()
-            user.save()
-
-            # TODO
-            # assign role to user
-            # group.user_set.add(user)
-
-            # return everything
-            serializer = self.serializer_class(user)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        except DjangoDBError as e:
-            parsed_e = django_db_error_parser(e)
-            if (
-                parsed_e
-                and "duplicate key value violates unique constraint" in parsed_e.slug
-            ):
-                raise ConflictError(
-                    detail=f"User with {'email' if parsed_e.field == 'username' else parsed_e.field} already exist"
-                )
-
-            # return a general API error
-            raise APIException()
 
     def get_queryset(self):
         ordering = self.request.query_params.get("ordering", "id")

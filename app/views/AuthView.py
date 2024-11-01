@@ -18,7 +18,8 @@ class BasicAuthentication(DRFBasicAuthentication):
         except User.DoesNotExist:
             raise exceptions.AuthenticationFailed(("Invalid username/password."))
 
-        if not user.is_active:
+        if not user.is_staff or not user.is_active:
+            # Only when both is_staff AND is_active are True does the authentication pass
             raise exceptions.AuthenticationFailed(("User inactive or deleted."))
 
         return (user, None)
@@ -26,14 +27,44 @@ class BasicAuthentication(DRFBasicAuthentication):
 
 class LoginView(KnoxLoginView):
     authentication_classes = [BasicAuthentication]
+    DJANGO_RA_ACTION_MAPPING = {
+        "view": ["list", "show"],
+        "change": ["edit"],
+        "add": ["create"],
+        "delete": ["delete"],
+    }
 
     def get_post_response_data(self, request, token, instance):
         data = super().get_post_response_data(request, token, instance)
 
-        # load in user roles & permissions
-        # so they're returned to the frontend
-        data["user"]["permissions"] = request.user.get_all_permissions()
-        data["user"]["roles"] = [group.name for group in request.user.groups.all()]
+        # build permissions into a format react-admin understands
+        # https://marmelab.com/react-admin/AuthRBAC.html
+        user_perms = request.user.get_all_permissions()
+        # p_list = [
+        #     "auth.change_permission",
+        #     "contenttypes.change_contenttype",
+        #     "auth.add_user",
+        #     "app.delete_volunteerteam",
+        #     "app.add_team",
+        #     "app.view_volunteeractivity",
+        # ]
+        ra_perms_dict = []
+        for item in user_perms:
+            app, perm = item.split(".")
+            # FIXME - is there way to get current app label instead of hardcoding
+            # in case the name/label changes
+            if app in ("app", "auth"):
+                action, resource = perm.split("_")
+                if resource in ("volunteer", "team", "user"):
+                    ra_perms_dict.append(
+                        {
+                            "action": self.DJANGO_RA_ACTION_MAPPING.get(action, []),
+                            "resource": f"{resource}s",
+                        }
+                    )
+                print(action, resource)
+        data["user"]["permissions"] = ra_perms_dict
+        # data["user"]["roles"] = [group.name for group in request.user.groups.all()]
         return data
 
 

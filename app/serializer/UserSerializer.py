@@ -18,7 +18,7 @@ class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     is_staff = serializers.BooleanField(required=True)
     is_active = serializers.BooleanField(default=True)
-    role = serializers.ChoiceField(choices=["administrator", "viewer", "editor"])
+    role = serializers.ChoiceField(required=True, choices=["administrator", "viewer", "editor"])
 
     def is_valid(self, *, raise_exception=True):
         return super().is_valid(raise_exception=raise_exception)

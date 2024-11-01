@@ -12,6 +12,14 @@ from app.serializer.VolunteerSkillSerializer import VolunteerSkillSerializer
 class VolunteerSkillViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerSkillSerializer
 
+    def create(self, request, *args, **kwargs):
+        # TODO - check if uer has permission to add skill to volunteer
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # TODO
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
         queryset = VolunteerSkill.objects.all()
 

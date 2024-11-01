@@ -1,7 +1,6 @@
 import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
-import {authProvider} from "./authProvider"
 import {Admin, Resource} from "react-admin"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
@@ -11,16 +10,18 @@ import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
 import {VolunteerShow} from "./views/volunteers/VolunteerShow"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
-import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
+import {useGoogleAuthProvider, GoogleAuthContextProvider, localStorageTokenStore} from "ra-auth-google"
+// import authProvider from "./authProvider_two"
+import {authProvider} from "./authProvider"
 
 export const App = () => {
-  
   // configure Sign-in with Google
-  const { gsiParams } = useGoogleAuthProvider({
+  const {gsiParams, authProvider: googleAuthProvider} = useGoogleAuthProvider({
     client_id: GOOGLE_CLIENT_ID,
   })
-  // an extended googleAuthProvider that handles login callback
   const drfDataProvider = dataProvider()
+  // wrap out auth provider around Google
+  // const drfAuthProvider = authProvider(googleAuthProvider)
   const drfAuthProvider = authProvider(gsiParams)
 
   return (

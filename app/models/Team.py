@@ -1,7 +1,5 @@
 from django.db import models
 
-from app.models.TeamCategory import TeamCategory
-
 
 class Team(models.Model):
     """
@@ -12,13 +10,6 @@ class Team(models.Model):
     description = models.TextField(blank=True, null=True)
     email = models.EmailField(null=False, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    category = models.ForeignKey(
-        TeamCategory,
-        db_column="category_id",
-        # Raise an error when trying to delete a category
-        # associated with a team
-        on_delete=models.PROTECT,
-    )
 
     # Info imported from iShelters
     ishelters_id = models.IntegerField(null=True, editable=False)

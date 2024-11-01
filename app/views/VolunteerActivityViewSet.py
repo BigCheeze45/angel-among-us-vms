@@ -11,6 +11,14 @@ from app.serializer.VolunteerActivitySerializer import VolunteerActivitySerializ
 class VolunteerActivityViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerActivitySerializer
 
+    def create(self, request, *args, **kwargs):
+        # TODO
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # TODO
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
         queryset = VolunteerActivity.objects.all()
 

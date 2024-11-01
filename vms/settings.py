@@ -15,9 +15,6 @@ from datetime import timedelta
 from pathlib import Path
 from common.utils import read_docker_secrets_file
 
-# Your Google OAuth 2.0 Client ID
-VITE_GOOGLE_CLIENT_ID = os.getenv("VITE_GOOGLE_CLIENT_ID")
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

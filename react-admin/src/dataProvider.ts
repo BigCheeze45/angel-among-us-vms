@@ -57,10 +57,10 @@ export const getOrderingQuery = (sort: SortPayload) => {
 export const fetchJson = (url: string, options: fetchUtils.Options = {}) => {
   // make any additional changes before sending the request
   if (!options.headers) {
-    options.headers = new Headers({ Accept: 'application/json' });
-}
-// add your own headers here
-options.headers.set('Authorization', `Token ${localStorage.getItem ('apiToken')}`);
+    options.headers = new Headers({Accept: "application/json"})
+  }
+  // add your own headers here
+  options.headers.set("Authorization", `Token ${localStorage.getItem("apiToken")}`)
   return fetchUtils.fetchJson(url, options)
 }
 

@@ -25,6 +25,10 @@ class TeamViewSet(viewsets.ModelViewSet):
     ]
     export_fields = ["name", "description", "email"]
 
+    def update(self, request, *args, **kwargs):
+        # TODO - check if user has permission to edit Team
+        return super().update(request, *args, **kwargs)
+    
     @action(detail=False, methods=[HTTPMethod.POST, HTTPMethod.GET])
     def export(self, request):
         export_format = request.data.get("format")

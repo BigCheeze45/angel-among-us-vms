@@ -17,7 +17,6 @@ import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {VolunteerFilterSidebar} from "./VolunteersFilterSidebar"
 import {ExportExcelButton} from "../../components/ExportExcelButton"
 
-
 const volunteerFilters = [
   <ReferenceInput
     key="team_filter"
