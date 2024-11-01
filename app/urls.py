@@ -12,12 +12,19 @@ from app.views.VolunteerTeamViewSet import VolunteerTeamViewSet
 from app.views.VolunteerActivityViewSet import VolunteerActivityViewSet
 from app.views.VolunteerMilestoneViewSet import VolunteerMilestoneViewSet
 
+from app.views.VolunteerPetViewSet import VolunteerPetViewSet
+from app.views.VolunteerChildrenViewSet import VolunteerChildrenViewSet
+
 # Create a router and register our top-level viewsets
 router = routers.DefaultRouter()
 router.register(r"teams", TeamViewSet, basename="Team")
 router.register(r"users", UserViewSet, basename="User")
 router.register(r"volunteers", VolunteerViewSet, basename="Volunteer")
 router.register(r"skills-categories", SkillCategoryViewSet, basename="skillscategories")
+
+# new views routes for children / pet
+router.register(r"volunteers-pet", VolunteerPetViewSet, basename="VolunteerPet")
+router.register(r"volunteers-childrens", VolunteerChildrenViewSet, basename="VolunteerChildren")
 
 # Create a nested router for team-related views
 team_router = routers.NestedSimpleRouter(router, r"teams", lookup="team")
@@ -33,6 +40,9 @@ volunteer_router.register(
 volunteer_router.register(
     r"activities", VolunteerActivityViewSet, basename="volunteer-activities"
 )
+
+volunteer_router.register(r"children", VolunteerChildrenViewSet, basename="volunteer-children")
+volunteer_router.register(r"pet", VolunteerPetViewSet, basename="volunteer-pet")
 
 # Wire up our API using automatic URL routing
 urlpatterns = [

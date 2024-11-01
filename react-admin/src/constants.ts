@@ -8,6 +8,8 @@ export const ENDPOINTS = {
   VOLUNTEERS: "volunteers",
   SKILLS_CATEGORIES: "skills-categories",
   VOLUNTEER_ACTIVITIES: "VOLUNTEER_ACTIVITIES",
+  VOLUNTEER_PETS : "VolunteerPet",
+  VOLUNTEER_CHILDREN : "VolunteerChildren",
 }
 
 export const enum HttpMethod {
