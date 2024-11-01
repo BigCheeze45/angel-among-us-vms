@@ -2,6 +2,7 @@ volumes:
   # use named volume to persist data, in this case the database
   pgdata:
   node_modules:
+  ishelters:
 
 
 secrets:
@@ -75,3 +76,5 @@ services:
       MYSQL_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - ${MYSQL_PORT:-3306}:3306
+    volumes:
+      - ishelters:/var/lib/mysql

@@ -86,10 +86,166 @@ class Command(BaseCommand):
         # endregion
 
         # 5: Generate report
-        # TODO
 
-        # 6: Email report
-        # TODO
+        # calling generate report method
+        # total records processed in all
+        vt_records = self.total_vt_records(vt_results)
+        team_records = self.total_team_records(team_results)
+        volunteer_records = self.total_volunteer_records(volunteer_results)
+        total_records_processed = vt_records + team_records + volunteer_records
+        report = self.generate_report(
+            total_records_processed, volunteer_results, team_results, vt_results
+        )
+
+        # print report for debugging
+        print(f"\n\n{report}\n")
+
+    # Gathering total records processed for each model
+
+    # Team records
+    def total_team_records(self, team_results):
+        return (
+            len(team_results.get("inserts"))
+            + len(team_results.get("failures"))
+            + len(team_results.get("updates"))
+        )
+
+        # volunteer records
+
+    def total_volunteer_records(self, volunteer_results):
+        return (
+            len(volunteer_results.get("inserts"))
+            + len(volunteer_results.get("updates"))
+            + len(volunteer_results.get("failures"))
+        )
+
+        # VolunteerTeam records
+
+    def total_vt_records(self, vt_results):
+        return len(vt_results.get("inserts")) + len(vt_results.get("failures"))
+
+        # Send report via email
+        # self.send_report(report)
+
+    # italic format for report
+    def italic(self, txt):
+        return f"\033[3m{txt}\033[0m"
+
+    # bold format for report
+    def bold(self, txt):
+        return f"\033[1m{txt}\033[0m"
+
+    # underlined format for report
+    def underline(self, txt):
+        return "\u0332".join(txt) + "\u0332"
+
+    # coloring text for report
+    def colored_txt(self, txt, color_code):
+        return f"\033[{color_code}m{txt}\033[0m"
+
+    def generate_report(self, total, volunteer, team, volunteer_team):
+        """
+        This function will generate a report in a format that can be changed but should portray
+        all information admin will need when the migration runs.
+        """
+        # generate title format
+        report = f"{self.bold(self.underline("ETL Report"))}\n\n"
+        # generate first section format
+        report += f"{self.underline("Processed Records Count")}\n"
+        report += f"\tTotal Number Records Processed:\t{self.italic(total)}\n"
+        report += f"\tTotal Team Records Processed:\t{self.italic(self.total_team_records(team))}\n"
+        report += f"\tTotal Volunteer Records Processed:\t{self.italic(self.total_volunteer_records(volunteer))}\n"
+        report += f"\tTotal VolunteerTeam Records Processed:\t{self.italic(self.total_vt_records(volunteer_team))}\n\n"
+
+        # generate second section format
+        # team information
+        report += f"\t{self.underline("Team Records Processed")}\n"
+
+        if self.total_team_records(team) != 0:
+            report += f"\t\tNew Inserts:\t{self.italic(len(team.get("inserts")))}\n"
+            report += f"\t\tUpdates:\t{self.italic(len(team.get("updates")))}\n"
+            report += f"\t\tFailures:\t{self.italic(len(team.get("failures")))}\n"
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the Teams Model",31)}\n"
+
+        # Volunteer information
+        report += f"\t{self.underline("Volunteer Records Processed")}\n"
+        if self.total_volunteer_records(volunteer) != 0:
+            report += (
+                f"\t\tNew Inserts:\t{self.italic(len(volunteer.get("inserts")))}\n"
+            )
+            report += f"\t\tUpdates:\t{self.italic(len(volunteer.get("updates")))}\n"
+            report += f"\t\tFailures:\t{self.italic(len(volunteer.get("failures")))}\n"
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the Volunteer Model",31)}\n"
+
+        # VolunteerTeam Information
+        report += f"\t{self.underline("VolunteerTeam Records Processed")}\n"
+        if self.total_vt_records(volunteer_team) != 0:
+            report += (
+                f"\t\tNew Inserts:\t{self.italic(len(volunteer_team.get("inserts")))}\n"
+            )
+            report += (
+                f"\t\tFailures:\t{self.italic(len(volunteer_team.get("failures")))}\n"
+            )
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the VolunteerTeam Model",31)}\n"
+
+        # Third Section
+        report += f"\n\n{self.underline("Information Gathered from Migration")}\n"
+        # team model
+        report += f"\t{self.bold("Team Model")}\n"
+        if self.total_team_records(team) != 0:
+            # new inserts
+            # report += f"\t{self.underline("New Inserts:")}\n"
+            for key in team.keys():
+                if team.get(key):
+                    report += f"\t\t{self.underline(key)}"
+                else:
+                    report += f"\t\t{self.colored_txt(f"No {key}",31)}\n"
+                for value in team.get(key):
+                    if value:
+                        report += f"\n\t\t\t{value}\t"
+                report += "\n"
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the Teams Model",31)}\n"
+
+        # volunteer Model
+        report += f"\t{self.bold("Volunteer Model")}\n"
+        if self.total_volunteer_records(volunteer) != 0:
+            # report += f"\t{self.underline("New Inserts:")}\n"
+            for key in volunteer.keys():
+                if volunteer.get(key):
+                    report += f"\t\t{self.underline(key)}"
+                else:
+                    report += f"\t\t{self.colored_txt(f"No {key}",31)}\n"
+                for value in volunteer.get(key):
+                    if value:
+                        report += f"\n\t\t\t{value}\t"
+                report += "\n"
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the Volunteer Model",31)}\n"
+
+        # volunteerTeam Model
+        report += f"\t{self.bold("VolunteerTeam Model")}\n"
+        if self.total_vt_records(volunteer_team) != 0:
+            # report += f"\t{self.underline("New Inserts:")}\n"
+            for key in volunteer_team.keys():
+                if volunteer_team.get(key):
+                    report += f"\t\t{self.underline(key)}"
+                else:
+                    report += f"\t\t{self.colored_txt(f"No {key}",31)}\n"
+                for value in volunteer_team.get(key):
+                    if value:
+                        report += f"\n\t\t\t{value}\t"
+                report += "\n"
+        else:
+            report += f"\t\t{self.colored_txt("No changes have been made to the VolunteerTeam Model",31)}\n"
+
+        return report
+
+    # 6: Email report
+    # TODO
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -127,6 +283,7 @@ class Command(BaseCommand):
         to delete them instead of setting `end_date`.
         """
         try:
+            # updated = []
             self.stdout.write(self.style.HTTP_INFO("Updating team assignments"))
             # 1: fetch existing V/T relationships from iShelters
             vt_ishelters_id = tuple(
