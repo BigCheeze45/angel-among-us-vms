@@ -102,8 +102,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "vms.urls"
-print(BASE_DIR.absolute())
-print(BASE_DIR.joinpath("templates").absolute())
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
