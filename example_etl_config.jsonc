@@ -13,17 +13,6 @@
         // Default to Django time zone if not provided
         // "time_zone": "America/New_York"
     },
-    /*
-        Email configuration setting. Will default to Django settings
-        if not provided
-        https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-EMAIL_HOST
-    */
-    // "email": {},
-    /*
-        Individuals to be notified when the ETL encounters a
-        catastrophic error & cannot continue. Ideally, this person
-        might be able to intercede & have it run to completion.
-    */
     "alert_recipients": [],
     /*
         Individuals to be notified when the ETL is complete.

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+    <body>
+        {# this is an example. feel free to style/format however you like #}
+        {# example usage of if; consult the docs for more information #}
+        {# https://docs.djangoproject.com/en/5.1/ref/templates/language/ #}
+        {% if color %}
+            <h4 style="background-color:mediumseagreen;">Below is the iShelters to VMS ETL report for {{ report_date|date:"m-d-Y"}}.</h4>
+        {% else %}
+            <h4>Below is the iShelters to VMS ETL report for {{ report_date|date:"m-d-Y"}}.</h4>
+        {% endif %}
+    </body>
+</head>

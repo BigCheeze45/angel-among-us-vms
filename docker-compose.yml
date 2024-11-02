@@ -15,6 +15,10 @@ secrets:
     environment: POSTGRES_DATABASE
   postgres_passwd:
     environment: POSTGRES_PASSWORD
+  email_user:
+    environment: EMAIL_USER
+  email_password:
+    environment: EMAIL_PASSWORD
 
 services:
   # See https://hub.docker.com/_/postgres
@@ -47,11 +51,24 @@ services:
       - postgres_db
       - postgres_user
       - postgres_passwd
+      - email_user
+      - email_password
     environment:
       - TZ=${GLOBAL_TIMEZONE:-America/New_York}
       # SECURITY WARNING: don't run with debug turned on in production!
-      - DEBUG=${DEBUG:-True}
+      - DEBUG=${DEBUG:-False}
       - DJANGO_LOG_LEVEL=${DJANGO_LOG_LEVEL:-INFO}
+      #region Email configuration
+      # Gmail SMTP: https://support.google.com/a/answer/176600?hl=en - Option 2
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_TIMEOUT=${EMAIL_TIMEOUT:-60}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-False}
+      # Including a trailing space so appended text is not squished
+      - EMAIL_SUBJECT_PREFIX=${EMAIL_SUBJECT_PREFIX:-AAU VMS }
+      - DEFAULT_FROM_EMAIL=${EMAIL_DEFAULT_FROM:-aauvms@localhost}
+      #endregion
     ports:
       - ${DJANGO_PORT:-8000}:8000
     entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]

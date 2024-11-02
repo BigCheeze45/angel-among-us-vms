@@ -4,9 +4,11 @@ from pathlib import Path
 
 from django.conf import settings
 from django.utils import timezone
+from django.core.mail import send_mail
 from django.forms.models import model_to_dict
 from django.db.utils import Error as DjangoDbError
 from django.core.management.base import BaseCommand
+from django.template.loader import render_to_string
 
 import pyjson5
 
@@ -86,7 +88,6 @@ class Command(BaseCommand):
         # endregion
 
         # 5: Generate report
-
         # calling generate report method
         # total records processed in all
         vt_records = self.total_vt_records(vt_results)
@@ -100,8 +101,34 @@ class Command(BaseCommand):
         # print report for debugging
         print(f"\n\n{report}\n")
 
-    # Gathering total records processed for each model
+        # 6: Email report
+        now = timezone.now()
+        # Django templates tutorial
+        # https://docs.djangoproject.com/en/5.1/ref/templates/language/
+        # Uncomment and modify app/templates/etl_report.html
+        # to send report as html
+        # html_message = render_to_string(
+        #     template_name="etl_report.html",
+        #     # pass variables to the template via the context dictionary
+        #     context={
+        #         "color": True,  # this is an example; can be deleted
+        #         "vt_records": vt_records,
+        #         "report_date": now,
+        #         "team_records": team_records,
+        #         "volunteer_records": volunteer_records,
+        #         "total_records_processed": total_records_processed,
+        #     },
+        # )
+        send_mail(
+            message=report,  # plain text
+            fail_silently=False,
+            from_email=None,  # Django will use the value of the DEFAULT_FROM_EMAIL setting
+            subject=f"iShelters to VMS ETL Report for {now.date().strftime("%m-%d-%Y")}",
+            recipient_list=options.get("report_recipients"),
+            # html_message=html_message, uncomment to send html message
+        )
 
+    # region Gathering total records processed for each model
     # Team records
     def total_team_records(self, team_results):
         return (
@@ -110,8 +137,7 @@ class Command(BaseCommand):
             + len(team_results.get("updates"))
         )
 
-        # volunteer records
-
+    # volunteer records
     def total_volunteer_records(self, volunteer_results):
         return (
             len(volunteer_results.get("inserts"))
@@ -119,29 +145,30 @@ class Command(BaseCommand):
             + len(volunteer_results.get("failures"))
         )
 
-        # VolunteerTeam records
-
+    # VolunteerTeam records
     def total_vt_records(self, vt_results):
         return len(vt_results.get("inserts")) + len(vt_results.get("failures"))
 
-        # Send report via email
-        # self.send_report(report)
+    # endregion
 
-    # italic format for report
+    # region Formatting
     def italic(self, txt):
+        """Italic format for report"""
         return f"\033[3m{txt}\033[0m"
 
-    # bold format for report
     def bold(self, txt):
+        """Bold format for report"""
         return f"\033[1m{txt}\033[0m"
 
-    # underlined format for report
     def underline(self, txt):
+        """Underlined format for report"""
         return "\u0332".join(txt) + "\u0332"
 
-    # coloring text for report
     def colored_txt(self, txt, color_code):
+        """Coloring text for report"""
         return f"\033[{color_code}m{txt}\033[0m"
+
+    # endregion
 
     def generate_report(self, total, volunteer, team, volunteer_team):
         """
@@ -149,7 +176,8 @@ class Command(BaseCommand):
         all information admin will need when the migration runs.
         """
         # generate title format
-        report = f"{self.bold(self.underline("ETL Report"))}\n\n"
+        now = timezone.now()
+        report = f"{self.bold(self.underline("VMS ETL Report"))} for {now.date()}\n\n"
         # generate first section format
         report += f"{self.underline("Processed Records Count")}\n"
         report += f"\tTotal Number Records Processed:\t{self.italic(total)}\n"
@@ -243,9 +271,6 @@ class Command(BaseCommand):
             report += f"\t\t{self.colored_txt("No changes have been made to the VolunteerTeam Model",31)}\n"
 
         return report
-
-    # 6: Email report
-    # TODO
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -748,22 +773,6 @@ class Command(BaseCommand):
             self.stderr.write(f"{e.message}")
             exit(1)
 
-        # Check email settings
-        if "email" not in config:
-            self.stdout.write(
-                self.style.WARNING(
-                    "Email configuration not provided. Falling back to Django settings."
-                )
-            )
-        email = {
-            "host": settings.EMAIL_HOST,
-            "port": settings.EMAIL_PORT,
-            "user": settings.EMAIL_HOST_USER,
-            "use_ssl": settings.EMAIL_USE_SSL,
-            "use_tls": settings.EMAIL_USE_TLS,
-            "password": settings.EMAIL_HOST_PASSWORD,
-        }
-        config.update(email=email)
         try:
             if "time_zone" not in config["source_database"]:
                 self.stdout.write(

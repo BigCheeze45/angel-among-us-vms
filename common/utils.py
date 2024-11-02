@@ -1,4 +1,8 @@
 from pathlib import Path
+from rest_framework.fields import BooleanField
+
+def convert_string_bool(str_bool: str) -> bool:
+    return str_bool.lower() in BooleanField.TRUE_VALUES
 
 
 def read_docker_secrets_file(secret: str, path: str = "/run/secrets") -> str | None:
