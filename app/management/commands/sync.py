@@ -107,25 +107,47 @@ class Command(BaseCommand):
         # https://docs.djangoproject.com/en/5.1/ref/templates/language/
         # Uncomment and modify app/templates/etl_report.html
         # to send report as html
-        # html_message = render_to_string(
-        #     template_name="etl_report.html",
-        #     # pass variables to the template via the context dictionary
-        #     context={
-        #         "color": True,  # this is an example; can be deleted
-        #         "vt_records": vt_records,
-        #         "report_date": now,
-        #         "team_records": team_records,
-        #         "volunteer_records": volunteer_records,
-        #         "total_records_processed": total_records_processed,
-        #     },
-        # )
+        html_message = render_to_string(
+            template_name="etl_report.html",
+            # pass variables to the template via the context dictionary
+            context={
+                "color": True,  # this is an example; can be deleted
+                "vt_records": vt_records,  # total vt record
+                "report_date": now,
+                "team_records": team_records,  # total team record
+                "volunteer_records": volunteer_records,  # total volunteer records
+                "total_records_processed": total_records_processed,  # total records processed
+                "team_results": team_results,  # team dictionary
+                "vt_results": vt_results,  # vt dictionary
+                "volunteer_results": volunteer_results,  # volunteer dictionary
+                "team_inserts": team_results.get("inserts"),
+                "team_updates": team_results.get("updates"),
+                "team_failures": team_results.get("failures"),
+                "volunteer_inserts": volunteer_results.get("inserts"),
+                "volunteer_updates": volunteer_results.get("updates"),
+                "volunteer_failures": volunteer_results.get("failures"),
+                "vt_inserts": vt_results.get("inserts"),
+                "vt_failures": vt_results.get("failures"),
+                "team_keys": team_results.keys(),
+                "volunteer_keys": volunteer_results.keys(),
+                "vt_keys": vt_results.keys(),
+                "num_team_inserts": len(team_results.get("inserts")),
+                "num_team_updates": len(team_results.get("updates")),
+                "num_team_failures": len(team_results.get("failures")),
+                "num_vol_inserts": len(volunteer_results.get("inserts")),
+                "num_vol_updates": len(volunteer_results.get("updates")),
+                "num_vol_failures": len(volunteer_results.get("failures")),
+                "num_vt_failures": len(vt_results.get("failures")),
+                "num_vt_inserts": len(vt_results.get("inserts")),
+            },
+        )
         send_mail(
             message=report,  # plain text
             fail_silently=False,
             from_email=None,  # Django will use the value of the DEFAULT_FROM_EMAIL setting
             subject=f"iShelters to VMS ETL Report for {now.date().strftime("%m-%d-%Y")}",
             recipient_list=options.get("report_recipients"),
-            # html_message=html_message, uncomment to send html message
+            html_message=html_message,  # uncomment to send html message
         )
 
     # region Gathering total records processed for each model
@@ -175,15 +197,18 @@ class Command(BaseCommand):
         This function will generate a report in a format that can be changed but should portray
         all information admin will need when the migration runs.
         """
+        # Test run for HTML
+
         # generate title format
         now = timezone.now()
-        report = f"{self.bold(self.underline("VMS ETL Report"))} for {now.date()}\n\n"
+        today = now.date()
+        report = f"{self.bold(self.underline("VMS ETL Report for"))} ({today})\n\n"
         # generate first section format
         report += f"{self.underline("Processed Records Count")}\n"
-        report += f"\tTotal Number Records Processed:\t{self.italic(total)}\n"
-        report += f"\tTotal Team Records Processed:\t{self.italic(self.total_team_records(team))}\n"
-        report += f"\tTotal Volunteer Records Processed:\t{self.italic(self.total_volunteer_records(volunteer))}\n"
-        report += f"\tTotal VolunteerTeam Records Processed:\t{self.italic(self.total_vt_records(volunteer_team))}\n\n"
+        report += f"\tTotal Number Records Processed: {self.italic(total)}\n"
+        report += f"\tTotal Team Records Processed: {self.italic(self.total_team_records(team))}\n"
+        report += f"\tTotal Volunteer Records Processed: {self.italic(self.total_volunteer_records(volunteer))}\n"
+        report += f"\tTotal Team Assignment Records Processed: {self.italic(self.total_vt_records(volunteer_team))}\n\n"
 
         # generate second section format
         # team information
@@ -208,7 +233,7 @@ class Command(BaseCommand):
             report += f"\t\t{self.colored_txt("No changes have been made to the Volunteer Model",31)}\n"
 
         # VolunteerTeam Information
-        report += f"\t{self.underline("VolunteerTeam Records Processed")}\n"
+        report += f"\t{self.underline("Team Assignment Records Processed")}\n"
         if self.total_vt_records(volunteer_team) != 0:
             report += (
                 f"\t\tNew Inserts:\t{self.italic(len(volunteer_team.get("inserts")))}\n"
@@ -217,7 +242,7 @@ class Command(BaseCommand):
                 f"\t\tFailures:\t{self.italic(len(volunteer_team.get("failures")))}\n"
             )
         else:
-            report += f"\t\t{self.colored_txt("No changes have been made to the VolunteerTeam Model",31)}\n"
+            report += f"\t\t{self.colored_txt("No changes have been made to the Team Assignments Model",31)}\n"
 
         # Third Section
         report += f"\n\n{self.underline("Information Gathered from Migration")}\n"
@@ -255,7 +280,7 @@ class Command(BaseCommand):
             report += f"\t\t{self.colored_txt("No changes have been made to the Volunteer Model",31)}\n"
 
         # volunteerTeam Model
-        report += f"\t{self.bold("VolunteerTeam Model")}\n"
+        report += f"\t{self.bold("Team Assignments Model")}\n"
         if self.total_vt_records(volunteer_team) != 0:
             # report += f"\t{self.underline("New Inserts:")}\n"
             for key in volunteer_team.keys():
@@ -268,7 +293,7 @@ class Command(BaseCommand):
                         report += f"\n\t\t\t{value}\t"
                 report += "\n"
         else:
-            report += f"\t\t{self.colored_txt("No changes have been made to the VolunteerTeam Model",31)}\n"
+            report += f"\t\t{self.colored_txt("No changes have been made to the Team Assignments Model",31)}\n"
 
         return report
 
@@ -409,10 +434,10 @@ class Command(BaseCommand):
                     )
                     inserts.append(
                         {
-                            "VMS ID": vt.id,
+                            "VMS_ID": vt.id,
                             "team": vt.team.name,
-                            "iShelters ID": vt.ishelters_id,
-                            "volunteer": vt.volunteer.full_name,
+                            "iShelters_ID": vt.ishelters_id,
+                            "Volunteer": vt.volunteer.full_name,
                         }
                     )
                 else:
@@ -491,10 +516,10 @@ class Command(BaseCommand):
                         team = Team.objects.filter(ishelters_id=ishelters_id).first()
                         team_updated_records.append(
                             {
-                                "VMS ID": team.id,
+                                "VMS_ID": team.id,
                                 "email": team.email,
                                 "name": team.name,
-                                "iShelters ID": team.ishelters_id,
+                                "iShelters_ID": team.ishelters_id,
                             }
                         )
                 else:
@@ -504,10 +529,10 @@ class Command(BaseCommand):
                     )
                     team_new_inserts.append(
                         {
-                            "VMS ID": team.id,
+                            "VMS_ID": team.id,
                             "email": team.email,
                             "name": team.name,
-                            "iShelters ID": team.ishelters_id,
+                            "iShelters_ID": team.ishelters_id,
                         }
                     )
             except DjangoDbError as e:
@@ -660,10 +685,10 @@ class Command(BaseCommand):
                         ).first()
                         volunteer_updated_records.append(
                             {
-                                "VMS ID": volunteer.id,
+                                "VMS_ID": volunteer.id,
                                 "email": volunteer.email,
                                 "name": volunteer.full_name,
-                                "iShelters ID": volunteer.ishelters_id,
+                                "iShelters_ID": volunteer.ishelters_id,
                             }
                         )
                     # endregion
@@ -675,10 +700,10 @@ class Command(BaseCommand):
                     )
                     volunteer_new_inserts.append(
                         {
-                            "VMS ID": volunteer.id,
+                            "VMS_ID": volunteer.id,
                             "email": volunteer.email,
                             "name": volunteer.full_name,
-                            "iShelters ID": volunteer.ishelters_id,
+                            "iShelters_ID": volunteer.ishelters_id,
                         }
                     )
                     # endregion
