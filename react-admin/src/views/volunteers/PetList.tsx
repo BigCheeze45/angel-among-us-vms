@@ -18,15 +18,16 @@ import {
 import {useState} from "react"
 import ContentAdd from "@mui/icons-material/Add"
 import {ENDPOINTS, GA_COUNTIES} from "../../constants"
-import {Dialog, DialogTitle, DialogContent, Button} from "@mui/material"
+import {Dialog, DialogTitle, DialogContent, Button, alertTitleClasses} from "@mui/material"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
-const EmptyActivities = () => <div>Volunteer has no activities yet</div>
+const EmptyActivities = () => <div>No Pet added yet</div>
 
-export const VolunteerActivitiesList = () => {
+export const PetList = () => {
   const [open, setOpen] = useState(false)
   const record = useRecordContext()
-  const data = record?.activities
+  const data = record?.pet
+
   const listContext = useList({data})
 
   const [create] = useCreate()
@@ -36,22 +37,24 @@ export const VolunteerActivitiesList = () => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const handleCreate = async value => {
+  const handleCreate = async ({id,description}) => {
+
     const payload = {
-      volunteer: value.id,
-      location: value.location,
-      start_date: value.start_date,
-      activity_name: value.activity_name,
+      volunteer: id,
+      description: description,
     }
 
-    const resource = `${ENDPOINTS.VOLUNTEERS}/${value.id}/activities`
+    const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/pet`;
+    console.log(resource,'rsssss')
+    const dd={data: payload};
+    console.log(dd,'dd')
     try {
       await create(resource, {data: payload})
       refresh()
-      notify("Activity added successfully", {type: "success"})
+      notify("Pet added successfully", {type: "success"})
       handleClose()
     } catch (error) {
-      notify("Error adding activity", {type: "error"})
+      notify("Error adding Pet", {type: "error"})
     }
   }
 
@@ -63,22 +66,25 @@ export const VolunteerActivitiesList = () => {
         onClick={handleOpen}
         style={{marginBottom: "1rem"}}
       >
-        Add new Activity
+        Add new Pet
       </Button>
       <Datagrid
         rowClick={false}
         empty={<EmptyActivities />}
       >
         <TextField
-          source="activity_name"
-          label="Activity"
+          source="description"
+          label="Description"
         />
-        <TextField source="location" />
-        <TextField source="description" />
+
         <DateField
-          source="start_date"
-          label="Date"
-        />
+        source="created_at"
+        label="Date Created"
+      />
+        <DateField
+        source="updated_at"
+        label="Date Updated"
+      />
       </Datagrid>
       <ActivitiesPagination />
 
@@ -87,24 +93,23 @@ export const VolunteerActivitiesList = () => {
         onClose={handleClose}
         maxWidth="md"
       >
-        <DialogTitle>New Activity</DialogTitle>
+        <DialogTitle>New Pet</DialogTitle>
         <Form onSubmit={handleCreate}>
           <DialogContent>
             <TextInput
-              source="activity_name"
-              label="Activity"
+          source="description"
+          label="Description"
               required
             />
-            <TextInput source="description" />
-            <DateInput
-              source="start_date"
+            {/* <DateInput
+              source="created_at"
               defaultValue={today}
             />
-            <AutocompleteInput
-              isRequired
-              source="location"
-              choices={GA_COUNTIES}
-            />
+                <DateInput
+              source="updated_at"
+              defaultValue={today}
+            /> */}
+          
             <SaveButton />
           </DialogContent>
         </Form>

@@ -3,7 +3,6 @@ import {
   TextField,
   TabbedShowLayout,
 } from "react-admin"
-
 import {TeamMembersList} from "./MembersList"
 
 export const TeamShow = () => (
