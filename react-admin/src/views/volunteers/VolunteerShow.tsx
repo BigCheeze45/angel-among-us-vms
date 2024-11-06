@@ -3,6 +3,8 @@ import {VolunteerTeamsList} from "./TeamsList"
 import {VolunteerSkillsList} from "./SkillsList"
 import {VolunteerShowSummary} from "./VolunteerShowSummary"
 import {VolunteerActivitiesList} from "./VolunteerActivitiesList"
+import { ChildrenList } from "./ChildrenList"
+import { PetList } from "./PetList"
 
 export const VolunteerShow = () => (
   <Show>
@@ -18,6 +20,12 @@ export const VolunteerShow = () => (
       </TabbedShowLayout.Tab>
       <TabbedShowLayout.Tab label="activities">
         <VolunteerActivitiesList />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Children">
+        <ChildrenList />
+      </TabbedShowLayout.Tab>
+      <TabbedShowLayout.Tab label="Pets">
+        <PetList />
       </TabbedShowLayout.Tab>
       <TabbedShowLayout.Tab label="address">
         <TextField source="address_line_1" />
