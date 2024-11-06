@@ -1,10 +1,14 @@
-from django.contrib.auth.models import User
+from http import HTTPMethod
 
+from django.contrib.auth.models import User
 from knox.views import LoginView as KnoxLoginView
 from knox.views import LogoutView as KnoxLogoutView
 from knox.views import LogoutAllView as KnoxLogoutAllView
 
-from rest_framework import exceptions
+from rest_framework.response import Response
+from rest_framework import exceptions, status
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication as DRFBasicAuthentication
 
 
@@ -40,7 +44,7 @@ class LoginView(KnoxLoginView):
         # build permissions into a format react-admin understands
         # https://marmelab.com/react-admin/AuthRBAC.html
         user_perms = request.user.get_all_permissions()
-        # p_list = [
+        # user_perms = [
         #     "auth.change_permission",
         #     "contenttypes.change_contenttype",
         #     "auth.add_user",
@@ -66,6 +70,12 @@ class LoginView(KnoxLoginView):
         data["user"]["permissions"] = ra_perms_dict
         # data["user"]["roles"] = [group.name for group in request.user.groups.all()]
         return data
+
+
+@api_view([HTTPMethod.POST])
+def refresh_token(request):
+    """Refresh token"""
+    return Response(None, status=status.HTTP_200_OK)
 
 
 class LogoutView(KnoxLogoutView):

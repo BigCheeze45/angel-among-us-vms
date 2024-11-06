@@ -24,4 +24,6 @@ RUN npm install
 
 COPY react-admin .
 
-CMD ["npm", "run", "dev"]
+#CMD ["npm", "run", "dev"]
+# https://stackoverflow.com/a/61137716
+CMD [ -d "node_modules" ] && npm run dev || npm ci && npm run dev

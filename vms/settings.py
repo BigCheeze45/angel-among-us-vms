@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
-from datetime import timedelta
 from pathlib import Path
+from datetime import timedelta
 from common.utils import read_docker_secrets_file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,11 +56,15 @@ if not DEBUG:
     handler400 = "rest_framework.exceptions.bad_request"
 
 # Django-Rest-Knox
+# https://jazzband.github.io/django-rest-knox/
 KNOX_TOKEN_MODEL = "knox.AuthToken"
 REST_KNOX = {
     "AUTO_REFRESH": True,
+    "TOKEN_LIMIT_PER_USER": 1,
     "TOKEN_MODEL": "knox.AuthToken",
     "TOKEN_TTL": timedelta(minutes=15),
+    "AUTO_REFRESH_MAX_TTL": timedelta(hours=1),
+    "MIN_REFRESH_INTERVAL": 15,  # number of seconds
     "USER_SERIALIZER": "knox.serializers.UserSerializer",
 }
 
