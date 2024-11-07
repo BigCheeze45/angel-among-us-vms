@@ -87,14 +87,14 @@ export const authProvider = ({
       // return Promise.resolve();
     },
 
-    // async checkError(error) {
-        // const status = error.status;
-        // if (status === 401 || status === 403) {
-        //     localStorage.removeItem('apiToken');
-        //     return Promise.reject();
-        // }
-    //     return Promise.resolve();
-    // },
+    async checkError(error) {
+        const status = error.status;
+        if (status === 401) {
+            localStorage.removeItem('apiToken');
+            return Promise.reject();
+        }
+        return Promise.resolve();
+    },
 
     async getPermissions(params) {
       console.log("getPermissions")

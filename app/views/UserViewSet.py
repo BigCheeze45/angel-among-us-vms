@@ -1,18 +1,14 @@
 import uuid
 from http import HTTPMethod
-
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User, Group
 from django.db.utils import Error as DjangoDBError
-
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException, ValidationError, PermissionDenied
-
 import pandas as pd
-
 from common.exceptions import ConflictError
 from common.utils import django_db_error_parser
 from app.serializer.UserSerializer import UserSerializer, UserCreateSerializer
@@ -33,17 +29,21 @@ class UserViewSet(viewsets.ModelViewSet):
     export_fields = ["first_name", "last_name", "email"]
 
     def destroy(self, request, *args, **kwargs):
-        # TODO
+        # DONE - check if user has permissions
+        if not request.user.has_perm("auth.delete_user"):
+            raise PermissionDenied("You do not have permission to delete this user.")
         return super().destroy(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        # TODO - check if user has permissions
+        # DONE - check if user has permissions
+        if not request.user.has_perm("auth.change_user"):
+            raise PermissionDenied("You do not have permission to update this user.")
         return super().update(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         # Returns True if the user has the specified permission, where perm is in the format "<app label>.<permission codename>".
         if not request.user.has_perm("auth.add_user"):
-            raise PermissionDenied()
+            raise PermissionDenied("You do not have permission to create a user.")
 
         user_create_serializer = UserCreateSerializer(data=request.data)
         # validate the incoming data & abort if it's not valid

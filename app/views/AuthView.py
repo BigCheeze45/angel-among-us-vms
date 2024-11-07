@@ -1,9 +1,7 @@
 from django.contrib.auth.models import User
-
 from knox.views import LoginView as KnoxLoginView
 from knox.views import LogoutView as KnoxLogoutView
-from knox.views import LogoutAllView as KnoxLogoutAllView
-
+from knox.views import LogoutAllView as KnoxLogoutAllV
 from rest_framework import exceptions
 from rest_framework.authentication import BasicAuthentication as DRFBasicAuthentication
 
@@ -72,5 +70,5 @@ class LogoutView(KnoxLogoutView):
     pass
 
 
-class LogoutAllView(KnoxLogoutAllView):
+class LogoutAllView(KnoxLogoutView):
     pass

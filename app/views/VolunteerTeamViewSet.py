@@ -1,7 +1,5 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework import viewsets
-
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.VolunteerTeamSerializer import VolunteerTeamSerializer
