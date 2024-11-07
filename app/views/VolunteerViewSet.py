@@ -18,13 +18,13 @@ class VolunteerViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerSerializer
     filterset_fields = [
         "active",
-        "ishelters_access_flag",
-        "ishelters_category_type",
+        "job_title",
         "has_maddie_certifications",
         "maddie_certifications_received_date",
     ]
     search_fields = [
         "full_name",
+        "ishelters_id",
         "preferred_name",
     ]
     export_fields = ["full_name", "email"]

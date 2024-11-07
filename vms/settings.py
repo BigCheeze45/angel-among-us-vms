@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
-from common.utils import read_docker_secrets_file
+from common.utils import read_docker_secrets_file, convert_string_bool
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,14 +24,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = read_docker_secrets_file("secret_key")
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = convert_string_bool(os.getenv("DEBUG", "False"))
 
 # If you set DEBUG to False, you also need to properly set the ALLOWED_HOSTS setting.
 # https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-ALLOWED_HOSTS
 ALLOWED_HOSTS = ["localhost", "django"]
 
-# Frameworks
+# Email configuration
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_DEFAULT_FROM")
+EMAIL_SUBJECT_PREFIX = os.getenv("EMAIL_SUBJECT_PREFIX")
+EMAIL_HOST_USER = read_docker_secrets_file("email_user")
+EMAIL_HOST_PASSWORD = read_docker_secrets_file("email_password")
+EMAIL_USE_TLS = convert_string_bool(os.getenv("EMAIL_USE_TLS", "True"))
+EMAIL_USE_SSL = convert_string_bool(os.getenv("EMAIL_USE_SSL", "False"))
+
 # django-rest-framework
 # https://www.django-rest-framework.org
 
@@ -56,9 +66,11 @@ if not DEBUG:
     handler500 = "rest_framework.exceptions.server_error"
     handler400 = "rest_framework.exceptions.bad_request"
 
+
 # django-phonenumber-field
 # ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
 PHONENUMBER_DEFAULT_REGION = "US"
+
 
 # django-cor-headers
 # https://github.com/adamchainz/django-cors-headers
@@ -66,6 +78,7 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
 # CORS_ALLOWED_ORIGINS = [*ALLOWED_HOSTS, "http://localhost", "http://localhost:8000"]
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -98,7 +111,7 @@ ROOT_URLCONF = "vms.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR.joinpath("templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

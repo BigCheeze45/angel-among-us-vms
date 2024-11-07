@@ -15,7 +15,7 @@ class VolunteerTeam(models.Model):
 
     team = models.ForeignKey(
         Team,
-        # editable=False,
+        editable=False,
         db_column="team_id",
         # when a team is deleted, also delete all its members
         on_delete=models.CASCADE,
@@ -28,9 +28,9 @@ class VolunteerTeam(models.Model):
         on_delete=models.CASCADE,
     )
     end_date = models.DateTimeField(null=True, blank=True)
-    last_modified_at = models.DateField(null=True, auto_now=True)
-    start_date = models.DateTimeField(null=False, auto_now_add=True)
-    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    start_date = models.DateTimeField(null=True, blank=True)
+    application_received_date = models.DateTimeField(auto_now=True)
+    ishelters_id = models.IntegerField(unique=True, editable=False)
 
     def __str__(self) -> str:
         return self.team.name

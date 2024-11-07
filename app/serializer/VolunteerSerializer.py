@@ -30,10 +30,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
         # include all fields except the following
-        exclude = [
-            "ishelters_created_dt",
-            "application_received_date",
-        ]
+        exclude = ["ishelters_created_dt"]
 
     def get_skills(self, obj):
         volunteer_skills = VolunteerSkill.objects.filter(volunteer=obj).select_related(

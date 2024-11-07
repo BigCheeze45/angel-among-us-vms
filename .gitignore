@@ -5,9 +5,10 @@
 IGNORE/
 react-admin/.vite/deps_temp_*/
 
-database-client-config.json
+*.json
+*.jsonc
 *.pdk
-
+!example_etl_config.jsonc
 ### Django ###
 *.log
 *.pot

@@ -1,5 +1,8 @@
-import {Show, TextField, TabbedShowLayout} from "react-admin"
-
+import {
+  Show,
+  TextField,
+  TabbedShowLayout,
+} from "react-admin"
 import {TeamMembersList} from "./MembersList"
 
 export const TeamShow = () => (

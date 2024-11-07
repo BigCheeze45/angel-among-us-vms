@@ -1,8 +1,14 @@
 import re
-from pathlib import Path
 from collections import namedtuple
+from pathlib import Path
 
 from django.db.utils import Error
+
+from rest_framework.fields import BooleanField
+
+
+def convert_string_bool(str_bool: str) -> bool:
+    return str_bool.lower() in BooleanField.TRUE_VALUES
 
 
 ParsedError = namedtuple("ParsedError", ["raw", "slug", "detail", "field"])

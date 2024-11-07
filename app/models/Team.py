@@ -1,33 +1,29 @@
 from django.db import models
 
-from app.models.TeamCategory import TeamCategory
-
 
 class Team(models.Model):
     """
     A volunteering team
     """
 
+    class Meta:
+        constraints = [
+            # fmt: off
+            # (https://www.postgresql.org/docs/15/release-15.html#id-1.11.6.5.5.3.4)
+            # Allow nulls in the email field but don't count null as unique.
+            # Only available on Postgres v15+
+            # This is to support importing teams from iShelters where teams
+            # don't have email
+            models.UniqueConstraint(name="email_null_not_unique", fields=["email"], nulls_distinct=True)
+            # fmt: on
+        ]
+
     name = models.CharField(max_length=200, unique=True, null=False)
     description = models.TextField(blank=True, null=True)
-    email = models.EmailField(null=False, unique=True)
-    created_at = models.DateTimeField(null=False, auto_now_add=True)
-    category = models.ForeignKey(
-        TeamCategory,
-        db_column="category_id",
-        # Raise an error when trying to delete a category
-        # associated with a team
-        on_delete=models.PROTECT,
-    )
-
-    # Info imported from iShelters
-    ishelters_id = models.IntegerField(null=True, editable=False)
+    email = models.EmailField(null=True)
+    ishelters_id = models.IntegerField(unique=True, editable=False)
     ishelters_created_dt = models.DateTimeField(null=True, editable=False)
-    application_received_date = models.DateTimeField(null=True, editable=False)
-    # TODO - make this a FK relationship to Users.ishelters_id
-    ishelters_created_by_id = models.IntegerField(
-        null=True, editable=False
-    )  # , on_delete=models.SET_NULL)
+    application_received_date = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.name

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        table,
+        th,
+        td {
+
+            border: 1px solid black;
+            font-size: 15px;
+        }
+
+        table {
+            width: 80%;
+        }
+
+        th,
+        td {
+            width: 15%;
+        }
+    </style>
+
+<body>
+    {# this is an example. feel free to style/format however you like #}
+    {# example usage of if; consult the docs for more information #}
+    {# https://docs.djangoproject.com/en/5.1/ref/templates/language/ #}
+
+    <h2 style="background-color:mediumseagreen;">Below is the iShelters to VMS ETL report for
+        {{ report_date|date:"m-d-Y"}}.
+    </h2>
+    {#First Section#}
+    <div>
+        {#Heading#}
+        <h3><ins>Processed Records Count</ins></h3>
+        <p style="font-size:15px;">
+            &emsp;&emsp;Total Number Records Processed:&emsp;<i>{{total_records_processed}}</i>
+            <br>
+            &emsp;&emsp;Total Team Records Processed:&emsp;<i>{{team_records}}</i>
+            <br>
+            &emsp;&emsp;Total Volunteer Records Processed:&emsp;<i>{{volunteer_records}}</i>
+            <br>
+            &emsp;&emsp;Total Team Assignment Records Processed:&emsp;<i>{{vt_records}}</i>
+            <br>
+            <br>
+            &emsp;&emsp;<ins>Team Records Processed</ins>
+            <br>
+            {% if team_records != 0 %}
+            &emsp;&emsp;&emsp;&emsp;New Inserts:&emsp;<i>{{team_inserts|length}}</i><br>
+            &emsp;&emsp;&emsp;&emsp;Updates:&emsp;<i>{{team_updates|length}}</i><br>
+            &emsp;&emsp;&emsp;&emsp;Failures:&emsp;<i>{{team_failures|length}}</i>
+            {% else %}
+            &emsp;&emsp;&emsp;&emsp;<span style="color:red">No changes have been made to the Teams Model</span>
+            {% endif %}
+            <br>
+            &emsp;&emsp;<ins>Volunteer Records Processed</ins>
+            <br>
+            {% if volunteer_records != 0 %}
+            &emsp;&emsp;&emsp;&emsp;New Inserts:&emsp;<i>{{volunteer_inserts|length}}</i><br>
+            &emsp;&emsp;&emsp;&emsp;Updates:&emsp;<i>{{volunteer_updates|length}}</i><br>
+            &emsp;&emsp;&emsp;&emsp;Failures:&emsp;<i>{{volunteer_failures|length}}</i>
+            {% else %}
+            &emsp;&emsp;&emsp;&emsp;<span style="color:red">No changes have been made to the Volunteer Model</span>
+            {% endif %}
+            <br>
+            &emsp;&emsp;<ins>Team Assignment Records Processed</ins>
+            <br>
+            {% if vt_records != 0 %}
+            &emsp;&emsp;&emsp;&emsp;New Inserts:&emsp;<i>{{vt_inserts|length}}</i><br>
+            &emsp;&emsp;&emsp;&emsp;Failures:&emsp;<i>{{vt_failures|length}}</i>
+            {% else %}
+            &emsp;&emsp;&emsp;&emsp;<span style="color:red">No changes have been made to the Team Assignments
+                Model</span>
+            {% endif %}
+        </p>
+    </div>
+
+    {#Second Section#}
+    <div>
+        <h3><ins>Information Gathered from Migration</ins></h3>
+        <p style="font-size:15px;">
+            {#Team Model#}
+            &emsp;&emsp;<b style="font-size:15px;">Team Model</b><br>
+
+            {% if team_records != 0 %}
+
+            {% for key in team_keys %}
+
+            {% if num_team_inserts != 0 and key == "inserts" %}
+            {#New Inserts are shown second#}
+            &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">New Inserts:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>VMS ID</th>
+                <th>Email</th>
+                <th>name</th>
+                <th>iShelters ID</th>
+            </tr>
+            {%for i in team_inserts %}
+            <tr>
+                <td>{{i.VMS_ID}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.iShelters_ID}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+
+        {%elif num_team_updates != 0 and key == "updates" %}
+        {#Updates are shown last#}
+        &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">Updates:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>VMS ID</th>
+                <th>Email</th>
+                <th>name</th>
+                <th>iShelters ID</th>
+            </tr>
+            {%for i in team_updates%}
+            <tr>
+                <td>{{i.VMS_ID}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.iShelters_ID}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+
+        {%elif num_team_failures != 0 and key == "failures" %}
+        {#Failures are shown first#}
+        &emsp;&emsp;&emsp;&emsp;<ins>Failures:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>ID</th>
+                <th>Error</th>
+            </tr>
+            {%for i in team_failures%}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.error}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+        {%else%}
+        <span style="color:red; font-size:15px;"><br>&emsp;&emsp;&emsp;&emsp;No {{key}}</span><br>
+        {% endif %}
+
+        {% endfor %}
+        {%else%}
+        <span style="color:red; font-size:15px;">&emsp;&emsp;&emsp;&emsp;No changes have been made to the Teams
+            Model</span>
+        {% endif %}
+        <br><br>
+
+
+        {#Volunteer model#}
+        &emsp;&emsp;<b style="font-size:15px;">Volunteer Model</b><br>
+        {% if volunteer_records != 0 %}
+
+        {% for key in volunteer_keys %}
+
+        {% if num_vol_inserts != 0 and key == "inserts" %}
+        &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">New Inserts:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>VMS ID</th>
+                <th>Email</th>
+                <th>name</th>
+                <th>iShelters ID</th>
+            </tr>
+            {%for i in volunteer_inserts%}
+            <tr>
+                <td>{{i.VMS_ID}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.iShelters_ID}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+
+        {%elif num_vol_updates != 0 and key == "updates" %}
+        &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">Updates:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>VMS ID</th>
+                <th>Email</th>
+                <th>name</th>
+                <th>iShelters ID</th>
+            </tr>
+            {%for i in volunteer_updates%}
+            <tr>
+                <td>{{i.VMS_ID}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.iShelters_ID}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+
+        {%elif num_vol_failures != 0 and key == "failures" %}
+        &emsp;&emsp;&emsp;&emsp;<ins>Failures:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>ID</th>
+                <th>Error</th>
+            </tr>
+            {%for i in volunteer_failures%}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.error}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+        {%else%}
+        <span style="color:red; font-size:15px;"><br>&emsp;&emsp;&emsp;&emsp;No {{key}}</span><br>
+        {% endif %}
+
+        {% endfor %}
+        {%else%}
+        <span style="color:red; font-size: 15px;">&emsp;&emsp;&emsp;&emsp;No changes have been made to the Volunteer
+            Model</span>
+        {% endif %}
+        <br><br>
+
+        {#VolunteerTeam model#}
+        &emsp;&emsp;<b style="font-size:15px;">Team Assignments Model</b><br>
+        {% if vt_records != 0 %}
+
+        {% for key in vt_keys %}
+
+        {% if num_vt_inserts != 0 and key == "inserts" %}
+        &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">New Inserts:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>VMS ID</th>
+                <th>Team</th>
+                <th>iShelters ID</th>
+                <th>Volunteer</th>
+            </tr>
+            {%for i in vt_inserts%}
+            <tr>
+                <td>{{i.VMS_ID}}</td>
+                <td>{{i.team}}</td>
+                <td>{{i.iShelters_ID}}</td>
+                <td>{{i.Volunteer}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+
+        {%elif num_vt_failures != 0 and key == "failures" %}
+        &emsp;&emsp;&emsp;&emsp;<ins style="font-size:15px;">Failures:</ins><br>
+        <table style="font-size:15px;">
+            <tr>
+                <th>ID</th>
+                <th>Error</th>
+            </tr>
+            {%for i in vt_failures%}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.error}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+        {%else%}
+        <span style="color:red; font-size:15px;"><br>&emsp;&emsp;&emsp;&emsp;No {{key}}</span><br>
+        {% endif %}
+        {% endfor %}
+        {%else%}
+        <span style="color:red;font-size:15px;">&emsp;&emsp;&emsp;&emsp;No changes have been made to the Team
+            Assignments Model</span>
+        {% endif %}
+        </p>
+
+    </div>
+
+</body>
+</head>

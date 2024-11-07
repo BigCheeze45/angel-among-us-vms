@@ -27,14 +27,25 @@ clean:
 	rm -f .devcontainer/.pdk
 	rm -fr react-admin/node_modules
 
-# Destroy and rebuild the database
-cleandb:
+# Destroy and rebuild the iShelters dev database
+cleanishelters:
+	$(DOCKER_COMPOSE) down ishelters --volumes
+	$(DOCKER_COMPOSE) up ishelters -d
+	sleep 10
+	$(MAKE) mimesis
+
+# Destroy and rebuild the application database
+cleanvms:
 	$(DOCKER_COMPOSE) down database --volumes
 	$(DOCKER_COMPOSE) up database -d
 	sleep 10
 	$(MAKE) makemigrations
 	$(MAKE) migrate
-	$(MAKE) loaddata
+
+# Combine cleaning the vms & ishelters
+cleandbs:
+	$(MAKE) cleanishelters
+	$(MAKE) cleanvms
 
 # Login into the specified container
 login:
@@ -44,21 +55,18 @@ login:
 migrate:
 	docker exec -t $(DJANGO_CONTAINER) python manage.py migrate
 
-# Dump DB to json file
-dumpdata:
-	docker exec -t $(DJANGO_CONTAINER) python manage.py dumpdata --output app/fixtures/dumpdata.json
-
-# Load sample fixtures
-loaddata:
-	docker exec -t $(DJANGO_CONTAINER) python manage.py loaddata app/fixtures/dumpdata.json
-
 # This command creates new migration files based on the changes detected in the models.
 makemigrations:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py makemigrations app
 
-# Run the mimesis command to load randomly generated data
+# Load fake data generated using mimesis into development
+# iShelters database
 mimesis:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py mimesis
+
+# Synchronize VMS with iShelters
+sync:
+	docker exec -ti $(DJANGO_CONTAINER) python manage.py sync
 
 # Create a new Django admin super user
 super:
@@ -72,10 +80,12 @@ djangotest:
 .PHONY: init
 init:
 	@echo "Setting up VMS Developemnt environment"
+	$(MAKE) clean
 	$(MAKE) build
 	$(MAKE) up
 	# FIXME - Hack until dependencies & health checks can be added
 	sleep 15
+	$(MAKE) mimesis
 	$(MAKE) migrate
-	$(MAKE) loaddata
+	$(MAKE) sync
 	@echo "Happy coding!"

@@ -18,6 +18,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     search_fields = [
         "name",
         "email",
+        "ishelters_id",
         "description",
     ]
     export_fields = ["name", "description", "email"]
