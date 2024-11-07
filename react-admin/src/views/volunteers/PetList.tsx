@@ -37,17 +37,16 @@ export const PetList = () => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const handleCreate = async ({id,description}) => {
-
+  const handleCreate = async ({id, description}) => {
     const payload = {
       volunteer: id,
       description: description,
     }
 
-    const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/pet`;
-    console.log(resource,'rsssss')
-    const dd={data: payload};
-    console.log(dd,'dd')
+    const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/pet`
+    console.log(resource, "rsssss")
+    const dd = {data: payload}
+    console.log(dd, "dd")
     try {
       await create(resource, {data: payload})
       refresh()
@@ -78,13 +77,13 @@ export const PetList = () => {
         />
 
         <DateField
-        source="created_at"
-        label="Date Created"
-      />
+          source="created_at"
+          label="Date Created"
+        />
         <DateField
-        source="updated_at"
-        label="Date Updated"
-      />
+          source="updated_at"
+          label="Date Updated"
+        />
       </Datagrid>
       <ActivitiesPagination />
 
@@ -97,8 +96,8 @@ export const PetList = () => {
         <Form onSubmit={handleCreate}>
           <DialogContent>
             <TextInput
-          source="description"
-          label="Description"
+              source="description"
+              label="Description"
               required
             />
             {/* <DateInput
@@ -109,7 +108,7 @@ export const PetList = () => {
               source="updated_at"
               defaultValue={today}
             /> */}
-          
+
             <SaveButton />
           </DialogContent>
         </Form>

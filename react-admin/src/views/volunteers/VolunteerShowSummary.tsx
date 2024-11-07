@@ -17,10 +17,13 @@ export const VolunteerShowSummary = () => (
       <BooleanField source="active" />
       <DateField source="date_of_birth" />
       <DateField source="active_status_change_date" />
-      <BooleanField source="has_maddie_certifications"/>
+      <BooleanField source="has_maddie_certifications" />
       <DateField source="maddie_certifications_received_date" />
-      <DateField source="application_received_date" showTime label="Last updated" />
+      <DateField
+        source="application_received_date"
+        showTime
+        label="Last updated"
+      />
     </SimpleShowLayout>
   </Show>
 )
- 

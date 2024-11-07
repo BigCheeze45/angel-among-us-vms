@@ -3,8 +3,8 @@ import {VolunteerTeamsList} from "./TeamsList"
 import {VolunteerSkillsList} from "./SkillsList"
 import {VolunteerShowSummary} from "./VolunteerShowSummary"
 import {VolunteerActivitiesList} from "./VolunteerActivitiesList"
-import { ChildrenList } from "./ChildrenList"
-import { PetList } from "./PetList"
+import {ChildrenList} from "./ChildrenList"
+import {PetList} from "./PetList"
 
 export const VolunteerShow = () => (
   <Show>

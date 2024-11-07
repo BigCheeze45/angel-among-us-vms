@@ -16,7 +16,7 @@ import {useState} from "react"
 import {ENDPOINTS} from "../../constants"
 import ContentAdd from "@mui/icons-material/Add"
 import {Dialog, DialogTitle, DialogContent, Button} from "@mui/material"
-import { resourceUsage } from "process"
+import {resourceUsage} from "process"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
 const EmptySkills = () => <div>Volunteer has no skills/interests yet</div>
@@ -45,7 +45,6 @@ export const VolunteerSkillsList = () => {
   const handleClose = () => setOpen(false)
 
   const handleCreate = async ({id, skill}) => {
-
     const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/skills`
     try {
       await create(resource, {data: {volunteer: id, skill}})
