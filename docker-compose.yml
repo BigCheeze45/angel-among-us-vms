@@ -95,3 +95,4 @@ services:
       - ${MYSQL_PORT:-3306}:3306
     volumes:
       - ishelters:/var/lib/mysql
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/docker_init/ishelters:/docker-entrypoint-initdb.d

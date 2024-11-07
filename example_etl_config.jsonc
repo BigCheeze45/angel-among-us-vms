@@ -13,7 +13,6 @@
         // Default to Django time zone if not provided
         // "time_zone": "America/New_York"
     },
-    "alert_recipients": [],
     /*
         Individuals to be notified when the ETL is complete.
         They will receive a report of changes

@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0008_remove_volunteeractivity_end_date_and_more'),
+        ('app', '0001_initial'),
     ]
 
     operations = [
