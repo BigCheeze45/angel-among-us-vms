@@ -33,6 +33,14 @@ services:
       - postgres_db
       - postgres_user
       - postgres_passwd
+    #Healthcheck for database
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "$$POSTGRES_USER" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   django:
     working_dir: /app
     volumes:
@@ -56,6 +64,14 @@ services:
     ports:
       - ${DJANGO_PORT:-8000}:8000
     entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+    #Healthcheck for django
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   react-admin:
     image: aau-vms-frontend
     container_name: react
@@ -72,6 +88,14 @@ services:
     depends_on:
       - database
       - django
+    #Healthcheck for react-admin
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5173" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
   ishelters:
     image: mysql
     container_name: aau_ishelters
