@@ -9,9 +9,9 @@ all: init
 # Build the Docker images
 build:
 	@echo "Building Django image"
-	docker build --target backend -t aau-vms-backend .
+	docker build --pull --no-cache --target backend -t aau-vms-backend .
 	@echo "Building React-Admin image"
-	docker build --target frontend -t aau-vms-frontend .
+	docker build --pull --no-cache --target frontend -t aau-vms-frontend .
 
 # Bring up the Docker Compose stack
 up:

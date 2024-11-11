@@ -1,5 +1,7 @@
 from django.db import models
 
+from common.constants import ISHELTERS_PROFILE_URL
+
 
 class Volunteer(models.Model):
     """
@@ -21,6 +23,7 @@ class Volunteer(models.Model):
 
     job_title = models.CharField(null=True, default="AAU Volunteer")
     ishelters_id = models.IntegerField(unique=True, editable=False)
+    ishelters_profile = models.URLField(null=True, blank=True)
     maddie_certifications_received_date = models.DateField(null=True, blank=True)
     ishelters_created_dt = models.DateTimeField(null=True, editable=False)
     application_received_date = models.DateTimeField(auto_now=True)
@@ -40,6 +43,9 @@ class Volunteer(models.Model):
                 self.full_name = f"{self.first_name.strip()} {self.middle_name.strip()} {self.last_name.strip()}"
             else:
                 self.full_name = f"{self.first_name.strip()} {self.last_name.strip()}"
+        # Update ishelters profile URL
+        if self.ishelters_id:
+            self.ishelters_profile = ISHELTERS_PROFILE_URL.format(self.ishelters_id)
         return super().save(*args, **kwargs)
 
     def __str__(self) -> str:

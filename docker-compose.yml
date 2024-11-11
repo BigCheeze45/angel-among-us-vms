@@ -82,7 +82,7 @@ services:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/.env:/app/.env
       - ${LOCAL_WORKSPACE_FOLDER:-.}/react-admin:/app
       # https://github.com/vitejs/vite/discussions/15532#discussioncomment-8038794
-      - node_modules:/app/node_modules
+      # - node_modules:/app/node_modules
     ports:
       - ${VITE_PORT:-80}:5173
   ishelters:

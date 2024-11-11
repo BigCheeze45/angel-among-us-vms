@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from datetime import timedelta
+
 from common.utils import read_docker_secrets_file, convert_string_bool
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,24 +51,34 @@ EMAIL_USE_SSL = convert_string_bool(os.getenv("EMAIL_USE_SSL", "False"))
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [],
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
     ],
-    "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
     "PAGE_SIZE": 25,
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
+    "DEFAULT_AUTHENTICATION_CLASSES": ["knox.auth.TokenAuthentication"],
 }
+
 # Do not enable JSON responses for 400 & 500 unhandled exceptions
 # during dev
 if not DEBUG:
     handler500 = "rest_framework.exceptions.server_error"
     handler400 = "rest_framework.exceptions.bad_request"
 
+# Django-Rest-Knox
+# https://jazzband.github.io/django-rest-knox/
+KNOX_TOKEN_MODEL = "knox.AuthToken"
+REST_KNOX = {
+    "AUTO_REFRESH": True,
+    "TOKEN_LIMIT_PER_USER": 1,
+    "TOKEN_MODEL": "knox.AuthToken",
+    "TOKEN_TTL": timedelta(minutes=15),
+    "AUTO_REFRESH_MAX_TTL": timedelta(hours=1),
+    "MIN_REFRESH_INTERVAL": 15,  # number of seconds
+    "USER_SERIALIZER": "knox.serializers.UserSerializer",
+}
 
 # django-phonenumber-field
 # ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
@@ -85,6 +98,7 @@ INSTALLED_APPS = [
     "app.apps.AppConfig",
     "corsheaders",
     "rest_framework",
+    "knox",
     "django_filters",
     "django.contrib.auth",
     "django.contrib.admin",

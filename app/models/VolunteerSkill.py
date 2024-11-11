@@ -8,8 +8,8 @@ class VolunteerSkill(models.Model):
     Association table linking Volunteers and the skills/interests they have.
     """
 
+    type = models.CharField(max_length=10, null=False)
     skill = models.CharField(max_length=100, null=False)
-    type = models.CharField(max_length=100, null=False)
     volunteer = models.ForeignKey(
         Volunteer,
         db_column="volunteer_id",

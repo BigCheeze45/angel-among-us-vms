@@ -1,4 +1,7 @@
 ERROR_DETAIL_CODES = {"IntegrityError": "data_integrity", "ProtectedError": "protected"}
+ISHELTERS_BASE_URL = "https://ishelter.ishelters.com"
+# # https://ishelter.ishelters.com/pp/profile.php?id=373251
+ISHELTERS_PROFILE_URL = ISHELTERS_BASE_URL + "/pp/profile.php?id={}"
 
 SHELTER_ID = 223
 ISHELTERS_CREATED_BY_IDS = [

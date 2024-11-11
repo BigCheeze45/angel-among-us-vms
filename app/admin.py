@@ -7,7 +7,6 @@ from app.models import (
     VolunteerTeam,
     VolunteerSkill,
     VolunteerActivity,
-    VolunteerMilestone,
 )
 
 # make models available in django admin
@@ -16,4 +15,3 @@ admin.site.register(Volunteer)
 admin.site.register(VolunteerTeam)
 admin.site.register(VolunteerSkill)
 admin.site.register(VolunteerActivity)
-admin.site.register(VolunteerMilestone)

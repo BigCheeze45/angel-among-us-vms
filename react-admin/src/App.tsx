@@ -1,12 +1,13 @@
 import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
+import authProvider from "./authProvider"
 import {Admin, Resource} from "react-admin"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
-import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
+import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
 import {VolunteerEdit} from "./views/volunteers/VolunteerEdit"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
@@ -14,10 +15,20 @@ import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
 import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
 export const App = () => {
-  const drfProvider = dataProvider()
-  const {authProvider, gsiParams} = useGoogleAuthProvider({
+  // configure Sign-in with Google
+  // Only one auto re-authn request can be made every 10 minutes.
+  const {gsiParams, authProvider: googleAuthProvider} = useGoogleAuthProvider({
+    auto_select: true,
+    itp_support: true,
+    use_fedcm_for_prompt: true,
     client_id: GOOGLE_CLIENT_ID,
+    cancel_on_tap_outside: false,
+    tokenStore: localStorageTokenStore,
   })
+  const drfDataProvider = dataProvider()
+  // wrap out auth provider around Google's, making sure to provide they're using
+  // the same token store
+  const drfAuthProvider = authProvider(googleAuthProvider, localStorageTokenStore)
 
   return (
     <GoogleAuthContextProvider value={gsiParams}>
@@ -26,8 +37,8 @@ export const App = () => {
         requireAuth
         layout={Layout}
         loginPage={LoginPage}
-        dataProvider={drfProvider}
-        authProvider={authProvider}
+        dataProvider={drfDataProvider}
+        authProvider={drfAuthProvider}
       >
         <Resource
           name="volunteers"

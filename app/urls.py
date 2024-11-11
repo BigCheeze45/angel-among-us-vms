@@ -8,7 +8,6 @@ from app.views.VolunteerViewSet import VolunteerViewSet
 from app.views.VolunteerSkillView import VolunteerSkillViewSet
 from app.views.VolunteerTeamViewSet import VolunteerTeamViewSet
 from app.views.VolunteerActivityViewSet import VolunteerActivityViewSet
-from app.views.VolunteerMilestoneViewSet import VolunteerMilestoneViewSet
 
 from app.views.VolunteerPetViewSet import VolunteerPetViewSet
 from app.views.VolunteerChildrenViewSet import VolunteerChildrenViewSet
@@ -27,9 +26,6 @@ team_router.register(r"members", TeamViewSet, basename="team-members")
 volunteer_router = routers.NestedSimpleRouter(router, r"volunteers", lookup="volunteer")
 volunteer_router.register(r"teams", VolunteerTeamViewSet, basename="volunteer-teams")
 volunteer_router.register(r"skills", VolunteerSkillViewSet, basename="volunteer-skills")
-volunteer_router.register(
-    r"milestones", VolunteerMilestoneViewSet, basename="volunteer-milestones"
-)
 volunteer_router.register(
     r"activities", VolunteerActivityViewSet, basename="volunteer-activities"
 )

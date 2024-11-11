@@ -3,4 +3,3 @@ from .Volunteer import Volunteer
 from .VolunteerTeam import VolunteerTeam
 from .VolunteerSkill import VolunteerSkill
 from .VolunteerActivity import VolunteerActivity
-from .VolunteerMilestone import VolunteerMilestone

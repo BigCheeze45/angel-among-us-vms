@@ -1,16 +1,15 @@
 import uuid
 from http import HTTPMethod
-
 from django.http import FileResponse
-
 import pandas as pd
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
-
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from app.models.Team import Team
+from app.models.Volunteer import Volunteer
+from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.TeamSerializer import TeamSerializer
+from app.serializer.VolunteerSerializer import VolunteerSerializer
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -22,6 +21,12 @@ class TeamViewSet(viewsets.ModelViewSet):
         "description",
     ]
     export_fields = ["name", "description", "email"]
+
+    def update(self, request, *args, **kwargs):
+        # DONE - check if user has permission to update a Team
+        if not request.user.has_perm("app.change_team"):
+            raise PermissionDenied("You do not have permission to update this team.")
+        return super().update(request, *args, **kwargs)
 
     @action(detail=False, methods=[HTTPMethod.POST, HTTPMethod.GET])
     def export(self, request):
