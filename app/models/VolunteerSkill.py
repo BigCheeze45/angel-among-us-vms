@@ -9,6 +9,7 @@ class VolunteerSkill(models.Model):
     """
 
     skill = models.CharField(max_length=100, null=False)
+    type = models.CharField(max_length=100, null=False)
     volunteer = models.ForeignKey(
         Volunteer,
         db_column="volunteer_id",

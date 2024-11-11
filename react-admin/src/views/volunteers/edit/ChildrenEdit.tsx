@@ -11,9 +11,8 @@ import {
   useNotify,
   SaveButton,
   useRefresh,
+  useUpdate,
   Pagination,
-  EditButton,
-  WrapperField,
   useRecordContext,
   ListContextProvider,
   BulkDeleteWithConfirmButton,
@@ -21,7 +20,6 @@ import {
 import {useState} from "react"
 import {ENDPOINTS} from "../../../constants"
 import ContentAdd from "@mui/icons-material/Add"
-import {ListActionToolbar} from "../../../components/ListActionToolbar"
 import {Dialog, DialogTitle, DialogContent, Button} from "@mui/material"
 
 const EmptyChildren = ({volunteerName}) => <div>No children added yet for {volunteerName}</div>
@@ -34,21 +32,38 @@ export const ChildrenEdit = () => {
   const listContext = useList({data})
   const [editing, setEditing] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(undefined)
 
   const notify = useNotify()
   const [create] = useCreate()
+  const [update] = useUpdate()
   const refresh = useRefresh()
 
-  const handleCreate = ({id, description}) => {
-    const payload = {
-      volunteer: id,
-      description: description,
+  const handleSave = ({id, description}) => {
+    if (editing) {
+      const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/children`
+      update(
+        resource,
+        {id, data: {description}},
+        {
+          onSuccess: () => {
+            setEditing(false)
+            refresh()
+            setDialogOpen(!dialogOpen)
+            notify("Record updated successfully", {type: "success"})
+          },
+          onError: error => {
+            notify(`Failed to update record: ${error.message}`, {type: "error"})
+          },
+        },
+      )
+      return
     }
 
     const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/children`
     create(
       resource,
-      {data: payload},
+      {data: {volunteer: id, description: description}},
       {
         onSuccess: () => {
           refresh()
@@ -66,14 +81,22 @@ export const ChildrenEdit = () => {
     <ListContextProvider value={listContext}>
       <Button
         startIcon={<ContentAdd />}
-        onClick={() => setDialogOpen(!dialogOpen)}
+        onClick={() => {
+          setEditing(false)
+          setDialogOpen(!dialogOpen)
+        }}
         style={{marginBottom: "1rem"}}
       >
         Add new child
       </Button>
       <Datagrid
         sx={{width: 1}}
-        rowClick={false}
+        rowClick={(_id, _resource, row) => {
+          setEditing(true)
+          setSelectedRow(row)
+          setDialogOpen(!dialogOpen)
+          return false // do nothing
+        }}
         resource={`${ENDPOINTS.VOLUNTEERS}/${record?.id}/children`}
         bulkActionButtons={
           <BulkDeleteWithConfirmButton
@@ -95,62 +118,57 @@ export const ChildrenEdit = () => {
           source="updated_at"
           label="Updated"
         />
-        {/* <WrapperField
-          source="actions"
-          label=""
-        >
-          <ListActionToolbar>
-            <EditButton
-              onClick={e => {
-                e.preventDefault()
-                console.log("EDITING")
-                setEditing(!editing)
-              }}
-            />
-          </ListActionToolbar>
-        </WrapperField> */}
       </Datagrid>
       <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
 
       <Dialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(!dialogOpen)}
+        onClose={() => {
+          setEditing(false)
+          setSelectedRow(undefined)
+          setDialogOpen(!dialogOpen)
+        }}
         // maxWidth="md"
         fullWidth
       >
-        <DialogTitle>New child</DialogTitle>
-        <DialogContent>
-          <Form onSubmit={handleCreate}>
-            <TextInput
-              isRequired
-              multiline
-              source="description"
-              validate={[required(), maxLength(500)]}
-            />
-            <SaveButton />
-          </Form>
-        </DialogContent>
+        <DialogTitle>{editing ? "Edit child" : "New child"}</DialogTitle>
+        {editing ? (
+          // #region Edit dialog
+          <>
+            <DialogContent>
+              <Form
+                onSubmit={handleSave}
+                record={selectedRow}
+              >
+                <TextInput
+                  isRequired
+                  multiline
+                  source="description"
+                  validate={[required(), maxLength(500)]}
+                />
+                <SaveButton />
+              </Form>
+            </DialogContent>
+          </>
+        ) : (
+          // #endregion
+          // #region Create dialog
+          <>
+            <DialogContent>
+              <Form onSubmit={handleSave}>
+                <TextInput
+                  isRequired
+                  multiline
+                  source="description"
+                  validate={[required(), maxLength(500)]}
+                />
+                <SaveButton />
+              </Form>
+            </DialogContent>
+          </>
+          //#endregion
+        )}
       </Dialog>
-
-      {/* <Dialog
-        open={editing}
-        onClose={() => setEditing(!editing)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Edit child</DialogTitle>
-        <DialogContent>
-          <Form onSubmit={() => console.log("SUBMITTING EDIT")}>
-            <TextInput
-              isRequired
-              multiline
-              source="description"
-              validate={[required(), maxLength(500)]}
-            />
-            <SaveButton />
-          </Form>
-        </DialogContent>
-      </Dialog> */}
     </ListContextProvider>
   )
 }

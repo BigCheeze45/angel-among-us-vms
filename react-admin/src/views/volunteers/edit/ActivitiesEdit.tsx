@@ -3,16 +3,17 @@ import {
   useList,
   required,
   Datagrid,
+  TextInput,
+  DateInput,
   maxLength,
   DateField,
   TextField,
+  useUpdate,
   useCreate,
   useNotify,
   SaveButton,
   useRefresh,
   Pagination,
-  TextInput,
-  DateInput,
   useRecordContext,
   ListContextProvider,
   BulkDeleteWithConfirmButton,
@@ -31,13 +32,37 @@ export const ActivitiesEdit = () => {
   const record = useRecordContext()
   const data = record?.activities
   const listContext = useList({data})
+  const [editing, setEditing] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(undefined)
 
-  const [create] = useCreate()
   const notify = useNotify()
+  const [create] = useCreate()
+  const [update] = useUpdate()
   const refresh = useRefresh()
 
-  const createNewActivity = formValues => {
+  const handleSave = formValues => {
+    if (editing) {
+      const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/activities`
+
+      update(
+        resource,
+        {id: selectedRow?.id, data: {...formValues}},
+        {
+          onSuccess: () => {
+            setEditing(false)
+            refresh()
+            setDialogOpen(!dialogOpen)
+            notify("Record updated successfully", {type: "success"})
+          },
+          onError: error => {
+            notify(`Failed to update record: ${error.message}`, {type: "error"})
+          },
+        },
+      )
+      return
+    }
+
     const payload = {
       volunteer: formValues.id,
       location: formValues.location,
@@ -67,7 +92,10 @@ export const ActivitiesEdit = () => {
     <ListContextProvider value={listContext}>
       <Button
         startIcon={<ContentAdd />}
-        onClick={() => setDialogOpen(!dialogOpen)}
+        onClick={() => {
+          setEditing(false)
+          setDialogOpen(!dialogOpen)
+        }}
         style={{marginBottom: "1rem"}}
       >
         Add new Activity
@@ -83,7 +111,12 @@ export const ActivitiesEdit = () => {
           />
         }
         sx={{width: 1}}
-        rowClick={false}
+        rowClick={(_id, _resource, row) => {
+          setEditing(true)
+          setSelectedRow(row)
+          setDialogOpen(!dialogOpen)
+          return false
+        }}
         empty={
           <WrappedEmpty
             volunteerName={record?.first_name}
@@ -105,39 +138,68 @@ export const ActivitiesEdit = () => {
 
       <Dialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(!dialogOpen)}
+        onClose={() => {
+          setEditing(false)
+          setSelectedRow(undefined)
+          setDialogOpen(!dialogOpen)
+        }}
         // maxWidth="md"
       >
-        <DialogTitle>New Activity</DialogTitle>
-        <DialogContent>
-          <Form onSubmit={createNewActivity}>
-            <TextInput
-              isRequired
-              validate={[required(), maxLength(200)]}
-              resettable
-              source="activity_name"
-              label="Activity"
-            />
-            <TextInput
-              resettable
-              multiline
-              source="description"
-              validate={maxLength(500)}
-            />
-            <DateInput
-              isRequired
-              validate={required()}
-              source="start_date"
-              defaultValue={startOfToday()}
-            />
-            {/* <AutocompleteInput
-              isRequired
-              source="location"
-              choices={GA_COUNTIES}
-            /> */}
-            <SaveButton />
-          </Form>
-        </DialogContent>
+        <DialogTitle>{editing ? "Edit Activity" : "New Activity"}</DialogTitle>
+        {editing ? (
+          <DialogContent>
+            <Form
+              onSubmit={handleSave}
+              record={selectedRow}
+            >
+              <TextInput
+                isRequired
+                resettable
+                label="Activity"
+                source="activity_name"
+                validate={[required(), maxLength(200)]}
+              />
+              <TextInput
+                resettable
+                multiline
+                source="description"
+                validate={maxLength(500)}
+              />
+              <DateInput
+                isRequired
+                source="start_date"
+                validate={required()}
+                defaultValue={startOfToday()}
+              />
+              <SaveButton />
+            </Form>
+          </DialogContent>
+        ) : (
+          <DialogContent>
+            <Form onSubmit={handleSave}>
+              <TextInput
+                isRequired
+                resettable
+                label="Activity"
+                source="activity_name"
+                validate={[required(), maxLength(200)]}
+              />
+              <TextInput
+                resettable
+                multiline
+                source="description"
+                validate={maxLength(500)}
+              />
+              <DateInput
+                isRequired
+                source="start_date"
+                validate={required()}
+                defaultValue={startOfToday()}
+              />
+              <SaveButton />
+            </Form>
+          </DialogContent>
+        )}
       </Dialog>
     </ListContextProvider>
   )

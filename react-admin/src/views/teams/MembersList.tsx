@@ -12,8 +12,7 @@ import {
 import {ENDPOINTS} from "../../constants"
 import {ListActionToolbar} from "../../components/ListActionToolbar"
 
-const EmptyMembers = () => <div>Team has no members yet</div>
-const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
+const EmptyMembers = ({teamName}) => <div>{teamName} has no members yet</div>
 
 export const TeamMembersList = () => {
   const record = useRecordContext()
@@ -23,7 +22,7 @@ export const TeamMembersList = () => {
   return (
     <ListContextProvider value={listContext}>
       <Datagrid
-        empty={<EmptyMembers />}
+        empty={<EmptyMembers teamName={record?.name} />}
         bulkActionButtons={false}
         // disable row clicking, instead click view volunteer to go to volunteer SHOW page
         rowClick={false}
@@ -42,7 +41,7 @@ export const TeamMembersList = () => {
           />
         </ListActionToolbar>
       </Datagrid>
-      <ActivitiesPagination />
+      <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
     </ListContextProvider>
   )
 }

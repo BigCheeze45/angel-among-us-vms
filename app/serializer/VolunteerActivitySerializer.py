@@ -12,7 +12,6 @@ class VolunteerActivitySerializer(serializers.ModelSerializer):
             "activity_name",
             "description",
             "start_date",
-            "location",
         ]
 
     def is_valid(self, *, raise_exception=True):

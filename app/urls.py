@@ -34,12 +34,23 @@ volunteer_router.register(
     r"activities", VolunteerActivityViewSet, basename="volunteer-activities"
 )
 
-volunteer_router.register(r"children", VolunteerChildrenViewSet, basename="volunteer-children")
-volunteer_router.register(r"pets", VolunteerPetViewSet, basename="volunteer-pet")
+# Nested router for children with detail view support
+children_router = routers.NestedDefaultRouter(
+    router, r"volunteers", lookup="volunteer"
+)
+children_router.register(r"children", VolunteerChildrenViewSet, basename="volunteer-children")
+
+# Nested router for pets with detail view support
+pets_router = routers.NestedDefaultRouter(
+    router, r"volunteers", lookup="volunteer"
+)
+pets_router.register(r"pets", VolunteerPetViewSet, basename="volunteer-pets")
 
 # Wire up our API using automatic URL routing
 urlpatterns = [
     path("", include(router.urls)),
     path("", include(volunteer_router.urls)),
     path("", include(team_router.urls)),
+    path("", include(children_router.urls)),
+    path("", include(pets_router.urls)),
 ]

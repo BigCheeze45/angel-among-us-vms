@@ -9,6 +9,7 @@ import {
   DateField,
   TextInput,
   useNotify,
+  useUpdate,
   SaveButton,
   useRefresh,
   Pagination,
@@ -25,22 +26,47 @@ import {Dialog, DialogTitle, DialogContent, Button} from "@mui/material"
 const WrappedEmpty = ({volunteerName, hasPets}) => (hasPets ? null : <EmptyPets volunteerName={volunteerName} />)
 
 export const PetsEdit = () => {
-  const [dialogOpen, setDialogOpen] = useState(false)
   const record = useRecordContext()
   const data = record?.pets
   const listContext = useList({data})
 
+  const [editing, setEditing] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(undefined)
+
   const notify = useNotify()
   const [create] = useCreate()
+  const [update] = useUpdate()
   const refresh = useRefresh()
 
-  const handleCreate = ({id, description}) => {
+  const handleSave = formValues => {
+    if (editing) {
+      const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/pets`
+
+      update(
+        resource,
+        {id: selectedRow?.id, data: {...formValues}},
+        {
+          onSuccess: () => {
+            setEditing(false)
+            refresh()
+            setDialogOpen(!dialogOpen)
+            notify("Record updated successfully", {type: "success"})
+          },
+          onError: error => {
+            notify(`Failed to update record: ${error.message}`, {type: "error"})
+          },
+        },
+      )
+      return
+    }
+
     const payload = {
       volunteer: id,
       description: description,
     }
 
-    const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/pets`
+    const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/pets`
     create(
       resource,
       {data: payload},
@@ -61,14 +87,16 @@ export const PetsEdit = () => {
     <ListContextProvider value={listContext}>
       <Button
         startIcon={<ContentAdd />}
-        onClick={() => setDialogOpen(!dialogOpen)}
+        onClick={() => {
+          setEditing(false)
+          setDialogOpen(!dialogOpen)
+        }}
         style={{marginBottom: "1rem"}}
       >
         Add new Pet
       </Button>
       <Datagrid
         sx={{width: 1}}
-        rowClick={false}
         resource={`${ENDPOINTS.VOLUNTEERS}/${record?.id}/pets`}
         bulkActionButtons={
           <BulkDeleteWithConfirmButton
@@ -78,6 +106,12 @@ export const PetsEdit = () => {
             onClick={refresh}
           />
         }
+        rowClick={(_id, _resource, row) => {
+          setEditing(true)
+          setSelectedRow(row)
+          setDialogOpen(!dialogOpen)
+          return false
+        }}
         empty={
           <WrappedEmpty
             hasPets={data.length === 0}
@@ -95,22 +129,38 @@ export const PetsEdit = () => {
 
       <Dialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(!dialogOpen)}
-        maxWidth="md"
-        fullWidth
+        onClose={() => {
+          setEditing(false)
+          setSelectedRow(undefined)
+          setDialogOpen(!dialogOpen)
+        }}
       >
-        <DialogTitle>New Pet</DialogTitle>
-        <DialogContent>
-          <Form onSubmit={handleCreate}>
-            <TextInput
-              multiline
-              isRequired
-              source="description"
-              validate={[required(), maxLength(500)]}
-            />
-            <SaveButton />
-          </Form>
-        </DialogContent>
+        <DialogTitle>{editing ? "Edit Pet" : "New Pet"}</DialogTitle>
+        {editing ? (
+          <DialogContent>
+            <Form onSubmit={handleSave} record={selectedRow}>
+              <TextInput
+                multiline
+                isRequired
+                source="description"
+                validate={[required(), maxLength(500)]}
+              />
+              <SaveButton />
+            </Form>
+          </DialogContent>
+        ) : (
+          <DialogContent>
+            <Form onSubmit={handleSave}>
+              <TextInput
+                multiline
+                isRequired
+                source="description"
+                validate={[required(), maxLength(500)]}
+              />
+              <SaveButton />
+            </Form>
+          </DialogContent>
+        )}
       </Dialog>
     </ListContextProvider>
   )

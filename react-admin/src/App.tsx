@@ -1,13 +1,13 @@
 import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
+import {Admin, Resource} from "react-admin"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
-import {Admin, Resource, EditGuesser} from "react-admin"
 import {VolunteerEdit} from "./views/volunteers/VolunteerEdit"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
@@ -41,8 +41,7 @@ export const App = () => {
           name="teams"
           list={TeamList}
           show={TeamShow}
-          edit={EditGuesser}
-          // hasEdit={false}
+          hasEdit={false}
           hasCreate={false}
         />
         <Resource
