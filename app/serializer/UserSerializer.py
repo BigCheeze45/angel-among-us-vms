@@ -5,9 +5,14 @@ from rest_framework import serializers
 
 # Serializers define the API representation.
 class UserSerializer(serializers.ModelSerializer):
+    roles = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         exclude = ["password", "username", "is_superuser"]
+
+    def get_roles(self, user):
+        return [{"name": g.name} for g in user.groups.all()]
 
 
 class UserCreateSerializer(serializers.Serializer):
@@ -18,7 +23,9 @@ class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     is_staff = serializers.BooleanField(required=True)
     is_active = serializers.BooleanField(default=True)
-    role = serializers.ChoiceField(required=True, choices=["administrator", "viewer", "editor"])
+    role = serializers.ChoiceField(
+        required=True, choices=["administrator", "viewer", "editor"]
+    )
 
     def is_valid(self, *, raise_exception=True):
         return super().is_valid(raise_exception=raise_exception)

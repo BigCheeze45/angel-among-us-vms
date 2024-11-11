@@ -1,41 +1,49 @@
 import uuid
 from http import HTTPMethod
+
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User, Group
 from django.db.utils import Error as DjangoDBError
+import pandas as pd
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
 from rest_framework.exceptions import APIException, ValidationError, PermissionDenied
-import pandas as pd
+
 from common.exceptions import ConflictError
 from common.utils import django_db_error_parser
 from app.serializer.UserSerializer import UserSerializer, UserCreateSerializer
 
 
+class UserFilters(filters.FilterSet):
+    # role = filters.BooleanFilter(name="date_published", method="filter_is_published")
+
+    class Meta:
+        model = User
+        fields = ["is_staff", "is_active"]
+
+
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    filterset_fields = [
-        "is_staff",
-        "is_active",
-    ]
+    filterset_class = UserFilters
+
     search_fields = [
         "email",
         "username",
         "last_name",
         "first_name",
     ]
-    export_fields = ["first_name", "last_name", "email"]
+    export_fields = ["first_name", "last_name", "email", "is_staff", "is_active"]
 
     def destroy(self, request, *args, **kwargs):
-        # DONE - check if user has permissions
         if not request.user.has_perm("auth.delete_user"):
             raise PermissionDenied("You do not have permission to delete this user.")
         return super().destroy(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        # DONE - check if user has permissions
         if not request.user.has_perm("auth.change_user"):
             raise PermissionDenied("You do not have permission to update this user.")
         return super().update(request, *args, **kwargs)

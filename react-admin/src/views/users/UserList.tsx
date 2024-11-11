@@ -1,49 +1,40 @@
 import {
-  Form,
   List,
-  email,
-  choices,
-  useNotify,
   DateField,
-  TextInput,
-  useCreate,
   TextField,
+  ChipField,
   TopToolbar,
   FilterList,
   EditButton,
   EmailField,
-  SaveButton,
-  SelectInput,
-  useRedirect,
+  ArrayField,
   CreateButton,
   BooleanField,
-  FilterButton,
   WrapperField,
   FilterListItem,
+  SingleFieldList,
   BulkUpdateButton,
   SavedQueriesList,
   FilterLiveSearch,
-  AutocompleteInput,
-  CheckboxGroupInput,
   SelectColumnsButton,
   DatagridConfigurable,
 } from "react-admin"
+import {UserCreate} from "./UserCreate"
 import {Fragment, useState} from "react"
-import {ENDPOINTS} from "../../constants"
+import {Card, CardContent} from "@mui/material"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {ListActionToolbar} from "../../components/ListActionToolbar"
 import CardMembershipIcon from "@mui/icons-material/CardMembership"
 import {ExportExcelButton} from "../../components/ExportExcelButton"
-import {Card, CardContent, Dialog, DialogTitle, DialogContent} from "@mui/material"
 
-const UserListActions = ({onCreateClick}) => (
+const UserListActions = (props: UserListActionsProps) => (
   <TopToolbar>
-    <FilterButton />
     <CreateButton
       onClick={e => {
         e.preventDefault()
-        onCreateClick()
+        e.stopPropagation()
+        props.onCreateClick()
       }}
     />
     <ExportCSVButton />
@@ -56,21 +47,12 @@ const UsersBulkActionButtons = () => (
   <Fragment>
     <BulkUpdateButton
       label="Disable"
-      data={{is_active: false}}
+      data={{is_active: false, is_staff: false}}
     />
     <ExportCSVButton />
     <ExportExcelButton />
   </Fragment>
 )
-
-const usersFilter = [
-  <AutocompleteInput
-    key="role_filter"
-    source="group"
-    label="Role"
-    choices={["Administrator", "Viewer", "Editor"]}
-  />,
-]
 
 const UsersFilterSidebar = () => (
   <Card sx={{order: -1, mr: 2, mt: 6, mb: 7, width: 200}}>
@@ -95,16 +77,33 @@ const UsersFilterSidebar = () => (
         />
       </FilterList>
       <FilterList
-        label="Superuser"
+        label="VMS Access"
         icon={<CardMembershipIcon />}
       >
         <FilterListItem
           label="Yes"
-          value={{is_superuser: true}}
+          value={{is_staff: true}}
         />
         <FilterListItem
           label="No"
-          value={{is_superuser: false}}
+          value={{is_staff: false}}
+        />
+      </FilterList>
+      <FilterList
+        label="Role"
+        icon={<CardMembershipIcon />}
+      >
+        <FilterListItem
+          label="Administrator"
+          value={{role: "administrator"}}
+        />
+        <FilterListItem
+          label="Editor"
+          value={{role: "editor"}}
+        />
+        <FilterListItem
+          label="Viewer"
+          value={{role: "viewer"}}
         />
       </FilterList>
     </CardContent>
@@ -112,40 +111,12 @@ const UsersFilterSidebar = () => (
 )
 
 export const UsersList = () => {
-  const notify = useNotify()
-  const [create] = useCreate()
-  const validateEmail = email()
-  const redirect = useRedirect()
   const [dialogOpen, setDialogOpen] = useState(false)
-  const validateRole = choices(["administrator", "editor", "viewer"], "Please choose one of the values")
-
-  const handleCreate = formValues => {
-    const {is_staff, ...rest} = formValues
-    const payload = {...rest, is_staff: is_staff.length === 1}
-    create(
-      ENDPOINTS.USERS,
-      {data: payload},
-      {
-        onSuccess: data => {
-          // console.log(data)
-          setDialogOpen(!dialogOpen)
-          notify(`Added ${data.first_name} ${data.last_name}`, {type: "success"})
-          redirect("show", ENDPOINTS.USERS, data.id)
-        },
-        onError: error => {
-          // console.log("ERROR")
-          // console.log(error)
-          notify(error.message, {type: "error"})
-        },
-      },
-    )
-  }
 
   return (
     <>
       <List
-        filters={usersFilter}
-        actions={<UserListActions onCreateClick={() => setDialogOpen(true)} />}
+        actions={<UserListActions onCreateClick={() => setDialogOpen(!dialogOpen)} />}
         aside={<UsersFilterSidebar />}
       >
         <DatagridConfigurable bulkActionButtons={<UsersBulkActionButtons />}>
@@ -157,11 +128,31 @@ export const UsersList = () => {
             source="is_active"
             label="Active"
           />
-          <DateField
-            source="last_login"
-            showTime
+          <BooleanField
+            source="is_staff"
+            label="VMS Access"
           />
-          <DateField source="date_joined" />
+          {/* <ArrayField
+            source="roles"
+            label="Role"
+            sortable={false}
+          >
+            <SingleFieldList linkType={false}>
+              <ChipField
+                source="name"
+                size="small"
+              />
+            </SingleFieldList>
+          </ArrayField> */}
+          <DateField
+            showTime
+            label="Last Login"
+            source="last_login"
+          />
+          <DateField
+            label="Date Joined"
+            source="date_joined"
+          />
           <WrapperField
             source="actions"
             label=""
@@ -172,59 +163,14 @@ export const UsersList = () => {
           </WrapperField>
         </DatagridConfigurable>
       </List>
-
-      {/* region create dialog */}
-      <Dialog
-        open={dialogOpen}
+      <UserCreate
+        dialogOpen={dialogOpen}
         onClose={() => setDialogOpen(!dialogOpen)}
-      >
-        <DialogTitle>Add New User</DialogTitle>
-        <DialogContent>
-          <Form onSubmit={handleCreate}>
-            <TextInput
-              source="first_name"
-              label="First Name"
-              required={true}
-            />
-            <TextInput
-              source="last_name"
-              label="Last Name"
-              required={true}
-            />
-            <TextInput
-              source="email"
-              label="Email"
-              validate={validateEmail}
-              required={true}
-            />
-            <SelectInput
-              source="role"
-              label="Role"
-              required={true}
-              validate={validateRole}
-              defaultValue="viewer"
-              choices={[
-                {id: "administrator", name: "Administrator"},
-                {id: "viewer", name: "Viewer"},
-                {id: "editor", name: "Editor"},
-              ]}
-            />
-            <CheckboxGroupInput
-              label={false}
-              source="is_staff"
-              choices={["Staff"]}
-              defaultValue={["Staff"]}
-              options={{required: true}}
-              helperText="Designates whether the user can log into the VMS"
-            />
-            <SaveButton
-              label="Create user"
-              sx={{mt: 1}}
-            />
-          </Form>
-        </DialogContent>
-      </Dialog>
-      {/* endregion */}
+      />
     </>
   )
+}
+
+interface UserListActionsProps {
+  onCreateClick: () => void
 }
