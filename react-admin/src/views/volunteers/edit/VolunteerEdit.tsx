@@ -1,7 +1,7 @@
-import {PetsEdit} from "./edit/PetsEdit"
-import {SkillsEdit} from "./edit/SkillsEdit"
-import {ChildrenEdit} from "./edit/ChildrenEdit"
-import {ActivitiesEdit} from "./edit/ActivitiesEdit"
+import {PetsEdit} from "./PetsEdit"
+import {SkillsEdit} from "./SkillsEdit"
+import {ChildrenEdit} from "./ChildrenEdit"
+import {ActivitiesEdit} from "./ActivitiesEdit"
 import {Edit, Toolbar, DateInput, TabbedForm, SaveButton} from "react-admin"
 
 const EditToolbar = () => (

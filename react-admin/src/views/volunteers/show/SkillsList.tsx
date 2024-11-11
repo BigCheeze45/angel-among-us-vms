@@ -1,4 +1,4 @@
-import {ENDPOINTS} from "../../constants"
+import {ENDPOINTS} from "../../../constants"
 import {useList, Datagrid, TextField, Pagination, useRecordContext, ListContextProvider} from "react-admin"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
@@ -18,6 +18,7 @@ export const VolunteerSkillsList = () => {
         empty={<EmptySkills volunteerName={record?.first_name} />}
       >
         <TextField source="skill" />
+        <TextField source="type" />
       </Datagrid>
       <ActivitiesPagination />
     </ListContextProvider>

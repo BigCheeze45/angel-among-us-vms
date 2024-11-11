@@ -21,7 +21,7 @@ import {useState} from "react"
 import {ENDPOINTS, VOLUNTEER_SKILLS} from "../../../constants"
 import ContentAdd from "@mui/icons-material/Add"
 import {Dialog, DialogTitle, DialogContent, Button} from "@mui/material"
-import {EmptySkills} from "../SkillsList"
+import {EmptySkills} from "../show/SkillsList"
 
 const ActivitiesPagination = () => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} />
 
@@ -37,11 +37,11 @@ export const SkillsEdit = () => {
   const refresh = useRefresh()
   const [create] = useCreate()
 
-  const handleCreate = ({id, skill}) => {
+  const handleCreate = ({id, skill, type}) => {
     const resource = `${ENDPOINTS.VOLUNTEERS}/${id}/skills`
     create(
       resource,
-      {data: {volunteer: id, skill}},
+      {data: {volunteer: id, skill, type}},
       {
         onSuccess: () => {
           refresh()
@@ -84,6 +84,7 @@ export const SkillsEdit = () => {
         }
       >
         <TextField source="skill" />
+        <TextField source="type" />
       </Datagrid>
       <ActivitiesPagination />
 
@@ -111,7 +112,7 @@ export const SkillsEdit = () => {
             <RadioButtonGroupInput
               isRequired
               label="Type"
-              source="category"
+              source="type"
               choices={[
                 {id: "skill", name: "Skill"},
                 {id: "interest", name: "Interest"},

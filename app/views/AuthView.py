@@ -66,7 +66,6 @@ class LoginView(KnoxLoginView):
                             "resource": f"{resource}s",
                         }
                     )
-                print(action, resource)
         data["user"]["permissions"] = ra_perms_dict
         # data["user"]["roles"] = [group.name for group in request.user.groups.all()]
         return data

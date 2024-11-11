@@ -72,7 +72,6 @@ if not DEBUG:
 KNOX_TOKEN_MODEL = "knox.AuthToken"
 REST_KNOX = {
     "AUTO_REFRESH": True,
-    "TOKEN_LIMIT_PER_USER": 1,
     "TOKEN_MODEL": "knox.AuthToken",
     "TOKEN_TTL": timedelta(minutes=15),
     "AUTO_REFRESH_MAX_TTL": timedelta(hours=1),

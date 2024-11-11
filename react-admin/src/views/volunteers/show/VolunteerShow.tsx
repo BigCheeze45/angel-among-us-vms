@@ -1,8 +1,8 @@
 import {PetList} from "./PetList"
 import {ShowSummary} from "./ShowSummary"
-import {ChildrenList} from "../ChildrenList"
-import {VolunteerTeamsList} from "../TeamsList"
-import {VolunteerSkillsList} from "../SkillsList"
+import {ChildrenList} from "./ChildrenList"
+import {VolunteerTeamsList} from "./TeamsList"
+import {VolunteerSkillsList} from "./SkillsList"
 import {ActivitiesList} from "./VolunteerActivitiesList"
 import {Show, TabbedShowLayout, TextField} from "react-admin"
 

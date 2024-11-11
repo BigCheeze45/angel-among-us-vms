@@ -1,5 +1,6 @@
 import {
   List,
+  UrlField,
   DateField,
   TextField,
   TopToolbar,
@@ -57,7 +58,7 @@ export const VolunteersList = () => {
     >
       <DatagridConfigurable
         bulkActionButtons={<VolunteerBulkActionButtons />}
-        omit={["work_phone", "home_phone", "date_of_birth", "maddie_certifications_received_date"]}
+        omit={["work_phone", "home_phone", "date_of_birth", "maddie_certifications_received_date", "ishelters_profile"]}
       >
         <TextField
           source="full_name"
@@ -66,7 +67,6 @@ export const VolunteersList = () => {
         <TextField source="preferred_name" />
         <EmailField source="email" />
         <DateField source="date_joined" />
-        <DateField source="active_status_change_date" />
         <BooleanField source="active" />
         <TextField source="cell_phone" />
         <DateField
@@ -85,14 +85,11 @@ export const VolunteersList = () => {
         />
         <TextField source="home_phone" />
         <TextField source="work_phone" />
-        {/* <WrapperField
-            source="actions"
-            label=""
-          >
-            <ListActionToolbar>
-              <EditButton label="View detail" />
-            </ListActionToolbar>
-          </WrapperField> */}
+        <UrlField
+          source="ishelters_profile"
+          label="iShelters Profile"
+          content="View iShelters profile"
+        />
       </DatagridConfigurable>
     </List>
   )

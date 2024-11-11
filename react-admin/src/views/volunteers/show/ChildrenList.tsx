@@ -1,4 +1,4 @@
-import {ENDPOINTS} from "../../constants"
+import {ENDPOINTS} from "../../../constants"
 import {useList, Datagrid, DateField, TextField, Pagination, useRecordContext, ListContextProvider} from "react-admin"
 
 const EmptyChildren = ({volunteerName}) => <div>No Children added yet for {volunteerName}</div>

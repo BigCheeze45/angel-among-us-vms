@@ -10,7 +10,7 @@ export default (baseAuthProvider: AuthProvider, tokenStore: TokenStore): AuthPro
     await baseAuthProvider.login(params)
     const googleToken = tokenStore?.getToken()
     const user: UserPayload = jwt_decode(googleToken)
-    
+
     const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
       method: "POST",
       headers: {

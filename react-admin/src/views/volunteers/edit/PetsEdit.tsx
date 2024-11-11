@@ -138,7 +138,10 @@ export const PetsEdit = () => {
         <DialogTitle>{editing ? "Edit Pet" : "New Pet"}</DialogTitle>
         {editing ? (
           <DialogContent>
-            <Form onSubmit={handleSave} record={selectedRow}>
+            <Form
+              onSubmit={handleSave}
+              record={selectedRow}
+            >
               <TextInput
                 multiline
                 isRequired

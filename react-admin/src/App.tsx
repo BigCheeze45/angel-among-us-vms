@@ -9,10 +9,10 @@ import {UserShow} from "./views/users/UserShow"
 import {UserEdit} from "./views/users/UserEdit"
 import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
-import {VolunteerEdit} from "./views/volunteers/VolunteerEdit"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
+import {VolunteerEdit} from "./views/volunteers/edit/VolunteerEdit"
 import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
-import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
+import {useGoogleAuthProvider, GoogleAuthContextProvider, localStorageTokenStore} from "ra-auth-google"
 
 export const App = () => {
   // configure Sign-in with Google
