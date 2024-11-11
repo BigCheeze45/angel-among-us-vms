@@ -1,7 +1,10 @@
 import {BooleanField, DateField, EmailField, Show, SimpleShowLayout, TextField} from "react-admin"
 
-export const VolunteerShowSummary = () => (
-  <Show title={false}>
+export const ShowSummary = () => (
+  <Show
+    title={false}
+    actions={false}
+  >
     <SimpleShowLayout>
       <TextField source="full_name" />
       <TextField source="preferred_name" />

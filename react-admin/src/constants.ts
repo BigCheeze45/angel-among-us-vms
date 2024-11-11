@@ -29,8 +29,19 @@ interface County {
   name: string
 }
 
+export const VOLUNTEER_SKILLS = [
+  {id: "Fundraising", name: "Fundraising"},
+  {id: "Photography", name: "Photography"},
+  {id: "Transportation", name: "Transportation"},
+  {id: "Graphic Design", name: "Graphic Design"},
+  {id: "Creative Writing", name: "Creative Writing"},
+  {id: "Helping at Events", name: "Helping at Events"},
+  {id: "Administrative Work", name: "Administrative Work"},
+  {id: "Education and Community", name: "Education and Community"},
+]
+
 export const GA_COUNTIES: County[] = [
-  {id: "undefined", name: "No address"},
+  {id: "county_isnull", name: "No address"},
   {id: "Appling", name: "Appling"},
   {id: "Atkinson", name: "Atkinson"},
   {id: "Bacon", name: "Bacon"},

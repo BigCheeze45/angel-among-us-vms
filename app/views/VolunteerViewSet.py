@@ -7,6 +7,7 @@ import pandas as pd
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from django_filters import rest_framework as filters
 from rest_framework.exceptions import ValidationError
 
 from app.models.Volunteer import Volunteer
@@ -14,20 +15,29 @@ from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.VolunteerSerializer import VolunteerSerializer
 
 
+class VolunteerFilters(filters.FilterSet):
+    class Meta:
+        model = Volunteer
+        fields = ["active", "job_title", "county"]
+
+    date_joined = filters.DateFromToRangeFilter()
+    has_maddie_certification = filters.BooleanFilter(
+        field_name="maddie_certifications_received_date", lookup_expr="isnull"
+    )
+    county_isnull = filters.BooleanFilter(
+        field_name="maddie_certifications_received_date", lookup_expr="isnull"
+    )
+
+
 class VolunteerViewSet(viewsets.ModelViewSet):
     serializer_class = VolunteerSerializer
-    filterset_fields = [
-        "active",
-        "job_title",
-        "has_maddie_certifications",
-        "maddie_certifications_received_date",
-    ]
+    filterset_class = VolunteerFilters
     search_fields = [
         "full_name",
         "ishelters_id",
         "preferred_name",
     ]
-    export_fields = ["full_name", "email"]
+    export_fields = ["full_name", "email", "job_title", "application_received_date"]
 
     @action(detail=False, methods=[HTTPMethod.POST, HTTPMethod.GET])
     def export(self, request):
@@ -91,6 +101,8 @@ class VolunteerViewSet(viewsets.ModelViewSet):
             filename = "volunteers.csv"
 
         df = pd.DataFrame(queryset.values(*fields))
+        if "application_received_date" in fields:
+            df = df.rename(columns={"application_received_date": "last_updated"})
         tmp_file = (
             f"/tmp/{str(uuid.uuid4())}.csv"  # write to a temp file with a random name
         )
@@ -113,6 +125,13 @@ class VolunteerViewSet(viewsets.ModelViewSet):
             filename = "volunteers.xlsx"
 
         df = pd.DataFrame(queryset.values(*fields))
+        if "application_received_date" in fields:
+            df = df.rename(columns={"application_received_date": "last_updated"})
+            # Excel does not support datetimes with timezones. Ensure that
+            # datetimes are timezone unaware before writing to Excel.
+            df["last_updated"] = df["last_updated"].apply(
+                lambda dt: pd.to_datetime(dt).date()
+            )
         # Once a workbook has been saved it is not possible to write
         # further data without rewriting the whole workbook
         tmp_file = f"/tmp/{str(uuid.uuid4())}.xlsx"

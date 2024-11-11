@@ -25,7 +25,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
     skills = serializers.SerializerMethodField()
     activities = serializers.SerializerMethodField()
     children = serializers.SerializerMethodField()
-    pet = serializers.SerializerMethodField()
+    pets = serializers.SerializerMethodField()
 
     class Meta:
         model = Volunteer
@@ -55,7 +55,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
         )
         return VolunteerChildrenSerializer(volunteer_children, many=True).data
 
-    def get_pet(self,obj):
+    def get_pets(self,obj):
         volunteer_pet = VolunteerPet.objects.filter(volunteer=obj).select_related(
             "volunteer"
         )

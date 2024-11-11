@@ -19,10 +19,6 @@ router.register(r"teams", TeamViewSet, basename="Team")
 router.register(r"users", UserViewSet, basename="User")
 router.register(r"volunteers", VolunteerViewSet, basename="Volunteer")
 
-# new views routes for children / pet
-router.register(r"volunteers-pet", VolunteerPetViewSet, basename="VolunteerPet")
-router.register(r"volunteers-childrens", VolunteerChildrenViewSet, basename="VolunteerChildren")
-
 # Create a nested router for team-related views
 team_router = routers.NestedSimpleRouter(router, r"teams", lookup="team")
 team_router.register(r"members", TeamViewSet, basename="team-members")
@@ -39,7 +35,7 @@ volunteer_router.register(
 )
 
 volunteer_router.register(r"children", VolunteerChildrenViewSet, basename="volunteer-children")
-volunteer_router.register(r"pet", VolunteerPetViewSet, basename="volunteer-pet")
+volunteer_router.register(r"pets", VolunteerPetViewSet, basename="volunteer-pet")
 
 # Wire up our API using automatic URL routing
 urlpatterns = [

@@ -15,8 +15,8 @@ class VolunteerPet(models.Model):
         blank=True, null=True, help_text="Detailed description of the Volunteer Pet"
     )
     
+    updated_at = models.DateField(auto_now=True)
     created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.description

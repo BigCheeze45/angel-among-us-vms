@@ -582,7 +582,7 @@ class Command(BaseCommand):
                 jt.title AS job_title,
                 birthDate AS date_of_birth,
                 s.dateJoined AS date_joined,
-                email,
+                IFNULL(email, email2) AS email,
                 s.current AS active,
                 p.timeCreated AS ishelters_created_dt,
                 cellPhone AS cell_phone,

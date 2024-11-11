@@ -1,20 +1,20 @@
-import {ENDPOINTS} from "../../constants"
+import {ENDPOINTS} from "../../../constants"
 import {useList, Datagrid, DateField, TextField, Pagination, useRecordContext, ListContextProvider} from "react-admin"
 
-const EmptyChildren = ({volunteerName}) => <div>No Children added yet for {volunteerName}</div>
+export const EmptyPets = ({volunteerName}) => <div>No pets added yet for {volunteerName}</div>
 
-export const ChildrenList = () => {
+export const PetList = () => {
   const record = useRecordContext()
-  const data = record?.children
+  const data = record?.pet
   const listContext = useList({data})
 
   return (
     <ListContextProvider value={listContext}>
       <Datagrid
+        resource={`${ENDPOINTS.VOLUNTEERS}/${record?.id}/pets`}
         rowClick={false}
         bulkActionButtons={false}
-        resource={`${ENDPOINTS.VOLUNTEERS}/${record?.id}/children`}
-        empty={<EmptyChildren volunteerName={record?.first_name} />}
+        empty={<EmptyPets volunteerName={record?.first_name} />}
       >
         <TextField source="description" />
         <DateField

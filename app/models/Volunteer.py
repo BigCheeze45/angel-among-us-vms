@@ -13,7 +13,6 @@ class Volunteer(models.Model):
     full_name = models.CharField(max_length=155, blank=True)  # First + Middle + Last
     email = models.EmailField(unique=True, null=False)
     date_joined = models.DateTimeField(null=True, blank=True)
-    active_status_change_date = models.DateField(null=True, blank=True)
     active = models.BooleanField(default=True)
     cell_phone = models.CharField(max_length=128)
     home_phone = models.CharField(null=True, blank=True, max_length=128)
@@ -23,7 +22,6 @@ class Volunteer(models.Model):
     job_title = models.CharField(null=True, default="AAU Volunteer")
     ishelters_id = models.IntegerField(unique=True, editable=False)
     maddie_certifications_received_date = models.DateField(null=True, blank=True)
-    has_maddie_certifications = models.BooleanField(default=False)
     ishelters_created_dt = models.DateTimeField(null=True, editable=False)
     application_received_date = models.DateTimeField(auto_now=True)
 

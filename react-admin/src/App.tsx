@@ -1,15 +1,16 @@
 import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
-import {Admin, Resource} from "react-admin"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UserShow} from "./views/users/UserShow"
 import {UsersList} from "./views/users/UserList"
 import {UserEdit} from "./views/users/UserEdit"
 import {TeamList} from "./views/teams/TeamsList"
-import {VolunteerShow} from "./views/volunteers/VolunteerShow"
+import {Admin, Resource, EditGuesser} from "react-admin"
+import {VolunteerEdit} from "./views/volunteers/VolunteerEdit"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
+import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
 import {useGoogleAuthProvider, GoogleAuthContextProvider} from "ra-auth-google"
 
 export const App = () => {
@@ -32,7 +33,7 @@ export const App = () => {
           name="volunteers"
           show={VolunteerShow}
           list={VolunteersList}
-          hasEdit={false}
+          edit={VolunteerEdit}
           hasCreate={false}
           recordRepresentation={record => `${record.full_name}`}
         />
@@ -40,7 +41,8 @@ export const App = () => {
           name="teams"
           list={TeamList}
           show={TeamShow}
-          hasEdit={false}
+          edit={EditGuesser}
+          // hasEdit={false}
           hasCreate={false}
         />
         <Resource

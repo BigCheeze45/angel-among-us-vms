@@ -1,16 +1,16 @@
-import {Show, TabbedShowLayout, TextField} from "react-admin"
-import {VolunteerTeamsList} from "./TeamsList"
-import {VolunteerSkillsList} from "./SkillsList"
-import {VolunteerShowSummary} from "./VolunteerShowSummary"
-import {VolunteerActivitiesList} from "./VolunteerActivitiesList"
-import {ChildrenList} from "./ChildrenList"
 import {PetList} from "./PetList"
+import {ShowSummary} from "./ShowSummary"
+import {ChildrenList} from "../ChildrenList"
+import {VolunteerTeamsList} from "../TeamsList"
+import {VolunteerSkillsList} from "../SkillsList"
+import {ActivitiesList} from "./VolunteerActivitiesList"
+import {Show, TabbedShowLayout, TextField} from "react-admin"
 
 export const VolunteerShow = () => (
   <Show>
     <TabbedShowLayout>
       <TabbedShowLayout.Tab label="summary">
-        <VolunteerShowSummary />
+        <ShowSummary />
       </TabbedShowLayout.Tab>
       <TabbedShowLayout.Tab label="teams">
         <VolunteerTeamsList />
@@ -19,7 +19,7 @@ export const VolunteerShow = () => (
         <VolunteerSkillsList />
       </TabbedShowLayout.Tab>
       <TabbedShowLayout.Tab label="activities">
-        <VolunteerActivitiesList />
+        <ActivitiesList />
       </TabbedShowLayout.Tab>
       <TabbedShowLayout.Tab label="Children">
         <ChildrenList />
