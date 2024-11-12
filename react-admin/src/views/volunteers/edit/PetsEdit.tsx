@@ -62,8 +62,8 @@ export const PetsEdit = () => {
     }
 
     const payload = {
-      volunteer: id,
-      description: description,
+      volunteer: formValues.id,
+      description: formValues.description,
     }
 
     const resource = `${ENDPOINTS.VOLUNTEERS}/${record?.id}/pets`
@@ -148,6 +148,7 @@ export const PetsEdit = () => {
                 source="description"
                 validate={[required(), maxLength(500)]}
               />
+              <div />
               <SaveButton />
             </Form>
           </DialogContent>
@@ -160,6 +161,7 @@ export const PetsEdit = () => {
                 source="description"
                 validate={[required(), maxLength(500)]}
               />
+              <div />
               <SaveButton />
             </Form>
           </DialogContent>

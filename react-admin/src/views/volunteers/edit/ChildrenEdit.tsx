@@ -129,7 +129,7 @@ export const ChildrenEdit = () => {
           setDialogOpen(!dialogOpen)
         }}
         // maxWidth="md"
-        fullWidth
+        // fullWidth
       >
         <DialogTitle>{editing ? "Edit child" : "New child"}</DialogTitle>
         {editing ? (
@@ -146,6 +146,7 @@ export const ChildrenEdit = () => {
                   source="description"
                   validate={[required(), maxLength(500)]}
                 />
+                <div />
                 <SaveButton />
               </Form>
             </DialogContent>
@@ -162,6 +163,7 @@ export const ChildrenEdit = () => {
                   source="description"
                   validate={[required(), maxLength(500)]}
                 />
+                <div />
                 <SaveButton />
               </Form>
             </DialogContent>

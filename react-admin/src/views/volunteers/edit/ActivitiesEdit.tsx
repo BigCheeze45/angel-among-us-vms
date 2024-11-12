@@ -120,7 +120,7 @@ export const ActivitiesEdit = () => {
         empty={
           <WrappedEmpty
             volunteerName={record?.first_name}
-            hasActivities={record?.activities === 0}
+            hasActivities={record?.activities.length === 0}
           />
         }
       >
@@ -159,18 +159,21 @@ export const ActivitiesEdit = () => {
                 source="activity_name"
                 validate={[required(), maxLength(200)]}
               />
+              <div />
               <TextInput
                 resettable
                 multiline
                 source="description"
                 validate={maxLength(500)}
               />
+              <div />
               <DateInput
                 isRequired
                 source="start_date"
                 validate={required()}
                 defaultValue={startOfToday()}
               />
+              <div />
               <SaveButton />
             </Form>
           </DialogContent>
@@ -184,18 +187,21 @@ export const ActivitiesEdit = () => {
                 source="activity_name"
                 validate={[required(), maxLength(200)]}
               />
+              <div />
               <TextInput
                 resettable
                 multiline
                 source="description"
                 validate={maxLength(500)}
               />
+              <div />
               <DateInput
                 isRequired
                 source="start_date"
                 validate={required()}
                 defaultValue={startOfToday()}
               />
+              <div />
               <SaveButton />
             </Form>
           </DialogContent>

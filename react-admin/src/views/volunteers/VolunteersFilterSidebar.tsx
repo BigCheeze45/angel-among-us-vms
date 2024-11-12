@@ -1,9 +1,9 @@
 import {Card, CardContent} from "@mui/material"
 import LoyaltyIcon from "@mui/icons-material/Loyalty"
 import {subYears, format, startOfYear} from "date-fns"
-import CategoryIcon from "@mui/icons-material/LocalOffer"
+import VerifiedIcon from "@mui/icons-material/Verified"
+import AssignmentIcon from "@mui/icons-material/Assignment"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
-import CardMembershipIcon from "@mui/icons-material/CardMembership"
 import {SavedQueriesList, FilterLiveSearch, FilterList, FilterListItem} from "react-admin"
 
 export const VolunteerFilterSidebar = () => {
@@ -31,7 +31,7 @@ export const VolunteerFilterSidebar = () => {
         </FilterList>
         <FilterList
           label="Maddie certification"
-          icon={<CardMembershipIcon />}
+          icon={<VerifiedIcon />}
         >
           <FilterListItem
             label="Yes"
@@ -44,7 +44,7 @@ export const VolunteerFilterSidebar = () => {
         </FilterList>
         <FilterList
           label="Primary job"
-          icon={<CategoryIcon />}
+          icon={<AssignmentIcon />}
         >
           <FilterListItem
             label="Volunteer"

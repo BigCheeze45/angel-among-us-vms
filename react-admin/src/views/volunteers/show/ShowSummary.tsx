@@ -19,13 +19,14 @@ export const ShowSummary = () => (
       <TextField source="work_phone" />
       <BooleanField source="active" />
       <DateField source="date_of_birth" />
-      <DateField source="active_status_change_date" />
-      <BooleanField source="has_maddie_certifications" />
-      <DateField source="maddie_certifications_received_date" />
       <DateField
-        source="application_received_date"
+        label="Maddie certification date"
+        source="maddie_certifications_received_date"
+      />
+      <DateField
         showTime
         label="Last updated"
+        source="application_received_date"
       />
     </SimpleShowLayout>
   </Show>

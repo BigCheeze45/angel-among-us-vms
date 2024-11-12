@@ -5,7 +5,7 @@ export const EmptyPets = ({volunteerName}) => <div>No pets added yet for {volunt
 
 export const PetList = () => {
   const record = useRecordContext()
-  const data = record?.pet
+  const data = record?.pets
   const listContext = useList({data})
 
   return (

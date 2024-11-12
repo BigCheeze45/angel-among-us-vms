@@ -1,4 +1,3 @@
-import {Dialog, DialogTitle, DialogContent} from "@mui/material"
 import {
   Form,
   choices,
@@ -11,6 +10,7 @@ import {
   BooleanInput,
 } from "react-admin"
 import {ENDPOINTS} from "../../constants"
+import {Dialog, DialogTitle, DialogContent} from "@mui/material"
 
 export const UserEdit = props => {
   const notify = useNotify()
@@ -18,10 +18,6 @@ export const UserEdit = props => {
   const [update] = useUpdate()
 
   const handleSubmit = formValues => {
-    // console.log(formValues)
-    // // const {groups, roles, user_permissions, id, ...rest} = formValues
-    // // console.log(rest)
-    // // return
     update(
       ENDPOINTS.USERS,
       {id: formValues.id, data: {...formValues}},
@@ -53,14 +49,17 @@ export const UserEdit = props => {
             source="first_name"
             resettable
           />
+          <div />
           <TextInput
             source="last_name"
             resettable
           />
+          <div />
           <TextInput
             source="email"
             resettable
           />
+          <div />
           <SelectInput
             resettable
             label="Role"

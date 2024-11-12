@@ -61,6 +61,7 @@ export const TeamEditDialog = (props: TeamEditDialogProps) => {
               source="email"
               validate={[required(), maxLength(100), email()]}
             />
+            <div />
             <SaveButton />
           </Form>
         </EditBase>

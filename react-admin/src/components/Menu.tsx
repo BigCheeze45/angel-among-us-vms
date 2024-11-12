@@ -1,14 +1,14 @@
-import {Menu} from "react-admin"
-import {Box, useTheme, Tooltip} from "@mui/material"
+import {Menu as RAMenu} from "react-admin"
+import {Box, useTheme} from "@mui/material"
 
-const CustomMenu = ({width}: {width?: string | number}) => {
+const Menu = () => {
   const theme = useTheme()
   const isDarkMode = theme.palette.mode === "dark"
 
   return (
     <Box
       sx={{
-        width: width || 50,
+        width: 300,
         marginRight: -9.5,
         padding: 1,
         display: "flex",
@@ -18,31 +18,28 @@ const CustomMenu = ({width}: {width?: string | number}) => {
         boxShadow: isDarkMode ? "0px 4px 12px rgba(255, 255, 255, 0.1)" : "0px 4px 12px rgba(0, 0, 0, 0.1)",
       }}
     >
-      {/* Logo with tooltip */}
-      <Tooltip title="Logo">
-        <Box
-          sx={{
-            width: "40px", // Increased circle size
-            height: "40px", // Increased circle size
-            borderRadius: "50%", // Ensure the container remains circular
-            border: isDarkMode ? "1px solid #7d7e82" : "1px solid #b1b2b4",
-            backgroundColor: isDarkMode ? "#333" : "#f0f0f0", // Background color for circle
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: "5px",
+      <Box
+        sx={{
+          width: "40px", // Increased circle size
+          height: "40px", // Increased circle size
+          borderRadius: "50%", // Ensure the container remains circular
+          border: isDarkMode ? "1px solid #7d7e82" : "1px solid #b1b2b4",
+          backgroundColor: isDarkMode ? "#333" : "#f0f0f0", // Background color for circle
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginLeft: "5px",
+        }}
+      >
+        <img
+          src="/favicon.png"
+          alt="Logo"
+          style={{
+            width: "23px",
+            height: "23px",
           }}
-        >
-          <img
-            src="/favicon.png"
-            alt="Logo"
-            style={{
-              width: "23px",
-              height: "23px",
-            }}
-          />
-        </Box>
-      </Tooltip>
+        />
+      </Box>
 
       {/* Separator line */}
       <Box
@@ -54,7 +51,7 @@ const CustomMenu = ({width}: {width?: string | number}) => {
         }}
       />
 
-      <Menu
+      <RAMenu
         sx={{
           "& .RaMenuItem": {
             color: isDarkMode ? "#fff" : "#333", // Text color based on theme
@@ -70,4 +67,4 @@ const CustomMenu = ({width}: {width?: string | number}) => {
   )
 }
 
-export default CustomMenu
+export default Menu

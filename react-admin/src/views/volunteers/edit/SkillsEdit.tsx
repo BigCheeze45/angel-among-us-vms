@@ -10,6 +10,7 @@ import {
   TextField,
   useRefresh,
   Pagination,
+  SimpleForm,
   SaveButton,
   useRecordContext,
   AutocompleteInput,
@@ -96,7 +97,10 @@ export const SkillsEdit = () => {
       >
         <DialogTitle>New Skill/Interest</DialogTitle>
         <DialogContent>
-          <Form onSubmit={handleCreate}>
+          <Form
+            onSubmit={handleCreate}
+            id="create_skill_form"
+          >
             <AutocompleteInput
               isRequired
               label="Options"
@@ -122,7 +126,8 @@ export const SkillsEdit = () => {
                 choices(["skill", "interest", "Please choose one of the values"]),
               ]}
             />
-            <SaveButton />
+            <div />
+            <SaveButton id="create_skill_form" />
           </Form>
         </DialogContent>
       </Dialog>

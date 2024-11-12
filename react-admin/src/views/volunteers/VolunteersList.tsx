@@ -24,6 +24,7 @@ const volunteerFilters = [
     source="team_id"
     reference="teams"
     perPage={25}
+    sx={{width: 1}}
     sort={{field: "name", order: "ASC"}}
   />,
   <AutocompleteInput
@@ -86,6 +87,8 @@ export const VolunteersList = () => {
         <TextField source="home_phone" />
         <TextField source="work_phone" />
         <UrlField
+          target="_blank"
+          rel="noopener noreferrer"
           source="ishelters_profile"
           label="iShelters Profile"
           content="View iShelters profile"

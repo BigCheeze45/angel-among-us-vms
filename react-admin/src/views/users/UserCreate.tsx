@@ -57,15 +57,18 @@ export const UserCreate = (props: UserCreateDialogProps) => {
             validate={[required()]}
             source="first_name"
           />
+          <div />
           <TextInput
             source="last_name"
             required={true}
           />
+          <div />
           <TextInput
             isRequired
             source="email"
             validate={[required(), email()]}
           />
+          <div />
           <SelectInput
             isRequired
             source="role"
@@ -77,6 +80,7 @@ export const UserCreate = (props: UserCreateDialogProps) => {
             ]}
             validate={[required(), choices(["administrator", "editor", "viewer"], "Please choose one of the values")]}
           />
+          <div />
           <CheckboxGroupInput
             label={false}
             source="is_staff"
@@ -85,6 +89,7 @@ export const UserCreate = (props: UserCreateDialogProps) => {
             // options={{required: true}}
             helperText="Designates whether the user can log into the VMS"
           />
+          <div />
           <SaveButton
             label="Create user"
             sx={{mt: 1}}

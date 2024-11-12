@@ -1,11 +1,10 @@
 import {Layout} from "./Layout"
-import {useState} from "react"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
 import authProvider from "./authProvider"
 import {Admin, Resource} from "react-admin"
-import {lightTheme, darkTheme} from "./theme"
 import {GOOGLE_CLIENT_ID} from "./constants"
+import {lightTheme, darkTheme} from "./Theme"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
@@ -18,8 +17,6 @@ import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
 import {useGoogleAuthProvider, GoogleAuthContextProvider, localStorageTokenStore} from "ra-auth-google"
 
 export const App = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const toggleTheme = () => setIsDarkMode(prevMode => !prevMode)
   // configure Sign-in with Google
   // Only one auto re-authn request can be made every 10 minutes.
   const {gsiParams, authProvider: googleAuthProvider} = useGoogleAuthProvider({
@@ -40,15 +37,11 @@ export const App = () => {
       <Admin
         // https://marmelab.com/react-admin/Admin.html#requireauth
         requireAuth
-        theme={isDarkMode ? darkTheme : lightTheme}
-        layout={props => (
-          <Layout
-            {...props}
-            toggleTheme={toggleTheme}
-            isDarkMode={isDarkMode}
-          />
-        )}
+        layout={Layout}
+        defaultTheme="light"
         loginPage={LoginPage}
+        darkTheme={darkTheme}
+        lightTheme={lightTheme}
         dataProvider={drfDataProvider}
         authProvider={drfAuthProvider}
       >

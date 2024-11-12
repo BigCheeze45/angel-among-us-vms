@@ -20,6 +20,7 @@ import {UserCreate} from "./UserCreate"
 import {Fragment, useState} from "react"
 import {Card, CardContent} from "@mui/material"
 import BadgeIcon from "@mui/icons-material/Badge"
+import PersonOffIcon from "@mui/icons-material/PersonOff"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
@@ -43,6 +44,7 @@ const UserListActions = (props: UserListActionsProps) => (
 const UsersBulkActionButtons = () => (
   <Fragment>
     <BulkUpdateButton
+      icon={<PersonOffIcon />}
       label="Disable"
       mutationMode="optimistic"
       successMessage="Logins disabled successfully"
