@@ -19,8 +19,8 @@ import {UserEdit} from "./UserEdit"
 import {UserCreate} from "./UserCreate"
 import {Fragment, useState} from "react"
 import {Card, CardContent} from "@mui/material"
-import BadgeIcon from '@mui/icons-material/Badge'
-import VisibilityIcon from '@mui/icons-material/Visibility'
+import BadgeIcon from "@mui/icons-material/Badge"
+import VisibilityIcon from "@mui/icons-material/Visibility"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {ExportExcelButton} from "../../components/ExportExcelButton"

@@ -1,19 +1,25 @@
-<<<<<<< Updated upstream
 import {Layout} from "./Layout"
+import {useState} from "react"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
 import authProvider from "./authProvider"
 import {Admin, Resource} from "react-admin"
+import {lightTheme, darkTheme} from "./theme"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
 import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
+import PeopleIcon from "@mui/icons-material/People"
+import PersonIcon from "@mui/icons-material/Person"
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 import {VolunteerEdit} from "./views/volunteers/edit/VolunteerEdit"
 import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
 import {useGoogleAuthProvider, GoogleAuthContextProvider, localStorageTokenStore} from "ra-auth-google"
 
 export const App = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const toggleTheme = () => setIsDarkMode(prevMode => !prevMode)
   // configure Sign-in with Google
   // Only one auto re-authn request can be made every 10 minutes.
   const {gsiParams, authProvider: googleAuthProvider} = useGoogleAuthProvider({
@@ -34,7 +40,14 @@ export const App = () => {
       <Admin
         // https://marmelab.com/react-admin/Admin.html#requireauth
         requireAuth
-        layout={Layout}
+        theme={isDarkMode ? darkTheme : lightTheme}
+        layout={props => (
+          <Layout
+            {...props}
+            toggleTheme={toggleTheme}
+            isDarkMode={isDarkMode}
+          />
+        )}
         loginPage={LoginPage}
         dataProvider={drfDataProvider}
         authProvider={drfAuthProvider}
@@ -45,6 +58,7 @@ export const App = () => {
           list={VolunteersList}
           edit={VolunteerEdit}
           hasCreate={false}
+          icon={VolunteerActivismIcon}
           recordRepresentation={record => `${record.full_name}`}
         />
         <Resource
@@ -53,6 +67,7 @@ export const App = () => {
           show={TeamShow}
           hasEdit={false}
           hasCreate={false}
+          icon={PeopleIcon}
         />
         <Resource
           name="users"
@@ -65,6 +80,7 @@ export const App = () => {
           hasCreate={false}
           hasShow={false}
           hasEdit={false}
+          icon={PersonIcon}
           // display user full name when presenting a record (e.g. show view)
           recordRepresentation={record => `${record.first_name} ${record.last_name}`}
         />
@@ -72,81 +88,3 @@ export const App = () => {
     </GoogleAuthContextProvider>
   )
 }
-=======
-import { Admin, Resource } from 'react-admin';
-import PeopleIcon from '@mui/icons-material/People';
-import PersonIcon from '@mui/icons-material/Person';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import { Layout } from "./Layout";
-import { LoginPage } from "./pages/Login";
-import dataProvider from "./dataProvider";
-import { lightTheme, darkTheme } from './theme';
-import { TeamShow } from "./views/teams/TeamShow";
-import { UserShow } from "./views/users/UserShow";
-import { UsersList } from "./views/users/UserList";
-import { UserEdit } from "./views/users/UserEdit";
-import { TeamList } from "./views/teams/TeamsList";
-import { UserCreate } from "./views/users/UserCreate";
-import { VolunteerShow } from "./views/volunteers/VolunteerShow";
-import { VolunteersList } from "./views/volunteers/VolunteersList";
-import { useGoogleAuthProvider, GoogleAuthContextProvider } from "ra-auth-google";
-import { useState } from 'react';
-
-export const App = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-    const drfProvider = dataProvider();
-    const { authProvider, gsiParams } = useGoogleAuthProvider({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    });
-
-    const toggleTheme = () => setIsDarkMode((prevMode) => !prevMode);
-
-    return (
-        <GoogleAuthContextProvider value={gsiParams}>
-            <Admin
-                theme={isDarkMode ? darkTheme : lightTheme}
-                requireAuth
-                layout={(props) => (
-                    <Layout 
-                        {...props} 
-                        toggleTheme={toggleTheme} 
-                        isDarkMode={isDarkMode} 
-                    />
-                )}
-                loginPage={LoginPage}
-                dataProvider={drfProvider}
-                authProvider={authProvider}
-            >
-                <Resource
-                    name="volunteers"
-                    show={VolunteerShow}
-                    list={VolunteersList}
-                    hasEdit={false}
-                    hasCreate={false}
-                    recordRepresentation={(record) => `${record.full_name}`}
-                    icon={VolunteerActivismIcon} 
-                />
-                <Resource
-                    name="teams"
-                    list={TeamList}
-                    show={TeamShow}
-                    hasEdit={false}
-                    hasCreate={false}
-                    icon={PeopleIcon} 
-                />
-                <Resource
-                    name="users"
-                    show={UserShow}
-                    edit={UserEdit}
-                    list={UsersList}
-                    create={UserCreate}
-                    recordRepresentation={(record) => `${record.first_name} ${record.last_name}`}
-                    icon={PersonIcon} 
-                />
-            </Admin>
-        </GoogleAuthContextProvider>
-    );
-};
-
-export default App;
->>>>>>> Stashed changes
