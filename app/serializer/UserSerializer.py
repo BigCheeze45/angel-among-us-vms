@@ -5,14 +5,14 @@ from rest_framework import serializers
 
 # Serializers define the API representation.
 class UserSerializer(serializers.ModelSerializer):
-    roles = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         exclude = ["password", "username", "is_superuser"]
 
-    def get_roles(self, user):
-        return [{"name": g.name} for g in user.groups.all()]
+    def get_role(self, user):
+        return [g.name.lower() for g in user.groups.all()]
 
 
 class UserCreateSerializer(serializers.Serializer):

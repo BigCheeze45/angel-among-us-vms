@@ -245,7 +245,7 @@ export default (apiUrl: string = API_BASE_URL): DataProvider => ({
 
     const response = await fetch(url, {
       method: HttpMethod.POST,
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json", Authorization: `Token ${localStorage.getItem("apiToken")}`},
       body: JSON.stringify({format: params.meta?.format, ids: params?.ids}),
     })
 

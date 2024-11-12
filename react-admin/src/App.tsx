@@ -5,8 +5,6 @@ import authProvider from "./authProvider"
 import {Admin, Resource} from "react-admin"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {TeamShow} from "./views/teams/TeamShow"
-import {UserShow} from "./views/users/UserShow"
-import {UserEdit} from "./views/users/UserEdit"
 import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
@@ -57,8 +55,6 @@ export const App = () => {
         />
         <Resource
           name="users"
-          show={UserShow}
-          edit={UserEdit}
           list={UsersList}
           /*
             There is a Create view however it's a dialog that's only available
@@ -66,6 +62,8 @@ export const App = () => {
             do anything unexpected (e.g. trying to navigate to it)
           */
           hasCreate={false}
+          hasShow={false}
+          hasEdit={false}
           // display user full name when presenting a record (e.g. show view)
           recordRepresentation={record => `${record.first_name} ${record.last_name}`}
         />

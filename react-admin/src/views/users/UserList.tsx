@@ -2,30 +2,27 @@ import {
   List,
   DateField,
   TextField,
-  ChipField,
   TopToolbar,
   FilterList,
-  EditButton,
   EmailField,
-  ArrayField,
   CreateButton,
   BooleanField,
   WrapperField,
   FilterListItem,
-  SingleFieldList,
   BulkUpdateButton,
   SavedQueriesList,
   FilterLiveSearch,
   SelectColumnsButton,
   DatagridConfigurable,
 } from "react-admin"
+import {UserEdit} from "./UserEdit"
 import {UserCreate} from "./UserCreate"
 import {Fragment, useState} from "react"
 import {Card, CardContent} from "@mui/material"
+import BadgeIcon from '@mui/icons-material/Badge'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
-import {ListActionToolbar} from "../../components/ListActionToolbar"
-import CardMembershipIcon from "@mui/icons-material/CardMembership"
 import {ExportExcelButton} from "../../components/ExportExcelButton"
 
 const UserListActions = (props: UserListActionsProps) => (
@@ -47,7 +44,9 @@ const UsersBulkActionButtons = () => (
   <Fragment>
     <BulkUpdateButton
       label="Disable"
-      data={{is_active: false, is_staff: false}}
+      mutationMode="optimistic"
+      successMessage="Logins disabled successfully"
+      data={{is_active: false, is_staff: false, disable: true}}
     />
     <ExportCSVButton />
     <ExportExcelButton />
@@ -78,7 +77,7 @@ const UsersFilterSidebar = () => (
       </FilterList>
       <FilterList
         label="VMS Access"
-        icon={<CardMembershipIcon />}
+        icon={<VisibilityIcon />}
       >
         <FilterListItem
           label="Yes"
@@ -91,7 +90,7 @@ const UsersFilterSidebar = () => (
       </FilterList>
       <FilterList
         label="Role"
-        icon={<CardMembershipIcon />}
+        icon={<BadgeIcon />}
       >
         <FilterListItem
           label="Administrator"
@@ -112,6 +111,8 @@ const UsersFilterSidebar = () => (
 
 export const UsersList = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(undefined)
+  const [editing, setEditing] = useState(false)
 
   return (
     <>
@@ -119,7 +120,14 @@ export const UsersList = () => {
         actions={<UserListActions onCreateClick={() => setDialogOpen(!dialogOpen)} />}
         aside={<UsersFilterSidebar />}
       >
-        <DatagridConfigurable bulkActionButtons={<UsersBulkActionButtons />}>
+        <DatagridConfigurable
+          bulkActionButtons={<UsersBulkActionButtons />}
+          rowClick={(_id, _resource, record) => {
+            setSelectedRow(record)
+            setEditing(!editing)
+            return false
+          }}
+        >
           <WrapperField label="Name">
             <TextField source="first_name" /> <TextField source="last_name" />
           </WrapperField>
@@ -132,18 +140,6 @@ export const UsersList = () => {
             source="is_staff"
             label="VMS Access"
           />
-          {/* <ArrayField
-            source="roles"
-            label="Role"
-            sortable={false}
-          >
-            <SingleFieldList linkType={false}>
-              <ChipField
-                source="name"
-                size="small"
-              />
-            </SingleFieldList>
-          </ArrayField> */}
           <DateField
             showTime
             label="Last Login"
@@ -153,19 +149,16 @@ export const UsersList = () => {
             label="Date Joined"
             source="date_joined"
           />
-          <WrapperField
-            source="actions"
-            label=""
-          >
-            <ListActionToolbar>
-              <EditButton />
-            </ListActionToolbar>
-          </WrapperField>
         </DatagridConfigurable>
       </List>
       <UserCreate
         dialogOpen={dialogOpen}
         onClose={() => setDialogOpen(!dialogOpen)}
+      />
+      <UserEdit
+        dialogOpen={editing}
+        onClose={() => setEditing(!editing)}
+        record={selectedRow}
       />
     </>
   )

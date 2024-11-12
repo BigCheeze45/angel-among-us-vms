@@ -19,7 +19,7 @@ from app.serializer.UserSerializer import UserSerializer, UserCreateSerializer
 
 
 class UserFilters(filters.FilterSet):
-    # role = filters.BooleanFilter(name="date_published", method="filter_is_published")
+    role = filters.CharFilter(field_name="groups__name", lookup_expr="iexact")
 
     class Meta:
         model = User
@@ -46,7 +46,32 @@ class UserViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         if not request.user.has_perm("auth.change_user"):
             raise PermissionDenied("You do not have permission to update this user.")
-        return super().update(request, *args, **kwargs)
+
+        # Disable user account
+        user = get_object_or_404(User, pk=kwargs.get("pk"))
+        if request.data.get("disable"):
+            user.is_staff = False
+            user.is_active = False
+            user.is_superuser = False
+            user.save()
+            serializer = self.serializer_class(user)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        
+        user_create_serializer = UserCreateSerializer(data=request.data)
+        # validate the incoming data & abort if it's not valid
+        user_create_serializer.is_valid()
+        validated_data = user_create_serializer.data
+
+        # check if this role (group) exists
+        group = get_object_or_404(Group, name__iexact=validated_data["role"])
+
+        del validated_data["role"]
+        User.objects.filter(pk=kwargs.get("pk")).update(**validated_data)
+        # assign role to user
+        group.user_set.add(user)
+
+        serializer = self.serializer_class(user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         # Returns True if the user has the specified permission, where perm is in the format "<app label>.<permission codename>".
