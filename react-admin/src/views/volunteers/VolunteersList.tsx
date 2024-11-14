@@ -13,12 +13,17 @@ import {
   DatagridConfigurable,
 } from "react-admin"
 import {Fragment} from "react"
-import {GA_COUNTIES} from "../../constants"
+import {GA_COUNTIES, VOLUNTEER_SKILLS} from "../../constants"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {VolunteerFilterSidebar} from "./VolunteersFilterSidebar"
 import {ExportExcelButton} from "../../components/ExportExcelButton"
 
 const volunteerFilters = [
+  <AutocompleteInput
+    key="skill_filter"
+    source="skill"
+    choices={VOLUNTEER_SKILLS}
+  />,
   <ReferenceInput
     key="team_filter"
     source="team_id"
@@ -31,6 +36,11 @@ const volunteerFilters = [
     key="county_filter"
     source="county"
     choices={GA_COUNTIES}
+  />,
+  <AutocompleteInput
+    key="interest_filter"
+    source="interest"
+    choices={VOLUNTEER_SKILLS}
   />,
 ]
 

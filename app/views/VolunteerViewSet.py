@@ -1,11 +1,14 @@
 import uuid
 from http import HTTPMethod
-from django.http import FileResponse
+
 import pandas as pd
+
 from rest_framework import viewsets
+from django.http import FileResponse
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
 from rest_framework.exceptions import ValidationError
+
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
 from app.serializer.VolunteerSerializer import VolunteerSerializer
@@ -16,6 +19,8 @@ class VolunteerFilters(filters.FilterSet):
         model = Volunteer
         fields = ["active", "job_title", "county"]
 
+    skill = filters.CharFilter(method="filter_by_skill")
+    interest = filters.CharFilter(method="filter_by_interest")
     date_joined = filters.DateFromToRangeFilter()
     has_maddie_certification = filters.BooleanFilter(
         field_name="maddie_certifications_received_date", lookup_expr="isnull"
@@ -23,6 +28,16 @@ class VolunteerFilters(filters.FilterSet):
     county_isnull = filters.BooleanFilter(
         field_name="maddie_certifications_received_date", lookup_expr="isnull"
     )
+
+    def filter_by_interest(self, queryset, name, value):
+        return self.filter_by_skill(queryset, name, value)
+
+    def filter_by_skill(self, queryset, name, value):
+        return (
+            queryset.filter(skills__skill__icontains=value, skills__type=name)
+            if name in ["skill", "interest"]
+            else queryset
+        )
 
 
 class VolunteerViewSet(viewsets.ModelViewSet):
