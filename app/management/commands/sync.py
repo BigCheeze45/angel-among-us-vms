@@ -650,6 +650,7 @@ class Command(BaseCommand):
                         volunteer,
                         exclude=[
                             "id",
+                            "ishelters_profile",
                             "application_received_date",
                             "has_maddie_certifications",
                             "active_status_change_date",

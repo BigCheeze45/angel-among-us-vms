@@ -7,9 +7,15 @@ from knox.views import LogoutAllView as KnoxLogoutAllView
 
 from rest_framework.response import Response
 from rest_framework import exceptions, status
-from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication as DRFBasicAuthentication
+from rest_framework.authentication import (
+    BasicAuthentication as DRFBasicAuthentication,
+)
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 
 
 class BasicAuthentication(DRFBasicAuthentication):
@@ -77,9 +83,17 @@ def refresh_token(request):
     return Response(None, status=status.HTTP_200_OK)
 
 
+@api_view([HTTPMethod.GET])
+@authentication_classes([])
+@permission_classes([])
+def health_check(request):
+    """Endpoint to check whether the app is up & running"""
+    return Response(None, status=status.HTTP_200_OK)
+
+
 class LogoutView(KnoxLogoutView):
     pass
 
 
-class LogoutAllView(KnoxLogoutView):
+class LogoutAllView(KnoxLogoutAllView):
     pass

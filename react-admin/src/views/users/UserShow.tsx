@@ -8,6 +8,7 @@ export const UserShow = () => (
         <TextField source="last_name" />
         <EmailField source="email" />
         <BooleanField source="is_staff" />
+        <TextField source="role" />
         <BooleanField source="is_active" />
         <DateField source="last_login" />
         <DateField source="date_joined" />

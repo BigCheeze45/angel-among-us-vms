@@ -23,6 +23,7 @@ from django.urls import include, path
 from app.views.AuthView import (
     LoginView,
     LogoutView,
+    health_check,
     refresh_token,
     LogoutAllView,
 )
@@ -30,6 +31,7 @@ from app.views.AuthView import (
 urlpatterns = [
     path("", include("app.urls")),
     path("admin/", admin.site.urls),
+    path(r"status/", health_check, name="health_check"),
     path(r"api/auth/refresh/", refresh_token, name="knox_refresh"),
     path(r"api/auth/login/", LoginView.as_view(), name="knox_login"),
     path(r"api/auth/logout/", LogoutView.as_view(), name="knox_logout"),

@@ -12,7 +12,13 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ["password", "username", "is_superuser"]
 
     def get_role(self, user):
-        return [g.name.lower() for g in user.groups.all()]
+        # FIXME - if/when users are assigned multiple roles
+        # return list of roles instead of just role
+        groups = [g.name.title() for g in user.groups.all()]
+        if groups:
+            return groups[0]
+
+        return None
 
 
 class UserCreateSerializer(serializers.Serializer):

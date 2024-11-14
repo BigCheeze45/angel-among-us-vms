@@ -1,4 +1,4 @@
-import {BooleanField, DateField, EmailField, Show, SimpleShowLayout, TextField} from "react-admin"
+import {BooleanField, UrlField, DateField, EmailField, Show, SimpleShowLayout, TextField} from "react-admin"
 
 export const ShowSummary = () => (
   <Show
@@ -22,6 +22,13 @@ export const ShowSummary = () => (
       <DateField
         label="Maddie certification date"
         source="maddie_certifications_received_date"
+      />
+      <UrlField
+        target="_blank"
+        rel="noopener noreferrer"
+        source="ishelters_profile"
+        label="iShelters Profile"
+        content="View iShelters profile"
       />
       <DateField
         showTime

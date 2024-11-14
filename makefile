@@ -21,6 +21,9 @@ up:
 down:
 	$(DOCKER_COMPOSE) down
 
+restart:
+	$(MAKE) down
+	$(MAKE) up
 # Reset: bring down the stack, remove volumes and orphaned containers
 clean:
 	$(DOCKER_COMPOSE) down --volumes --remove-orphans
@@ -31,14 +34,12 @@ clean:
 cleanishelters:
 	$(DOCKER_COMPOSE) down ishelters --volumes
 	$(DOCKER_COMPOSE) up ishelters -d
-	sleep 10
 	$(MAKE) mimesis
 
 # Destroy and rebuild the application database
 cleanvms:
 	$(DOCKER_COMPOSE) down database --volumes
 	$(DOCKER_COMPOSE) up database -d
-	sleep 10
 	$(MAKE) makemigrations
 	$(MAKE) migrate
 
@@ -83,8 +84,6 @@ init:
 	$(MAKE) clean
 	$(MAKE) build
 	$(MAKE) up
-	# FIXME - Hack until dependencies & health checks can be added
-	sleep 15
 	$(MAKE) mimesis
 	$(MAKE) migrate
 	$(MAKE) sync

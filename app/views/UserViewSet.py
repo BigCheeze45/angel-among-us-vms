@@ -3,7 +3,7 @@ from http import HTTPMethod
 
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from django.db.utils import Error as DjangoDBError
 import pandas as pd
 
@@ -53,6 +53,9 @@ class UserViewSet(viewsets.ModelViewSet):
             user.is_staff = False
             user.is_active = False
             user.is_superuser = False
+            # remove any group and direct permissions
+            user.groups.clear()
+            user.user_permissions.clear()
             user.save()
             serializer = self.serializer_class(user)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -61,13 +64,20 @@ class UserViewSet(viewsets.ModelViewSet):
         # validate the incoming data & abort if it's not valid
         user_create_serializer.is_valid()
         validated_data = user_create_serializer.data
+        # Update username in case user's email has changed
+        validated_data["username"] = validated_data["email"]
 
         # check if this role (group) exists
         group = get_object_or_404(Group, name__iexact=validated_data["role"])
 
         del validated_data["role"]
         User.objects.filter(pk=kwargs.get("pk")).update(**validated_data)
-        # assign role to user
+        
+        # Remove any previously assigned role & permissions
+        # TODO - remove to support users have multiple roles & granular permissions
+        user.groups.clear()
+        
+        # assign new role to user
         group.user_set.add(user)
 
         serializer = self.serializer_class(user)
@@ -92,7 +102,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user = User.objects.create(
                 is_superuser=False,
                 **validated_data,
-                username=user_create_serializer["email"],
+                username=validated_data["email"],
             )
             user.set_unusable_password()
             user.save()

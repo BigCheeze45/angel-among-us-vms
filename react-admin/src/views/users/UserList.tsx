@@ -6,6 +6,7 @@ import {
   FilterList,
   EmailField,
   CreateButton,
+  DeleteButton,
   BooleanField,
   WrapperField,
   FilterListItem,
@@ -14,6 +15,7 @@ import {
   FilterLiveSearch,
   SelectColumnsButton,
   DatagridConfigurable,
+  DeleteWithConfirmButton,
 } from "react-admin"
 import {UserEdit} from "./UserEdit"
 import {UserCreate} from "./UserCreate"
@@ -25,6 +27,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
 import {ExportExcelButton} from "../../components/ExportExcelButton"
+import {ListActionToolbar} from "../../components/ListActionToolbar"
 
 const UserListActions = (props: UserListActionsProps) => (
   <TopToolbar>
@@ -142,6 +145,7 @@ export const UsersList = () => {
             source="is_staff"
             label="VMS Access"
           />
+          <TextField source="role" />
           <DateField
             showTime
             label="Last Login"
@@ -151,6 +155,18 @@ export const UsersList = () => {
             label="Date Joined"
             source="date_joined"
           />
+          <WrapperField
+            source="actions"
+            label=""
+          >
+            <ListActionToolbar>
+              <DeleteWithConfirmButton
+                confirmColor="warning"
+                confirmTitle="Delete user"
+                confirmContent="You will not be able to recover this record. Are you sure?"
+              />
+            </ListActionToolbar>
+          </WrapperField>
         </DatagridConfigurable>
       </List>
       <UserCreate

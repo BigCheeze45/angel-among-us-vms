@@ -18,9 +18,10 @@ export const UserEdit = props => {
   const [update] = useUpdate()
 
   const handleSubmit = formValues => {
+    const {role} = formValues
     update(
       ENDPOINTS.USERS,
-      {id: formValues.id, data: {...formValues}},
+      {id: formValues.id, data: {...formValues, role: role.toLowerCase()}},
       {
         onSuccess: () => {
           refresh()
@@ -64,12 +65,9 @@ export const UserEdit = props => {
             resettable
             label="Role"
             source="role"
-            validate={[choices(["administrator", "editor", "viewer"], "Please choose one of the values")]}
-            choices={[
-              {id: "administrator", name: "Administrator"},
-              {id: "viewer", name: "Viewer"},
-              {id: "editor", name: "Editor"},
-            ]}
+            create={false}
+            choices={["Administrator", "Editor", "Viewer"]}
+            validate={[choices(["Administrator", "Editor", "Viewer"], "Please choose one of the values")]}
           />
           <BooleanInput
             source="is_staff"

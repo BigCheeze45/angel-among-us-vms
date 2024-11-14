@@ -4,6 +4,7 @@ import {
   TopToolbar,
   EmailField,
   ShowButton,
+  useCanAccess,
   WrapperField,
   FilterLiveSearch,
   SavedQueriesList,
@@ -11,6 +12,7 @@ import {
   DatagridConfigurable,
 } from "react-admin"
 import {Fragment, useState} from "react"
+import {ENDPOINTS} from "../../constants"
 import {TeamEditDialog} from "./TeamsEdit"
 import {Card, CardContent} from "@mui/material"
 import {ExportCSVButton} from "../../components/ExportCSVButton"
@@ -49,6 +51,12 @@ const TeamsBulkActionButtons = () => (
 export const TeamList = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedRecord, setSelectedRecord] = useState(undefined)
+  const {isPending, canAccess, error} = useCanAccess({
+    action: "edit",
+    resource: ENDPOINTS.TEAMS,
+  })
+
+  if (isPending) return null
 
   return (
     <List
@@ -58,6 +66,9 @@ export const TeamList = () => {
       <DatagridConfigurable
         bulkActionButtons={<TeamsBulkActionButtons />}
         rowClick={(_id, _resource, record) => {
+          if (!canAccess) {
+            return false
+          }
           setSelectedRecord(record)
           setDialogOpen(!dialogOpen)
           return false
