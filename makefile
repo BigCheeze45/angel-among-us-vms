@@ -27,6 +27,9 @@ restart:
 # Reset: bring down the stack, remove volumes and orphaned containers
 clean:
 	$(DOCKER_COMPOSE) down --volumes --remove-orphans
+	rm -fr react-admin/dist
+	rm -fr react-admin/.env
+	rm -fr react-admin/.vite
 	rm -f .devcontainer/.pdk
 	rm -fr react-admin/node_modules
 
@@ -34,6 +37,7 @@ clean:
 cleanishelters:
 	$(DOCKER_COMPOSE) down ishelters --volumes
 	$(DOCKER_COMPOSE) up ishelters -d
+	sleep 15
 	$(MAKE) mimesis
 
 # Destroy and rebuild the application database
@@ -42,6 +46,7 @@ cleanvms:
 	$(DOCKER_COMPOSE) up database -d
 	$(MAKE) makemigrations
 	$(MAKE) migrate
+	$(MAKE) super
 
 # Combine cleaning the vms & ishelters
 cleandbs:
@@ -73,18 +78,19 @@ sync:
 super:
 	docker exec -ti $(DJANGO_CONTAINER) python manage.py createsuperuser
 
-# Run backend (django) tests
-djangotest:
-	docker exec -t $(DJANGO_CONTAINER) python manage.py test --noinput --failfast app/tests
+cleaninit:
+	$(MAKE) clean
+	$(MAKE) init
 
 # Initialize: print welcome message, build image, and bring up the stack
 .PHONY: init
 init:
-	@echo "Setting up VMS Developemnt environment"
-	$(MAKE) clean
-	$(MAKE) build
+	@echo "Setting up VMS development environment"
+	# $(MAKE) build
 	$(MAKE) up
-	$(MAKE) mimesis
+	sleep 15
 	$(MAKE) migrate
+	$(MAKE) mimesis
 	$(MAKE) sync
+	$(MAKE) super
 	@echo "Happy coding!"

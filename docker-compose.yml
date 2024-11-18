@@ -1,7 +1,6 @@
 volumes:
   # use named volume to persist data, in this case the database
   pgdata:
-  node_modules:
   ishelters:
 
 
@@ -38,12 +37,12 @@ services:
       - postgres_db
       - postgres_user
       - postgres_passwd
-    #Healthcheck for database
+    # Healthcheck for database
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $(cat $$POSTGRES_USER_FILE) -d $(cat $$POSTGRES_DB_FILE)" ]
       interval: 30s
       retries: 5
-      start_period: 5s
+      start_period: 15s
 
   django:
     working_dir: /app
@@ -53,53 +52,30 @@ services:
       - ${LOCAL_WORKSPACE_FOLDER:-.}:/app
     image: aau-vms-backend
     container_name: django
-    secrets:
-      - secret_key
-      - postgres_db
-      - postgres_user
-      - postgres_passwd
-      - email_user
-      - email_password
-    depends_on:
-      database:
-        condition: service_healthy
     environment:
-      - TZ=${GLOBAL_TIMEZONE:-America/New_York}
-      # SECURITY WARNING: don't run with debug turned on in production!
-      - DEBUG=${DEBUG:-False}
-      - DJANGO_LOG_LEVEL=${DJANGO_LOG_LEVEL:-INFO}
-      #region Email configuration
-      # Gmail SMTP: https://support.google.com/a/answer/176600?hl=en - Option 2
-      - EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
-      - EMAIL_PORT=${EMAIL_PORT:-587}
-      - EMAIL_TIMEOUT=${EMAIL_TIMEOUT:-60}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}
-      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-False}
-      # Including a trailing space so appended text is not squished
-      - EMAIL_SUBJECT_PREFIX=${EMAIL_SUBJECT_PREFIX:-AAU VMS}
-      - DEFAULT_FROM_EMAIL=${EMAIL_DEFAULT_FROM:-aauvms@localhost}
-      #endregion
+      POSTGRES_HOST: ${POSTGRES_HOST:-host.docker.internal}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE:-aau_vms}
+      ISHELTERS_HOST: ${ISHELTERS_HOST:-host.docker.internal}
+      ISHELTERS_DATABASE: ${ISHELTERS_DATABASE:-ishelters}
+    env_file:
+      - .env
     ports:
-      - ${DJANGO_PORT:-8000}:8000
-    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:${DJANGO_PORT:-8000}" ]
-    #Healthcheck for django
+      - ${DJANGO_PORT}:8000
+    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:$DJANGO_PORT" ]
     healthcheck:
       test: [ "CMD-SHELL", "curl --fail http://localhost:${DJANGO_PORT:-8000}/status || exit 1" ]
       interval: 30s
       retries: 3
-      start_period: 5s
+      start_period: 15s
 
   react-admin:
     image: aau-vms-frontend
     container_name: react
-    environment:
-      - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
-      - VITE_JSON_SERVER_URL=${VITE_JSON_SERVER_URL:-http://localhost:${DJANGO_PORT:-8000}}
+    env_file:
+      - .env
     volumes:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/.env:/app/.env
       - ${LOCAL_WORKSPACE_FOLDER:-.}/react-admin:/app
-      # https://github.com/vitejs/vite/discussions/15532#discussioncomment-8038794
-      - node_modules:/app/node_modules
     ports:
       - ${VITE_PORT:-80}:5173
     depends_on:
@@ -107,24 +83,24 @@ services:
         condition: service_healthy
       django:
         condition: service_healthy
-    #Healthcheck for react-admin
-    healthcheck:
-      test: [ "CMD-SHELL", "curl --fail http://localhost:${VITE_PORT:-80} || exit 1" ]
-      interval: 30s
-      retries: 3
+      ishelters:
+        condition: service_healthy
 
   ishelters:
     image: mysql
-    container_name: aau_ishelters
+    container_name: ishelters
     environment:
-      MYSQL_DATABASE: aau_ishelters
-      MYSQL_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_USER: ${ISHELTERS_USERNAME}
+      MYSQL_PASSWORD: ${ISHELTERS_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${ISHELTERS_PASSWORD}
+      MYSQL_DATABASE: ${ISHELTERS_DATABASE:-ishelters}
     ports:
-      - ${MYSQL_PORT:-3306}:3306
+      - ${ISHELTERS_PORT:-3306}:3306
     volumes:
       - ishelters:/var/lib/mysql
       - ${LOCAL_WORKSPACE_FOLDER:-.}/docker_init/ishelters:/docker-entrypoint-initdb.d
-    depends_on:
-      - database
-      - django
-      - react-admin
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 3
+      start_period: 15s

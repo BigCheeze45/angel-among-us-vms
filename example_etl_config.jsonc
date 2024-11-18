@@ -31,5 +31,10 @@
         Set this to true to delete team assignments when they're deleted
         in iShelters
     */
-    "team_assignment_match_source": false
+    "team_assignment_match_source": false,
+    /*
+        If you choose not to configure email or don't want the ETL
+        report email, set this to false
+    */
+    "email_report": true
 }

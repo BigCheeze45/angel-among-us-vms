@@ -14,9 +14,10 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-from common.utils import read_docker_secrets_file, convert_string_bool
+from common.utils import convert_string_bool
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-
+# from rest_framework.permissions
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,40 +26,45 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = read_docker_secrets_file("secret_key")
-
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = convert_string_bool(os.getenv("DEBUG", "False"))
 
 # If you set DEBUG to False, you also need to properly set the ALLOWED_HOSTS setting.
 # https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-ALLOWED_HOSTS
-ALLOWED_HOSTS = ["localhost", "django"]
+ALLOWED_HOSTS = [url.strip() for url in os.getenv("ALLOWED_HOSTS", "*").split(",")]
 
 # Email configuration
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
+EMAIL_HOST_USER = os.getenv("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_DEFAULT_FROM")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_SUBJECT_PREFIX = os.getenv("EMAIL_SUBJECT_PREFIX")
-EMAIL_HOST_USER = read_docker_secrets_file("email_user")
-EMAIL_HOST_PASSWORD = read_docker_secrets_file("email_password")
 EMAIL_USE_TLS = convert_string_bool(os.getenv("EMAIL_USE_TLS", "True"))
 EMAIL_USE_SSL = convert_string_bool(os.getenv("EMAIL_USE_SSL", "False"))
 
 # django-rest-framework
 # https://www.django-rest-framework.org
 
+REQUIRE_AUTH = convert_string_bool(os.getenv("REQUIRE_AUTH", True))
+if REQUIRE_AUTH:
+    auth_classes = ["knox.auth.TokenAuthentication"]
+    perm_classes = ["rest_framework.permissions.IsAuthenticated"]
+else:
+    auth_classes = []
+    perm_classes = ["rest_framework.permissions.IsAuthenticatedOrReadOnly"]
+
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "PAGE_SIZE": 25,
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
     ],
-    "PAGE_SIZE": 25,
     "DEFAULT_PAGINATION_CLASS": "app.ModelPagination.ModelPagination",
-    "DEFAULT_AUTHENTICATION_CLASSES": ["knox.auth.TokenAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": auth_classes,
+    "DEFAULT_PERMISSION_CLASSES": perm_classes,
 }
 
 # Do not enable JSON responses for 400 & 500 unhandled exceptions
@@ -79,17 +85,16 @@ REST_KNOX = {
     "USER_SERIALIZER": "knox.serializers.UserSerializer",
 }
 
-# django-phonenumber-field
-# ISO-3166-1 two-letter country code indicating how to interpret regional phone numbers.
-PHONENUMBER_DEFAULT_REGION = "US"
-
-
 # django-cor-headers
 # https://github.com/adamchainz/django-cors-headers
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOWED_ORIGINS = [*ALLOWED_HOSTS, "http://localhost", "http://localhost:8000"]
+# if True, overrides all other CORS setting
+CORS_ALLOW_ALL_ORIGINS = convert_string_bool(os.getenv("CORS_ALLOW_ALL_ORIGINS", DEBUG))
+if os.getenv("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS = [
+        url.strip() for url in os.getenv("CORS_ALLOWED_ORIGINS").split(",")
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = []
 
 
 # Application definition
@@ -104,7 +109,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "phonenumber_field",
     "django.contrib.contenttypes",
 ]
 
@@ -146,11 +150,11 @@ WSGI_APPLICATION = "vms.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": f"{read_docker_secrets_file('postgres_db')}",
-        "USER": f"{read_docker_secrets_file('postgres_user')}",
-        "PASSWORD": f"{read_docker_secrets_file('postgres_passwd')}",
-        "HOST": "database",
-        "PORT": "5432",
+        "USER": os.getenv("POSTGRES_USER"),
+        "NAME": os.getenv("POSTGRES_DATABASE"),
+        "PORT": os.getenv("POSTGRES_PORT", 5432),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", "database"),
     }
 }
 

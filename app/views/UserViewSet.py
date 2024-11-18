@@ -3,7 +3,7 @@ from http import HTTPMethod
 
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import User, Group
 from django.db.utils import Error as DjangoDBError
 import pandas as pd
 

@@ -1,5 +1,17 @@
+let client_id, require_auth
+console.log(Object.keys(import.meta.env).includes("VITE_GOOGLE_CLIENT_ID"))
+if (Object.keys(import.meta.env).includes("VITE_GOOGLE_CLIENT_ID")) {
+  client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID
+} else {
+  client_id = "PLACE HOLDER - REPLACE ME WITH ACTUAL G CLIENT ID"
+}
+
+if (Object.keys(import.meta.env).includes("VITE_REQUIRE_AUTH")) {
+  require_auth = import.meta.env.VITE_REQUIRE_AUTH.toLowerCase() === "true"
+}
+export const REQUIRE_AUTH = require_auth
+export const GOOGLE_CLIENT_ID = client_id
 export const API_BASE_URL = import.meta.env.VITE_JSON_SERVER_URL
-export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 export const ENDPOINTS = {
   TEAMS: "teams",

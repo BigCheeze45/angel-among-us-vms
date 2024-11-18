@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from mimesis import Field, Locale
 from mimesis.random import Random
 
-
+from common.utils import get_etl_config_from_env
 from app.management.commands.common import (
     load_ishelters_staff,
     load_ishelters_person,
@@ -41,13 +41,25 @@ class Command(BaseCommand):
             "--num-person",
             type=int,
             default=1000,
-            help="Number of individuals to load in the 'person' table"
-            " Defaults to config.jsonc in the current working directory",
+            help="Number of individuals to load in the 'person' table",
         )
 
     def handle(self, *args: Any, **options: Any) -> str | None:
-        with open(options.get("config_file")) as input_:
-            config = pyjson5.load(input_)
+        if options.get("config_file").exists():
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Configuration file found. {options.get('config_file')}"
+                )
+            )
+            with open(options.get("config_file")) as input_:
+                config = pyjson5.load(input_)
+        else:
+            self.stdout.write(
+                self.style.WARNING(
+                    "Configuration file not found. Attempting to read ETL configuration from environment."
+                )
+            )
+            config = get_etl_config_from_env()
         options.update(**config)
 
         self._load_ishelters(options)
@@ -60,7 +72,9 @@ class Command(BaseCommand):
         load_ishelters_country(conn, self.mimesis_random)
         load_ishelters_job_title(conn, self.mimesis_random)
         load_ishelters_sign_in_type(conn, self.mimesis_random)
-        load_ishelters_person(conn, self.mimesis_random, self.field, options.get("num_person"))
+        load_ishelters_person(
+            conn, self.mimesis_random, self.field, options.get("num_person")
+        )
         load_ishelters_staff(conn, self.mimesis_random, self.field)
         load_ishelters_staff_job_title(conn, self.mimesis_random, self.field)
         load_ishelters_desired_job(conn, self.mimesis_random, self.field)

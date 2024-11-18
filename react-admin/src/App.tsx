@@ -2,7 +2,7 @@ import {Layout} from "./Layout"
 import {LoginPage} from "./pages/Login"
 import dataProvider from "./dataProvider"
 import authProvider from "./authProvider"
-import {Admin, Resource} from "react-admin"
+import {REQUIRE_AUTH} from "./constants"
 import {GOOGLE_CLIENT_ID} from "./constants"
 import {lightTheme, darkTheme} from "./Theme"
 import {TeamShow} from "./views/teams/TeamShow"
@@ -10,11 +10,55 @@ import {UsersList} from "./views/users/UserList"
 import {TeamList} from "./views/teams/TeamsList"
 import PeopleIcon from "@mui/icons-material/People"
 import PersonIcon from "@mui/icons-material/Person"
-import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism"
+import {Admin, Resource, AdminProps} from "react-admin"
 import {VolunteersList} from "./views/volunteers/VolunteersList"
 import {VolunteerEdit} from "./views/volunteers/edit/VolunteerEdit"
 import {VolunteerShow} from "./views/volunteers/show/VolunteerShow"
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism"
 import {useGoogleAuthProvider, GoogleAuthContextProvider, localStorageTokenStore} from "ra-auth-google"
+
+const BaseAdmin = (props: AdminProps) => (
+  <Admin
+    layout={Layout}
+    defaultTheme="light"
+    darkTheme={darkTheme}
+    lightTheme={lightTheme}
+    {...props}
+  >
+    <Resource
+      name="volunteers"
+      show={VolunteerShow}
+      list={VolunteersList}
+      edit={VolunteerEdit}
+      hasCreate={false}
+      icon={VolunteerActivismIcon}
+      recordRepresentation={record => `${record.full_name}`}
+    />
+    <Resource
+      name="teams"
+      list={TeamList}
+      show={TeamShow}
+      hasEdit={false}
+      hasCreate={false}
+      icon={PeopleIcon}
+    />
+    <Resource
+      name="users"
+      list={UsersList}
+      /*
+      There is a Create view however it's a dialog that's only available
+      from UsersList. Setting this to false so RA doesn't doesn't
+      do anything unexpected (e.g. trying to navigate to it)
+    */
+      hasCreate={false}
+      hasShow={false}
+      hasEdit={false}
+      icon={PersonIcon}
+      // display user full name when presenting a record (e.g. show view)
+      recordRepresentation={record => `${record.first_name} ${record.last_name}`}
+    />
+  </Admin>
+)
 
 export const App = () => {
   // configure Sign-in with Google
@@ -24,7 +68,6 @@ export const App = () => {
     itp_support: true,
     use_fedcm_for_prompt: true,
     client_id: GOOGLE_CLIENT_ID,
-    cancel_on_tap_outside: false,
     tokenStore: localStorageTokenStore,
   })
   const drfDataProvider = dataProvider()
@@ -32,52 +75,17 @@ export const App = () => {
   // the same token store
   const drfAuthProvider = authProvider(googleAuthProvider, localStorageTokenStore)
 
-  return (
+  return !REQUIRE_AUTH ? (
+    <BaseAdmin dataProvider={drfDataProvider} />
+  ) : (
     <GoogleAuthContextProvider value={gsiParams}>
-      <Admin
+      <BaseAdmin
         // https://marmelab.com/react-admin/Admin.html#requireauth
         requireAuth
-        layout={Layout}
-        defaultTheme="light"
         loginPage={LoginPage}
-        darkTheme={darkTheme}
-        lightTheme={lightTheme}
         dataProvider={drfDataProvider}
         authProvider={drfAuthProvider}
-      >
-        <Resource
-          name="volunteers"
-          show={VolunteerShow}
-          list={VolunteersList}
-          edit={VolunteerEdit}
-          hasCreate={false}
-          icon={VolunteerActivismIcon}
-          recordRepresentation={record => `${record.full_name}`}
-        />
-        <Resource
-          name="teams"
-          list={TeamList}
-          show={TeamShow}
-          hasEdit={false}
-          hasCreate={false}
-          icon={PeopleIcon}
-        />
-        <Resource
-          name="users"
-          list={UsersList}
-          /*
-            There is a Create view however it's a dialog that's only available
-            from UsersList. Setting this to false so RA doesn't doesn't
-            do anything unexpected (e.g. trying to navigate to it)
-          */
-          hasCreate={false}
-          hasShow={false}
-          hasEdit={false}
-          icon={PersonIcon}
-          // display user full name when presenting a record (e.g. show view)
-          recordRepresentation={record => `${record.first_name} ${record.last_name}`}
-        />
-      </Admin>
+      />
     </GoogleAuthContextProvider>
   )
 }

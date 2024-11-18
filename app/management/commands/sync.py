@@ -2,7 +2,6 @@ import pprint
 from typing import Any
 from pathlib import Path
 
-from django.conf import settings
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.forms.models import model_to_dict
@@ -19,6 +18,8 @@ from mysql.connector.errors import Error as MySqlError
 from app.models.Team import Team
 from app.models.Volunteer import Volunteer
 from app.models.VolunteerTeam import VolunteerTeam
+
+from common.utils import get_etl_config_from_env
 
 
 # https://docs.djangoproject.com/en/5.0/howto/custom-management-commands/
@@ -103,8 +104,6 @@ class Command(BaseCommand):
 
         # 6: Email report
         now = timezone.now()
-        # Django templates tutorial
-        # https://docs.djangoproject.com/en/5.1/ref/templates/language/
         # Uncomment and modify app/templates/etl_report.html
         # to send report as html
         html_message = render_to_string(
@@ -141,14 +140,16 @@ class Command(BaseCommand):
                 "num_vt_inserts": len(vt_results.get("inserts")),
             },
         )
-        send_mail(
-            message=report,  # plain text
-            fail_silently=False,
-            from_email=None,  # Django will use the value of the DEFAULT_FROM_EMAIL setting
-            subject=f"iShelters to VMS ETL Report for {now.date().strftime("%m-%d-%Y")}",
-            recipient_list=options.get("report_recipients"),
-            html_message=html_message,  # uncomment to send html message
-        )
+
+        if options.get("email_report"):
+            send_mail(
+                message=report,  # plain text
+                fail_silently=False,
+                from_email=None,  # Django will use the value of the DEFAULT_FROM_EMAIL setting
+                subject=f"iShelters to VMS ETL Report for {now.date().strftime("%m-%d-%Y")}",
+                recipient_list=options.get("report_recipients"),
+                html_message=html_message,
+            )
 
     # region Gathering total records processed for each model
     # Team records
@@ -304,9 +305,7 @@ class Command(BaseCommand):
             "--config",
             type=Path,
             dest="config_file",
-            default=Path("config.jsonc"),
-            help="Path to ETL configuration file."
-            " Defaults to config.jsonc in the current working directory",
+            help="Path to ETL configuration file",
         )
 
         parser.add_argument(
@@ -381,33 +380,32 @@ class Command(BaseCommand):
         cursor.close()
 
     def _load_team_assignments(self, connection: MySQLConnection):
-        cursor = connection.cursor(dictionary=True)
+        # region Query to extract data from the desiredJob table
+        statement = """
+                SELECT
+                    jobId AS team,
+                    id AS ishelters_id,
+                    staffId AS volunteer,
+                    timeCreated AS start_date
+                FROM desiredJob
+                """
         volunteer_ishelters_ids = tuple(
             Volunteer.objects.values_list("ishelters_id", flat=True).all()
         )
-        # region Query to extract data from the desiredJob table
-        cursor.execute(
-            f"""
-            SELECT
-                jobId AS team,
-                id AS ishelters_id,
-                staffId AS volunteer,
-                timeCreated AS start_date
-            FROM desiredJob
-            WHERE
-                -- select only assignments for imported volunteers
-                -- this is better than SELECT * & walking over
-                -- thousands of rows that might not be relevant
-                staffId IN {volunteer_ishelters_ids}
-            """
-        )
+        if volunteer_ishelters_ids:
+            # -- select only assignments for imported volunteers
+            # -- this is better than SELECT * & walking over
+            # -- thousands of rows that might not be relevant
+            statement += f"WHERE staffId IN {volunteer_ishelters_ids}"
+        statement += ";"
         # endregion
 
         inserts = []
         failures = []
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(statement)
         self.stdout.write(self.style.HTTP_INFO("Importing team assignments"))
-        rows = cursor.fetchall()
-        for row in rows:
+        for row in cursor.fetchall():
             try:
                 ishelters_id = row["ishelters_id"]
                 # make naive datetime timezone aware
@@ -614,7 +612,7 @@ class Command(BaseCommand):
         # endregion
 
         if active_volunteers_only:
-            base_volunteer_query += "\nANDs.current = '1'"
+            base_volunteer_query += "\nAND s.current = '1'"
         base_volunteer_query += ";"
 
         volunteer_new_inserts = []
@@ -652,8 +650,6 @@ class Command(BaseCommand):
                             "id",
                             "ishelters_profile",
                             "application_received_date",
-                            "has_maddie_certifications",
-                            "active_status_change_date",
                             "maddie_certifications_received_date",
                         ],
                     )
@@ -671,10 +667,6 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.NOTICE("Change detected"))
                         # self.stdout.write(f"iShelters Row: {row}")
                         # self.stdout.write(f"VMS Row: {volunteer_dict}")
-
-                        if row["active"] != volunteer_dict["active"]:
-                            # active status has changed
-                            row["active_status_change_date"] = timezone.now()
 
                         # https://docs.djangoproject.com/en/5.1/ref/models/querysets/#django.db.models.query.QuerySet.update
                         # update volunteer by passing in the iShelters row, matching on ishelters_id
@@ -760,55 +752,40 @@ class Command(BaseCommand):
         """Load migration configuration into `options`"""
         # 1: is config file provided?
         config_file: Path = options.get("config_file")
-        if not config_file:
-            self.stderr.write(
-                (
-                    "Migration configuration file not provided."
-                    " Provide a valid JSON or .JSONC configuration file."
-                    "\nBy default, the current working directory is checked for 'config.jsonc'."
-                    "\nIf this is running inside of a container, verify the file is properly mounted."
-                    "\nMigration process will now exit."
-                )
-            )
-            exit(1)
-
-        # 2: does the provided config file exists
-        if not config_file.exists():
-            self.stderr.write(
-                (
-                    f"{str(config_file.absolute())} not found."
-                    "\nDoes this file exists?"
-                    " Verify the path then try again."
-                    "\nMigration process will now exit."
-                )
-            )
-            exit(1)
-
-        # 3: is the provided config file valid
-        try:
-            with open(config_file) as input_:
-                config = pyjson5.load(input_)
-        except pyjson5.Json5DecoderException as e:
-            self.stderr.write(
-                (
-                    f"Failed parsing {str(config_file.absolute())}."
-                    "\nMake sure the file is valid JSON or JSONC."
-                    "\nMigration process will now exit."
-                )
-            )
-            self.stderr.write(f"{e.message}")
-            exit(1)
-
-        try:
-            if "time_zone" not in config["source_database"]:
-                self.stdout.write(
-                    self.style.WARNING(
-                        "Source database timezone not provided. Falling back to Django settings."
+        if config_file:
+            # 2: does the provided config file exists
+            if not config_file.exists():
+                self.stderr.write(
+                    (
+                        f"{str(config_file.absolute())} not found."
+                        "\nDoes this file exists?"
+                        " Verify the path then try again."
+                        "\nMigration process will now exit."
                     )
                 )
-                config["source_database"].update(time_zone=settings.TIME_ZONE)
-        except KeyError:
-            pass
+                exit(1)
+
+            # 3: is the provided config file valid
+            try:
+                with open(config_file) as input_:
+                    config = pyjson5.load(input_)
+            except pyjson5.Json5DecoderException as e:
+                self.stderr.write(
+                    (
+                        f"Failed parsing {str(config_file.absolute())}."
+                        "\nMake sure the file is valid JSON or JSONC."
+                        "\nMigration process will now exit."
+                    )
+                )
+                self.stderr.write(f"{e.message}")
+                exit(1)
+        else:
+            self.stdout.write(
+                self.style.WARNING(
+                    "Configuration file not found. Attempting to read ETL configuration from environment."
+                )
+            )
+            config = get_etl_config_from_env()
 
         self.stdout.write(self.style.SUCCESS("Configuration file loaded"))
         self.stdout.write(pprint.pformat(config))

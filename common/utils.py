@@ -1,4 +1,4 @@
-import re
+import re, os
 from collections import namedtuple
 from pathlib import Path
 
@@ -6,9 +6,41 @@ from django.db.utils import Error
 
 from rest_framework.fields import BooleanField
 
+ETL_CONFIG_EXPECTED_BOOLS = [
+    "autocommit",
+    "email_report",
+    "active_volunteers_only",
+    "team_assignment_match_source",
+]
+
 
 def convert_string_bool(str_bool: str) -> bool:
     return str_bool.lower() in BooleanField.TRUE_VALUES
+
+
+def get_etl_config_from_env() -> dict:
+    # Check environment variables
+    config = {"source_database": {}}
+    for key, value in os.environ.items():
+        key_split = key.split("_", 1)
+        namespace_prefix = key_split[0].lower()
+        if namespace_prefix == "ishelters":
+            setting = key_split[1].lower()
+            if setting in ETL_CONFIG_EXPECTED_BOOLS:
+                config["source_database"][setting] = convert_string_bool(value)
+                continue
+
+            config["source_database"][setting] = value
+        elif namespace_prefix == "etl":
+            setting = key_split[1].lower()
+            if setting == "report_recipients":
+                config[setting] = value.split(",")
+                continue
+            if setting in ETL_CONFIG_EXPECTED_BOOLS:
+                config[setting] = convert_string_bool(value)
+                continue
+            config[setting] = value
+    return config
 
 
 ParsedError = namedtuple("ParsedError", ["raw", "slug", "detail", "field"])
