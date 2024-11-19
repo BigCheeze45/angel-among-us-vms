@@ -4,10 +4,13 @@ Volunteer management system using a Django REST backend (via [Django REST framew
 ](https://www.django-rest-framework.org))
 with a React (via [React-Admin](https://marmelab.com/react-admin/)) frontend.
 
+# Documentation
+Project docs are available in the [docs](./docs/) folder.
+
 # Getting Started
 
 **Instructions and setup below are for development and should not be used when deploying
-to production.
+to production.**
 
 ## Perquisites
 
@@ -150,5 +153,5 @@ _Generated using [Markdown Tables Generator](https://www.tablesgenerator.com/mar
 
 ## Using makefile on Windows
 
-Windows does not support makefiles natively. However, if you have installed/enabled WSL,
+Windows does not support make files natively. However, if you have installed/enabled WSL,
 you can open a WSL terminal to use the makefile.

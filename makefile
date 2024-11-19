@@ -12,6 +12,8 @@ build:
 	docker build --pull --no-cache --target backend -t aau-vms-backend .
 	@echo "Building React-Admin image"
 	docker build --pull --no-cache --target frontend -t aau-vms-frontend .
+	@echo "Building docs image"
+	docker build --pull --no-cache --target docs -t aau-vms-docs .
 
 # Bring up the Docker Compose stack
 up:
@@ -86,7 +88,7 @@ cleaninit:
 .PHONY: init
 init:
 	@echo "Setting up VMS development environment"
-	# $(MAKE) build
+	$(MAKE) build
 	$(MAKE) up
 	sleep 15
 	$(MAKE) migrate

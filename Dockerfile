@@ -25,3 +25,9 @@ RUN npm install
 COPY react-admin .
 
 CMD ["npm", "run", "dev"]
+
+# Docs builder
+FROM sphinxdoc/sphinx AS docs
+
+WORKDIR /docs
+RUN pip install --no-cache-dir myst_parser sphinx-autobuild

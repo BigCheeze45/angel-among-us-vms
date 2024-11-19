@@ -1,3 +1,11 @@
+# Configuration
+These are the available options that can be set and made available
+to the docker container.
+
+Note that after changing your `.env`, you must run `make restart` to
+apply the new changes.
+
+```ini
 # region REQUIRED
 # These options are required and must be set
 # for the containers & application to initialize/start correctly.
@@ -115,4 +123,4 @@ ETL_TEAM_ASSIGNMENT_MATCH_SOURCE=False
 # CORS_ALLOWED_ORIGINS
 # A comma separated list of origins that are authorized to make cross-site HTTP requests
 # CORS_ALLOW_ALL_ORIGINS
-# endregion
+```

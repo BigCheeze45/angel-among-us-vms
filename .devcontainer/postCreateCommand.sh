@@ -9,9 +9,10 @@ git config --global --add safe.directory "$CONTAINER_WORKSPACE_FOLDER"
 # #CMD ["npm", "run", "dev"]
 # https://stackoverflow.com/a/61137716
 # CMD [ -d "node_modules" ] && npm run dev || npm ci && npm run dev
-
-# setup local node modules
-cd react-admin && npm ci && cd ..
+if [ ! -d "react-admin/node_modules" ]; then
+    # setup local node modules
+    cd react-admin && npm ci && cd ..
+fi
 
 # Build application image & start the stack
 if [ ! -f "$INITIALIZATION_FILE" ]; then

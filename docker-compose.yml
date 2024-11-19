@@ -20,8 +20,16 @@ secrets:
     environment: EMAIL_PASSWORD
 
 services:
-  # See https://hub.docker.com/_/postgres
+  docs:
+    image: aau-vms-docs
+    container_name: docs
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/docs:/docs
+    ports:
+      - 8080:8000
+    entrypoint: [ "sphinx-autobuild", "--host", "0.0.0.0", "source", "build" ]
   database:
+    # See https://hub.docker.com/_/postgres
     image: postgres
     container_name: database
     volumes:
