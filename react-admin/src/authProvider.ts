@@ -1,5 +1,6 @@
 import jwt_decode from "jwt-decode"
 import {API_BASE_URL} from "./constants"
+import inMemoryTokenStore from "./tokenStore"
 import {TokenStore, UserPayload} from "ra-auth-google"
 import {AuthProvider, QueryFunctionContext, HttpError} from "react-admin"
 
@@ -9,13 +10,13 @@ export default (baseAuthProvider: AuthProvider, tokenStore: TokenStore): AuthPro
     // Only one auto re-authn request can be made every 10 minutes.
     await baseAuthProvider.login(params)
     const googleToken = tokenStore?.getToken()
-    const user: UserPayload = jwt_decode(googleToken)
 
     const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + btoa(`${user.email}:${""}`),
+        // Authorization: "Basic " + btoa(`${user.email}:${""}`),
+        Authorization: "Basic " + btoa(`${googleToken}:${""}`),
       },
     })
 
@@ -25,26 +26,29 @@ export default (baseAuthProvider: AuthProvider, tokenStore: TokenStore): AuthPro
     }
 
     const data = await response.json()
-    localStorage.setItem("apiToken", data.token)
+    inMemoryTokenStore.setToken(data.token)
     localStorage.setItem("permissions", JSON.stringify(data.user.permissions))
+    // remove G token it's no longer needed
+    tokenStore?.removeToken()
   },
   logout: async function (params): Promise<void | false | string> {
     // log out of Google SSO
     await baseAuthProvider.logout(params)
 
     // delete token from backend if it's still valid
-    const apiToken = localStorage.getItem("apiToken")
+    const apiToken = inMemoryTokenStore.getToken()
     await fetch(`${API_BASE_URL}/api/auth/logout/`, {
       method: "POST",
       headers: {Authorization: `Token ${apiToken}`},
     })
 
     // clean up client side
-    localStorage.removeItem("apiToken")
+    inMemoryTokenStore.removeToken()
     localStorage.removeItem("permissions")
   },
   checkAuth: async function (params: any & QueryFunctionContext): Promise<void> {
-    const apiToken = localStorage.getItem("apiToken")
+    const apiToken = inMemoryTokenStore.getToken()
+    console.log(apiToken)
     if (!apiToken) {
       // No access token present
       return Promise.reject({message: "Session expired. Please login."})
@@ -65,7 +69,7 @@ export default (baseAuthProvider: AuthProvider, tokenStore: TokenStore): AuthPro
   checkError: async function (error: any): Promise<void> {
     const status = error.status
     if (status === 401) {
-      localStorage.removeItem("apiToken")
+      inMemoryTokenStore.removeToken()
       return Promise.reject({message: "Session expired. Please login."})
     }
   },

@@ -28,8 +28,8 @@ import {
   GetManyReferenceParams,
   GetManyReferenceResult,
 } from "react-admin"
-
 import {stringify} from "query-string"
+import inMemoryTokenStore from "./tokenStore"
 import {ENDPOINTS, HttpMethod, API_BASE_URL} from "./constants"
 
 export const getPaginationQuery = (pagination: PaginationPayload) => {
@@ -60,7 +60,11 @@ export const fetchJson = (url: string, options: fetchUtils.Options = {}) => {
     options.headers = new Headers({Accept: "application/json"})
   }
   // add your own headers here
-  options.headers.set("Authorization", `Token ${localStorage.getItem("apiToken")}`)
+  // options.headers.set("Authorization", `Token ${localStorage.getItem("apiToken")}`)
+  const token = inMemoryTokenStore.getToken()
+  if (token) {
+    options.headers.set("Authorization", `Token ${inMemoryTokenStore.getToken()}`)
+  }
   return fetchUtils.fetchJson(url, options)
 }
 
